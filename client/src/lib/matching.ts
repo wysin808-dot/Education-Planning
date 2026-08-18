@@ -18,32 +18,52 @@ import {
 /** 机会分层：与界面标签定义严格对应 */
 export type Tier = "reach" | "target" | "safe" | "unknown";
 
-export const TIER_META: Record<Tier, { label: string; short: string; definition: string; color: string }> = {
+export const TIER_META: Record<
+  Tier,
+  { label: string; short: string; definition: string; definitionEn: string; color: string }
+> = {
   safe: {
     label: "稳妥",
     short: "Safe",
     definition: "预计 ATAR 高出官方最低门槛 5 分及以上，在满足先修科目的前提下把握较大。",
+    definitionEn:
+      "The projected ATAR sits at least 5 points above the official minimum. With prerequisites met, the prospects are strong.",
     color: "#4A6B4F",
   },
   target: {
     label: "匹配",
     short: "Target",
     definition: "预计 ATAR 达到官方最低门槛，且高出幅度在 5 分以内，属于正常竞争区间。",
+    definitionEn:
+      "The projected ATAR meets the official minimum but by less than 5 points, placing it in the normal competitive range.",
     color: "#B4884A",
   },
   reach: {
     label: "冲刺",
     short: "Reach",
     definition: "预计 ATAR 低于官方最低门槛，需要提分、更换专业或考虑其他入学路径。",
+    definitionEn:
+      "The projected ATAR falls below the official minimum. It calls for score improvement, a different programme, or an alternative pathway.",
     color: "#9C4A3C",
   },
   unknown: {
     label: "待评估",
     short: "Review",
     definition: "该专业官方未公布 ATAR 门槛，采用综合评估或个案审核，需由顾问结合完整背景判断。",
+    definitionEn:
+      "This programme publishes no ATAR threshold and is assessed holistically or case by case, so a counsellor must weigh the full profile.",
     color: "#6B6B6B",
   },
 };
+
+/** 分层标签的英文名，供英文界面直接使用 */
+export function tierLabel(tier: Tier, lang: "zh" | "en"): string {
+  return lang === "zh" ? TIER_META[tier].label : TIER_META[tier].short;
+}
+
+export function tierDefinition(tier: Tier, lang: "zh" | "en"): string {
+  return lang === "zh" ? TIER_META[tier].definition : TIER_META[tier].definitionEn;
+}
 
 /** 差额多少分以内算作「匹配」区间 */
 const TARGET_BAND = 5;
@@ -243,3 +263,21 @@ export function subjectLabel(key: SubjectKey): string {
 export function subjectGroupLabel(group: SubjectKey[]): string {
   return group.map(subjectLabel).join(" 或 ");
 }
+
+/** 双语版科目标签 */
+export function subjectLabelBy(key: SubjectKey, lang: "zh" | "en"): string {
+  const s = SUBJECTS.find((x) => x.key === key);
+  if (!s) return key;
+  return lang === "zh" ? s.zh : s.en;
+}
+
+export function subjectGroupLabelBy(group: SubjectKey[], lang: "zh" | "en"): string {
+  return group.map((k) => subjectLabelBy(k, lang)).join(lang === "zh" ? " 或 " : " or ");
+}
+
+/** 建议等级的英文对照 */
+export const LEVEL_EN: Record<SubjectAdvice["level"], string> = {
+  必需: "Required",
+  强烈建议: "Strongly advised",
+  可选: "Optional",
+};

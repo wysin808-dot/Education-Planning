@@ -1,60 +1,99 @@
 /**
  * 设计风格：Admissions Almanac
- * 本文件包含盾形徽记文字标、顶栏与页脚。深墨绿底 + 铜金细线分隔，字距放宽。
+ * 顶栏与页脚使用 BCI 官方 logo（红色横版 / 反白横版），保留铜金细线与放宽字距。
+ * 注意：BCI 官方主色为砖红 #B02A2A，与年鉴的墨绿铜金构成双色体系——
+ * 红色仅用于品牌标识与强调，版面主色仍为墨绿。
  */
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/contexts/LangContext";
 
-const MARK_SRC = "/manus-storage/bv-mark_4449a333.png";
+const LOGO_RED = "/manus-storage/bci-logo-horizontal_ead9c912.png";
+const LOGO_WHITE = "/manus-storage/bci-logo-horizontal-white_4bd4c272.png";
 
 export function Wordmark({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const light = variant === "light";
+  const { t } = useLang();
   return (
-    <span className="flex items-center gap-3">
+    <span className="flex items-center gap-3.5">
       <img
-        src={MARK_SRC}
-        alt="Brentvale College International 盾形刻度徽记"
-        className="h-11 w-11 shrink-0 object-contain"
+        src={light ? LOGO_WHITE : LOGO_RED}
+        alt="Brentvale College International"
+        className="h-10 w-auto shrink-0 object-contain sm:h-11"
       />
-      <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-[family-name:var(--font-display)] text-[1.0625rem] font-semibold tracking-[0.16em]",
-            light ? "text-paper" : "text-green",
-          )}>
-          BRENTVALE
-        </span>
-        <span className={cn("mt-1 h-px w-full", light ? "bg-brass/70" : "bg-brass")} />
-        <span
-          className={cn(
-            "mt-1 text-[0.625rem] tracking-[0.3em]",
-            light ? "text-paper/75" : "text-muted-foreground",
-          )}>
-          WACE 升学规划
-        </span>
+      <span
+        className={cn(
+          "hidden h-9 w-px shrink-0 sm:block",
+          light ? "bg-brass/50" : "bg-brass/60",
+        )}
+      />
+      <span
+        className={cn(
+          "hidden whitespace-nowrap text-[0.6875rem] leading-tight tracking-[0.22em] sm:block",
+          light ? "text-paper/70" : "text-muted-foreground",
+        )}>
+        {t("WACE 升学规划", "WACE PATHWAYS")}
       </span>
     </span>
   );
 }
 
 const NAV = [
-  { href: "/", label: "首页" },
-  { href: "/forward", label: "分数查院校" },
-  { href: "/reverse", label: "院校查门槛" },
-  { href: "/subjects", label: "选课规划" },
-  { href: "/table", label: "门槛总表" },
-  { href: "/brochure", label: "宣传册" },
+  { href: "/", zh: "首页", en: "Home" },
+  { href: "/forward", zh: "分数查院校", en: "Score → Universities" },
+  { href: "/reverse", zh: "院校查门槛", en: "University → ATAR" },
+  { href: "/subjects", zh: "选课规划", en: "Subject Planner" },
+  { href: "/table", zh: "门槛总表", en: "Threshold Table" },
+  { href: "/brochure", zh: "宣传册", en: "Brochure" },
 ];
+
+function LangToggle({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const { lang, setLang } = useLang();
+  const light = variant === "light";
+  return (
+    <div
+      className={cn(
+        "flex shrink-0 items-center border",
+        light ? "border-paper/30" : "border-border",
+      )}
+      role="group"
+      aria-label="Language / 语言">
+      {(["zh", "en"] as const).map((code) => {
+        const active = lang === code;
+        return (
+          <button
+            key={code}
+            type="button"
+            onClick={() => setLang(code)}
+            aria-pressed={active}
+            className={cn(
+              "px-2.5 py-1.5 text-[0.6875rem] tracking-[0.12em] transition-colors duration-150",
+              active
+                ? light
+                  ? "bg-paper text-green"
+                  : "bg-green text-primary-foreground"
+                : light
+                  ? "text-paper/65 hover:text-paper"
+                  : "text-muted-foreground hover:text-green",
+            )}>
+            {code === "zh" ? "中文" : "EN"}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export function SiteHeader() {
   const [path] = useLocation();
+  const { lang, t } = useLang();
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border bg-paper/92 backdrop-blur-md">
-      <div className="container flex h-[4.5rem] items-center justify-between gap-6">
+      <div className="container flex h-[4.5rem] items-center justify-between gap-4">
         <Link href="/" className="shrink-0">
           <Wordmark />
         </Link>
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-0.5 xl:flex">
           {NAV.map((item) => {
             const active = path === item.href;
             return (
@@ -62,28 +101,26 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative px-3 py-2 text-[0.8125rem] transition-colors duration-150",
+                  "relative whitespace-nowrap px-2.5 py-2 text-[0.8125rem] transition-colors duration-150",
                   active ? "text-green" : "text-muted-foreground hover:text-green",
                 )}>
-                {item.label}
-                {active && <span className="absolute inset-x-3 -bottom-px h-[2px] bg-brass" />}
+                {lang === "zh" ? item.zh : item.en}
+                {active && <span className="absolute inset-x-2.5 -bottom-px h-[2px] bg-brass" />}
               </Link>
             );
           })}
         </nav>
-        <div className="flex items-center gap-4">
-          <span className="hidden text-[0.6875rem] tracking-[0.18em] text-muted-foreground xl:inline">
-            2026/27 入学数据
-          </span>
+        <div className="flex shrink-0 items-center gap-3">
+          <LangToggle />
           <Link
             href="/forward"
-            className="border border-green bg-green px-4 py-2 text-[0.8125rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft">
-            开始规划
+            className="hidden whitespace-nowrap border border-green bg-green px-4 py-2 text-[0.8125rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft sm:inline-block">
+            {t("开始规划", "Start Planning")}
           </Link>
         </div>
       </div>
-      {/* 移动端导航 */}
-      <div className="border-t border-border/70 lg:hidden">
+      {/* 移动与中屏导航 */}
+      <div className="relative border-t border-border/70 xl:hidden">
         <div className="container flex gap-1 overflow-x-auto py-2">
           {NAV.map((item) => {
             const active = path === item.href;
@@ -95,65 +132,91 @@ export function SiteHeader() {
                   "whitespace-nowrap px-3 py-1.5 text-[0.75rem] transition-colors",
                   active ? "bg-green text-primary-foreground" : "text-muted-foreground",
                 )}>
-                {item.label}
+                {lang === "zh" ? item.zh : item.en}
               </Link>
             );
           })}
         </div>
+        {/* 右侧渐隐提示该行可横向滚动，避免末项看似缺失 */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-paper to-transparent" />
       </div>
     </header>
   );
 }
 
 export function SiteFooter() {
+  const { t } = useLang();
   return (
     <footer className="no-print mt-24 border-t-2 border-green bg-green text-paper">
       <div className="container grid gap-10 py-14 md:grid-cols-[1.3fr_1fr_1fr]">
         <div>
           <Wordmark variant="light" />
           <p className="mt-5 max-w-md font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-paper/80">
-            Brentvale College International 为 WACE 学生提供升学门槛查询与选课决策支持。本工具的所有分数与要求均引自各校官方招生页面，用于规划参考。
+            {t(
+              "Brentvale College International 为 WACE 学生提供升学门槛查询与选课决策支持。本工具的所有分数与要求均引自各校官方招生页面，用于规划参考。",
+              "Brentvale College International provides WACE students with admission threshold lookups and subject-selection guidance. All scores and requirements are drawn from official university admissions pages and are intended for planning reference.",
+            )}
           </p>
         </div>
         <div>
-          <h3 className="eyebrow text-brass-soft">查询工具</h3>
+          <h3 className="eyebrow text-brass-soft">{t("查询工具", "Tools")}</h3>
           <ul className="mt-4 space-y-2.5 text-[0.875rem] text-paper/80">
             <li>
               <Link href="/forward" className="hover:text-brass-soft">
-                按 ATAR 查可申请院校
+                {t("按 ATAR 查可申请院校", "Find universities by ATAR")}
               </Link>
             </li>
             <li>
               <Link href="/reverse" className="hover:text-brass-soft">
-                按院校专业查所需分数
+                {t("按院校专业查所需分数", "Find ATAR by programme")}
               </Link>
             </li>
             <li>
               <Link href="/subjects" className="hover:text-brass-soft">
-                WACE 选课规划
+                {t("WACE 选课规划", "WACE subject planner")}
               </Link>
             </li>
             <li>
               <Link href="/table" className="hover:text-brass-soft">
-                31 校门槛总表
+                {t("31 校门槛总表", "31-university threshold table")}
               </Link>
             </li>
           </ul>
         </div>
         <div>
-          <h3 className="eyebrow text-brass-soft">数据说明</h3>
+          <h3 className="eyebrow text-brass-soft">{t("数据说明", "About the Data")}</h3>
           <ul className="mt-4 space-y-2.5 text-[0.875rem] leading-relaxed text-paper/80">
-            <li>覆盖新加坡 6 所、香港 8 所、澳洲 8 所、英国 9 所</li>
-            <li>数据对应 2026 与 2027 年入学周期</li>
-            <li>门槛为官方最低要求，非录取保证</li>
-            <li>申请前请以院校官网最新公告为准</li>
+            <li>
+              {t(
+                "覆盖新加坡 6 所、香港 8 所、澳洲 8 所、英国 9 所",
+                "6 Singapore · 8 Hong Kong · 8 Australia · 9 United Kingdom",
+              )}
+            </li>
+            <li>{t("数据对应 2026 与 2027 年入学周期", "For 2026 and 2027 intake cycles")}</li>
+            <li>
+              {t(
+                "门槛为官方最低要求，非录取保证",
+                "Thresholds are official minimums, not guarantees of an offer",
+              )}
+            </li>
+            <li>
+              {t(
+                "申请前请以院校官网最新公告为准",
+                "Always verify against the university's latest official announcement",
+              )}
+            </li>
           </ul>
         </div>
       </div>
       <div className="border-t border-paper/15">
         <div className="container flex flex-col gap-2 py-5 text-[0.75rem] text-paper/60 md:flex-row md:items-center md:justify-between">
-          <span>© 2026 Brentvale College International · 招生与升学指导办公室</span>
-          <span className="score">最后核验：2026 年 8 月</span>
+          <span>
+            {t(
+              "© 2026 Brentvale College International · 招生与升学指导办公室",
+              "© 2026 Brentvale College International · Admissions & Careers Office",
+            )}
+          </span>
+          <span className="score">{t("最后核验：2026 年 8 月", "Last verified: August 2026")}</span>
         </div>
       </div>
     </footer>

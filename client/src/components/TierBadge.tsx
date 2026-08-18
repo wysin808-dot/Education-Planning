@@ -2,8 +2,9 @@
  * 设计风格：Admissions Almanac
  * 分层标签使用低饱和语义色（砖红/铜金/鼠尾草绿/灰），避免红绿灯式刺眼对比。
  */
-import { TIER_META, type Tier } from "@/lib/matching";
+import { TIER_META, tierDefinition, tierLabel, type Tier } from "@/lib/matching";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/contexts/LangContext";
 
 const CLASSES: Record<Tier, string> = {
   safe: "border-tier-safe text-tier-safe bg-tier-safe/8",
@@ -13,7 +14,7 @@ const CLASSES: Record<Tier, string> = {
 };
 
 export function TierBadge({ tier, className }: { tier: Tier; className?: string }) {
-  const meta = TIER_META[tier];
+  const { lang } = useLang();
   return (
     <span
       className={cn(
@@ -21,15 +22,16 @@ export function TierBadge({ tier, className }: { tier: Tier; className?: string 
         CLASSES[tier],
         className,
       )}
-      title={meta.definition}>
+      title={tierDefinition(tier, lang)}>
       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
-      {meta.label}
+      {tierLabel(tier, lang)}
     </span>
   );
 }
 
 export function TierLegend({ className }: { className?: string }) {
   const order: Tier[] = ["safe", "target", "reach", "unknown"];
+  const { lang } = useLang();
   return (
     <dl className={cn("divide-y divide-border border-y border-border", className)}>
       {order.map((tier) => (
@@ -38,11 +40,10 @@ export function TierLegend({ className }: { className?: string }) {
             <TierBadge tier={tier} />
           </dt>
           <dd className="font-[family-name:var(--font-serif)] text-[0.875rem] leading-relaxed text-muted-foreground">
-            {TIER_META[tier].definition}
+            {tierDefinition(tier, lang)}
           </dd>
         </div>
       ))}
     </dl>
   );
 }
-
