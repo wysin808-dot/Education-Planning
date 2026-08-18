@@ -1,6 +1,7 @@
 /**
  * 设计风格：Admissions Almanac
- * 顶栏与页脚使用 BCI 官方 logo（红色横版 / 反白横版），保留铜金细线与放宽字距。
+ * 页头采用 BCI 官方圆形徽章与紧凑 BRENTVALE 短字标，降低横向占用；
+ * 页脚仍使用完整官方横版 logo（红色横版 / 反白横版），保留铜金细线与放宽字距。
  * 注意：BCI 官方主色为砖红 #B02A2A，与年鉴的墨绿铜金构成双色体系——
  * 红色仅用于品牌标识与强调，版面主色仍为墨绿。
  */
@@ -10,10 +11,45 @@ import { useLang } from "@/contexts/LangContext";
 
 const LOGO_RED = "/manus-storage/bci-logo-horizontal_ead9c912.png";
 const LOGO_WHITE = "/manus-storage/bci-logo-horizontal-white_4bd4c272.png";
+const CREST_RED = "/manus-storage/bci-crest_444d5067.png";
+const CREST_WHITE = "/manus-storage/bci-crest-white_94d24f24.png";
 
-export function Wordmark({ variant = "dark" }: { variant?: "dark" | "light" }) {
+export function Wordmark({
+  variant = "dark",
+  compact = false,
+}: {
+  variant?: "dark" | "light";
+  compact?: boolean;
+}) {
   const light = variant === "light";
   const { t } = useLang();
+  if (compact) {
+    return (
+      <span className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+        <img
+          src={light ? CREST_WHITE : CREST_RED}
+          alt="Brentvale College"
+          className="h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9"
+        />
+        <span className="min-w-0 border-l border-brass/60 pl-2.5 sm:pl-3">
+          <span
+            className={cn(
+              "block whitespace-nowrap font-[family-name:var(--font-serif)] text-[0.75rem] font-semibold tracking-[0.13em] sm:text-[0.8125rem]",
+              light ? "text-paper" : "text-brand-red",
+            )}>
+            BRENTVALE
+          </span>
+          <span
+            className={cn(
+              "block whitespace-nowrap pt-0.5 text-[0.5rem] tracking-[0.18em] sm:text-[0.5625rem]",
+              light ? "text-paper/70" : "text-muted-foreground",
+            )}>
+            {t("WACE 升学规划", "WACE PATHWAYS")}
+          </span>
+        </span>
+      </span>
+    );
+  }
   return (
     <span className="flex items-center gap-3.5">
       <img
@@ -91,7 +127,7 @@ export function SiteHeader() {
     <header className="no-print sticky top-0 z-40 border-b border-border bg-paper/92 backdrop-blur-md">
       <div className="container flex h-[4.5rem] items-center justify-between gap-4">
         <Link href="/" className="shrink-0">
-          <Wordmark />
+          <Wordmark compact />
         </Link>
         <nav className="hidden items-center gap-0.5 xl:flex">
           {NAV.map((item) => {
