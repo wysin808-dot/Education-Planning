@@ -11,6 +11,7 @@ import { TierBadge } from "@/components/TierBadge";
 import { FIELDS, REGIONS, SUBJECTS, type FieldKey, type Region, type SubjectKey } from "@/data/universities";
 import {
   forwardMatch,
+  extraLabel,
   subjectGroupLabelBy,
   summarizeByTier,
   tierDefinition,
@@ -296,7 +297,7 @@ export default function Forward() {
                             key={s.key}
                             type="button"
                             onClick={() => toggle(subjects, s.key, setSubjects)}
-                            title={s.note}
+                            title={lang === "zh" ? s.note : s.noteEn}
                             className={cn(
                               "border px-2 py-1 text-[0.75rem] transition-colors duration-150",
                               on
@@ -591,7 +592,9 @@ export default function Forward() {
                                     <td className="py-3.5 pr-4">
                                       {row.programme.atarNote && (
                                         <span className="block font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
-                                          {row.programme.atarNote}
+                                          {lang === "zh"
+                                            ? row.programme.atarNote
+                                            : (row.programme.atarNoteEn ?? row.programme.atarNote)}
                                         </span>
                                       )}
                                       {row.prerequisite.satisfied ? (
@@ -612,11 +615,11 @@ export default function Forward() {
                                       )}
                                       {row.programme.extras.length > 0 && (
                                         <span className="mt-1.5 flex flex-wrap gap-1.5">
-                                          {row.programme.extras.map((e) => (
+                                      {row.programme.extras.map((e) => (
                                             <span
                                               key={e}
                                               className="border border-brass/50 bg-brass/8 px-1.5 py-0.5 text-[0.6875rem] text-[oklch(0.45_0.07_74)]">
-                                              {e}
+                                          {extraLabel(e, lang)}
                                             </span>
                                           ))}
                                         </span>

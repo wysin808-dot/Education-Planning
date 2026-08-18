@@ -8,7 +8,14 @@ import { AlertTriangle, Info, Plus, Trash2 } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { FIELDS, HEMISPHERES, SUBJECTS, UNIVERSITIES, type Hemisphere } from "@/data/universities";
-import { LEVEL_EN, adviseSubjects, subjectLabelBy } from "@/lib/matching";
+import {
+  LEVEL_EN,
+  adviseSubjectsBy,
+  groupLabel,
+  scalingLabel,
+  subjectLabelBy,
+  type SubjectAdvice,
+} from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 
@@ -40,7 +47,7 @@ export default function Subjects() {
   const [hemisphere, setHemisphere] = useState<Hemisphere>("south");
 
   const pickedUni = useMemo(() => UNIVERSITIES.find((u) => u.id === pickUni), [pickUni]);
-  const advice = useMemo(() => adviseSubjects(targets), [targets]);
+  const advice = useMemo(() => adviseSubjectsBy(targets, lang), [targets, lang]);
 
   /** 当前课程序列开设的科目 */
   const availableSubjects = useMemo(
@@ -136,7 +143,9 @@ export default function Subjects() {
               ))}
             </div>
             <span className="text-[0.75rem] text-muted-foreground">
-              {HEMISPHERES.find((h) => h.id === hemisphere)?.note}
+              {lang === "zh"
+                ? HEMISPHERES.find((h) => h.id === hemisphere)?.note
+                : HEMISPHERES.find((h) => h.id === hemisphere)?.noteEn}
             </span>
           </div>
         </div>
@@ -205,7 +214,10 @@ export default function Subjects() {
                         <span className="score">
                           {threshold === null ? t("官方未公布", "not published") : threshold.toFixed(2)}
                         </span>
-                        {p.atarNote ? ` · ${p.atarNote}` : ""}
+                        {(() => {
+                          const n = lang === "zh" ? p.atarNote : (p.atarNoteEn ?? p.atarNote);
+                          return n ? ` · ${n}` : "";
+                        })()}
                       </p>
                     </div>
                     <button
@@ -371,7 +383,7 @@ export default function Subjects() {
                   {lang === "zh" ? f.zh : f.en}
                 </h3>
                 <p className="mt-2 font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
-                  {f.advice}
+                  {lang === "zh" ? f.advice : f.adviceEn}
                 </p>
               </div>
             ))}
@@ -419,10 +431,16 @@ export default function Subjects() {
                   {SUBJECTS.map((s) => (
                     <tr key={s.key} className="border-b border-border align-top">
                       <td className="py-3.5 pr-4">
-                        <span className="text-[0.875rem] text-green">{s.zh}</span>
-                        <span className="mt-0.5 block text-[0.6875rem] text-muted-foreground">{s.en}</span>
+                        <span className="text-[0.875rem] text-green">
+                          {lang === "zh" ? s.zh : s.en}
+                        </span>
+                        <span className="mt-0.5 block text-[0.6875rem] text-muted-foreground">
+                          {lang === "zh" ? s.en : s.zh}
+                        </span>
                       </td>
-                      <td className="py-3.5 pr-4 text-[0.8125rem] text-muted-foreground">{s.group}</td>
+                      <td className="py-3.5 pr-4 text-[0.8125rem] text-muted-foreground">
+                        {groupLabel(s.group, lang)}
+                      </td>
                       <td
                         className={cn(
                           "py-3.5 pr-3 text-center text-[0.875rem]",
@@ -447,11 +465,11 @@ export default function Subjects() {
                                 ? "border-tier-target text-[oklch(0.48_0.07_74)] bg-tier-target/10"
                                 : "border-tier-unknown text-tier-unknown bg-tier-unknown/8",
                           )}>
-                          {s.scaling}
+                          {scalingLabel(s.scaling, lang)}
                         </span>
                       </td>
                       <td className="py-3.5 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
-                        {s.note}
+                        {lang === "zh" ? s.note : s.noteEn}
                       </td>
                     </tr>
                   ))}

@@ -172,18 +172,32 @@ export interface ReverseResult {
   extras: string[];
 }
 
-export function reverseLookup(universityId: string, programmeId: string): ReverseResult | null {
+export function reverseLookup(
+  universityId: string,
+  programmeId: string,
+  lang: "zh" | "en" = "zh",
+): ReverseResult | null {
   const uni = UNIVERSITIES.find((u) => u.id === universityId);
   if (!uni) return null;
   const prog = uni.programmes.find((p) => p.id === programmeId);
   if (!prog) return null;
   const requiredAtar = prog.atar ?? uni.minAtar;
+  const zh = lang === "zh";
+  const progNote = zh ? prog.atarNote : (prog.atarNoteEn ?? prog.atarNote);
+  const uniNote = zh ? uni.minAtarNote : uni.minAtarNoteEn;
   const note =
     prog.atar !== null
-      ? (prog.atarNote ?? "官方按专业公布该门槛。")
+      ? (progNote ??
+        (zh
+          ? "官方按专业公布该门槛。"
+          : "This threshold is published by the university at programme level."))
       : uni.minAtar !== null
-        ? `该专业未单列门槛，沿用全校最低要求。${uni.minAtarNote}`
-        : uni.minAtarNote;
+        ? `${
+            zh
+              ? "该专业未单列门槛，沿用全校最低要求。"
+              : "No programme-level threshold is published; the institution-wide minimum applies. "
+          }${uniNote}`
+        : uniNote;
   return {
     university: uni,
     programme: prog,
@@ -209,10 +223,18 @@ export interface SubjectAdvice {
  * requiredBy 统计该科目出现在多少个目标专业的先修要求中。
  */
 export function adviseSubjects(targets: { universityId: string; programmeId: string }[]): SubjectAdvice[] {
+  return adviseSubjectsBy(targets, "zh");
+}
+
+/** 选课建议（可指定语言，理由文案取对应语言版本） */
+export function adviseSubjectsBy(
+  targets: { universityId: string; programmeId: string }[],
+  lang: "zh" | "en",
+): SubjectAdvice[] {
   const counter = new Map<SubjectKey, number>();
   let total = 0;
   for (const t of targets) {
-    const r = reverseLookup(t.universityId, t.programmeId);
+    const r = reverseLookup(t.universityId, t.programmeId, lang);
     if (!r) continue;
     total += 1;
     const flat = new Set<SubjectKey>();
@@ -230,15 +252,17 @@ export function adviseSubjects(targets: { universityId: string; programmeId: str
       subject,
       requiredBy,
       level,
-      reason: meta?.note ?? "",
+      reason: (lang === "zh" ? meta?.note : meta?.noteEn) ?? "",
     });
   });
   return advice.sort((a, b) => b.requiredBy - a.requiredBy);
 }
 
 /** 由学科方向获取通用选课建议文案 */
-export function fieldAdvice(field: FieldKey): string {
-  return FIELDS.find((f) => f.key === field)?.advice ?? "";
+export function fieldAdvice(field: FieldKey, lang: "zh" | "en" = "zh"): string {
+  const f = FIELDS.find((x) => x.key === field);
+  if (!f) return "";
+  return lang === "zh" ? f.advice : f.adviceEn;
 }
 
 /** 统计数据集规模，用于界面展示与自检 */
@@ -277,7 +301,58 @@ export function subjectGroupLabelBy(group: SubjectKey[], lang: "zh" | "en"): str
 
 /** 建议等级的英文对照 */
 export const LEVEL_EN: Record<SubjectAdvice["level"], string> = {
-  必需: "Required",
+  必需: "Essential",
   强烈建议: "Strongly advised",
   可选: "Optional",
 };
+
+/**
+ * 附加测试与选拔要求的英文标签。多数为国际通用缩写（UCAT / LNAT 等）
+ * 保持原样，仅中文表述需要翻译。
+ */
+const EXTRA_EN: Record<string, string> = {
+  面试: "Interview",
+  笔试: "Written test",
+  作品集: "Portfolio",
+  试音: "Audition",
+  试听: "Audition",
+  医疗体检: "Medical examination",
+  入学考试: "Entrance examination",
+};
+
+export function extraLabel(extra: string, lang: "zh" | "en"): string {
+  if (lang === "zh") return extra;
+  return EXTRA_EN[extra] ?? extra;
+}
+
+/** scaling 强度的英文标签 */
+const SCALING_EN: Record<string, string> = {
+  高: "Strong",
+  中: "Moderate",
+  一般: "Modest",
+};
+
+export function scalingLabel(scaling: string, lang: "zh" | "en"): string {
+  if (lang === "zh") return scaling;
+  return SCALING_EN[scaling] ?? scaling;
+}
+
+/** 数据核验信心的英文标签 */
+export function confidenceLabel(confidence: string, lang: "zh" | "en"): string {
+  if (lang === "zh") return confidence;
+  return confidence === "高" ? "High" : confidence === "中" ? "Medium" : "Low";
+}
+
+/** 科目学科分组的英文标签 */
+const GROUP_EN: Record<string, string> = {
+  数学: "Mathematics",
+  科学: "Science",
+  科技: "Technology",
+  商科: "Business",
+  人文与语言: "Humanities & Languages",
+};
+
+export function groupLabel(group: string, lang: "zh" | "en"): string {
+  if (lang === "zh") return group;
+  return GROUP_EN[group] ?? group;
+}

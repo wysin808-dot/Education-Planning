@@ -10,7 +10,13 @@ import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
-import { classifyTier, reverseLookup, subjectGroupLabelBy } from "@/lib/matching";
+import {
+  classifyTier,
+  confidenceLabel,
+  extraLabel,
+  reverseLookup,
+  subjectGroupLabelBy,
+} from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 
@@ -38,8 +44,8 @@ export default function Reverse() {
   const result = useMemo(() => {
     if (!uni) return null;
     const validProg = uni.programmes.some((p) => p.id === progId) ? progId : uni.programmes[0]?.id;
-    return validProg ? reverseLookup(uni.id, validProg) : null;
-  }, [uni, progId]);
+    return validProg ? reverseLookup(uni.id, validProg, lang) : null;
+  }, [uni, progId, lang]);
 
   /** 可选：填入自己的分数以获得即时对照 */
   const myAtar = useMemo(() => {
@@ -249,7 +255,9 @@ export default function Reverse() {
                       {result.programme.atarNote && (
                         <p className="mt-2 font-[family-name:var(--font-serif)] text-[0.875rem] leading-relaxed text-muted-foreground">
                           {t("院校说明：", "Note: ")}
-                          {result.programme.atarNote}
+                          {lang === "zh"
+                            ? result.programme.atarNote
+                            : (result.programme.atarNoteEn ?? result.programme.atarNote)}
                         </p>
                       )}
                     </dd>
@@ -270,7 +278,7 @@ export default function Reverse() {
                             <span
                               key={e}
                               className="border border-brass/60 bg-brass/8 px-2 py-1 text-[0.8125rem] text-[oklch(0.45_0.07_74)]">
-                              {e}
+                              {extraLabel(e, lang)}
                             </span>
                           ))}
                         </div>
@@ -283,7 +291,7 @@ export default function Reverse() {
                       {t("英语要求", "English requirement")}
                     </dt>
                     <dd className="font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-ink">
-                      {result.university.english}
+                      {lang === "zh" ? result.university.english : result.university.englishEn}
                     </dd>
                   </div>
 
@@ -292,7 +300,7 @@ export default function Reverse() {
                       {t("WACE 申请提示", "WACE application notes")}
                     </dt>
                     <dd className="font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-ink">
-                      {result.university.waceNotes}
+                      {lang === "zh" ? result.university.waceNotes : result.university.waceNotesEn}
                     </dd>
                   </div>
 
@@ -301,7 +309,9 @@ export default function Reverse() {
                       {t("申请窗口", "Application window")}
                     </dt>
                     <dd className="text-[0.9375rem] leading-relaxed text-ink">
-                      {result.university.applicationWindow}
+                      {lang === "zh"
+                        ? result.university.applicationWindow
+                        : result.university.applicationWindowEn}
                     </dd>
                   </div>
 
@@ -310,11 +320,11 @@ export default function Reverse() {
                       {t("数据年份", "Data year")}
                     </dt>
                     <dd className="text-[0.9375rem] text-ink">
-                      {result.university.dataYear}
-                      <span className="ml-2 text-[0.75rem] text-muted-foreground">
-                        {t("核验信心：", "Confidence: ")}
-                        {result.university.confidence}
-                      </span>
+                      {lang === "zh" ? result.university.dataYear : result.university.dataYearEn}
+                        <span className="ml-2 text-[0.75rem] text-muted-foreground">
+                          {t("核验信心：", "Confidence: ")}
+                          {confidenceLabel(result.university.confidence, lang)}
+                        </span>
                     </dd>
                   </div>
                 </dl>

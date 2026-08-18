@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { ChevronDown, ExternalLink, Printer, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
+import { confidenceLabel, extraLabel } from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 
@@ -210,11 +211,11 @@ export default function TableView() {
                               {(p.atar ?? u.minAtar) === null ? "—" : (p.atar ?? u.minAtar)!.toFixed(2)}
                             </td>
                             <td className="py-2.5 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
-                              {p.atarNote}
+                              {lang === "zh" ? p.atarNote : (p.atarNoteEn ?? p.atarNote)}
                               {p.extras.length > 0 && (
                                 <span className="mt-1 block text-[oklch(0.48_0.07_74)]">
                                   {t("附加：", "Extras: ")}
-                                  {p.extras.join("、")}
+                                  {p.extras.map((e) => extraLabel(e, lang)).join(lang === "zh" ? "、" : ", ")}
                                 </span>
                               )}
                             </td>
@@ -246,30 +247,34 @@ export default function TableView() {
                     <div className="grid gap-1 py-2.5 sm:grid-cols-[6rem_1fr] sm:gap-4">
                       <dt className="text-muted-foreground">{t("门槛口径", "Basis")}</dt>
                       <dd className="font-[family-name:var(--font-serif)] leading-relaxed text-ink">
-                        {u.minAtarNote}
+                        {lang === "zh" ? u.minAtarNote : u.minAtarNoteEn}
                       </dd>
                     </div>
                     <div className="grid gap-1 py-2.5 sm:grid-cols-[6rem_1fr] sm:gap-4">
                       <dt className="text-muted-foreground">{t("英语要求", "English")}</dt>
-                      <dd className="font-[family-name:var(--font-serif)] leading-relaxed text-ink">{u.english}</dd>
+                      <dd className="font-[family-name:var(--font-serif)] leading-relaxed text-ink">
+                        {lang === "zh" ? u.english : u.englishEn}
+                      </dd>
                     </div>
                     <div className="grid gap-1 py-2.5 sm:grid-cols-[6rem_1fr] sm:gap-4">
                       <dt className="text-muted-foreground">{t("申请窗口", "Window")}</dt>
-                      <dd className="leading-relaxed text-ink">{u.applicationWindow}</dd>
+                      <dd className="leading-relaxed text-ink">
+                        {lang === "zh" ? u.applicationWindow : u.applicationWindowEn}
+                      </dd>
                     </div>
                     <div className="grid gap-1 py-2.5 sm:grid-cols-[6rem_1fr] sm:gap-4">
                       <dt className="text-muted-foreground">{t("WACE 提示", "WACE notes")}</dt>
                       <dd className="font-[family-name:var(--font-serif)] leading-relaxed text-ink">
-                        {u.waceNotes}
+                        {lang === "zh" ? u.waceNotes : u.waceNotesEn}
                       </dd>
                     </div>
                     <div className="grid gap-1 py-2.5 sm:grid-cols-[6rem_1fr] sm:gap-4">
                       <dt className="text-muted-foreground">{t("数据年份", "Data year")}</dt>
                       <dd className="text-ink">
-                        {u.dataYear}
+                        {lang === "zh" ? u.dataYear : u.dataYearEn}
                         <span className="ml-2 text-[0.75rem] text-muted-foreground">
                           {t("信心 ", "Confidence ")}
-                          {u.confidence}
+                          {confidenceLabel(u.confidence, lang)}
                         </span>
                       </dd>
                     </div>

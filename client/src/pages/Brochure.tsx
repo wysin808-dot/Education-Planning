@@ -178,7 +178,7 @@ export default function Brochure() {
               <div key={f.key} className="grid gap-1.5 border-b border-border pb-3.5 sm:grid-cols-[7rem_1fr] sm:gap-5">
                 <span className="text-[0.875rem] text-green">{lang === "zh" ? f.zh : f.en}</span>
                 <p className="font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
-                  {f.advice}
+                  {lang === "zh" ? f.advice : f.adviceEn}
                 </p>
               </div>
             ))}
