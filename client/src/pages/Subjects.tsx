@@ -405,7 +405,38 @@ export default function Subjects() {
                 "The ATAR courses approved for delivery at Brentvale College International: 11 in the Northern Hemisphere sequence and 16 in the Southern. The scaling column is a relative indication of a course's contribution to an ATAR, offered to help weigh combinations; it is not an official conversion.",
               )}
             </p>
-            <div className="mt-8 overflow-x-auto">
+            <div className="mt-8 space-y-3 md:hidden">
+              {SUBJECTS.map((s) => (
+                <article key={s.key} className="border border-border bg-card p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="text-[0.9375rem] leading-snug text-green">{lang === "zh" ? s.zh : s.en}</h3>
+                      <p className="mt-1 text-[0.6875rem] text-muted-foreground">{lang === "zh" ? s.en : s.zh}</p>
+                    </div>
+                    <span
+                      className={cn(
+                        "shrink-0 border px-1.5 py-0.5 text-[0.6875rem]",
+                        s.scaling === "高"
+                          ? "border-tier-safe bg-tier-safe/8 text-tier-safe"
+                          : s.scaling === "中"
+                            ? "border-tier-target bg-tier-target/10 text-[oklch(0.48_0.07_74)]"
+                            : "border-tier-unknown bg-tier-unknown/8 text-tier-unknown",
+                      )}>
+                      {scalingLabel(s.scaling, lang)}
+                    </span>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-3 text-[0.75rem] text-muted-foreground">
+                    <span>{t("分类：", "Group: ")}{groupLabel(s.group, lang)}</span>
+                    <span className={s.north ? "text-tier-safe" : "text-muted-foreground/55"}>{t("北：", "North: ")}{s.north ? "●" : "—"}</span>
+                    <span className={s.south ? "text-tier-safe" : "text-muted-foreground/55"}>{t("南：", "South: ")}{s.south ? "●" : "—"}</span>
+                  </div>
+                  <p className="mt-3 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
+                    {lang === "zh" ? s.note : s.noteEn}
+                  </p>
+                </article>
+              ))}
+            </div>
+            <div className="mt-8 hidden overflow-x-auto md:block">
               <table className="w-full min-w-[40rem] border-collapse">
                 <thead>
                   <tr className="border-b-2 border-green">

@@ -157,7 +157,7 @@ export function SiteHeader() {
       </div>
       {/* 移动与中屏导航 */}
       <div className="relative border-t border-border/70 xl:hidden">
-        <div className="container flex gap-1 overflow-x-auto py-2">
+        <div className="container flex snap-x snap-mandatory justify-between gap-0 overflow-x-auto py-2 sm:justify-start sm:gap-1">
           {NAV.map((item) => {
             const active = path === item.href;
             return (
@@ -165,7 +165,7 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "whitespace-nowrap px-3 py-1.5 text-[0.75rem] transition-colors",
+                  "snap-start whitespace-nowrap px-1.5 py-1.5 text-[0.6875rem] transition-colors sm:px-3 sm:text-[0.75rem]",
                   active ? "bg-green text-primary-foreground" : "text-muted-foreground",
                 )}>
                 {lang === "zh" ? item.zh : item.en}

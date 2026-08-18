@@ -145,6 +145,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
+    overflow-x: clip;
     /* 纸感底纹：极细的双向纹理，模拟年鉴用纸 */
     background-image:
       radial-gradient(circle at 12% 8%, oklch(0.99 0.012 88 / 0.7) 0%, transparent 42%),
@@ -278,4 +279,3 @@
     background-image: none;
   }
 }
-

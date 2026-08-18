@@ -4,7 +4,7 @@
  * 分数一律等宽右对齐；结果行以规则线分隔，不使用卡片网格。
  */
 import { useMemo, useState } from "react";
-import { AlertTriangle, Check, ChevronDown, Printer, X } from "lucide-react";
+import { AlertTriangle, Check, ChevronDown, Printer, SlidersHorizontal, X } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
@@ -21,6 +21,7 @@ import {
 } from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
+import { useIsMobile } from "@/hooks/useMobile";
 
 const SUBJECT_GROUPS = ["数学", "科学", "商科", "科技", "人文与语言"] as const;
 
@@ -117,6 +118,7 @@ export default function Forward() {
   const [fields, setFields] = useState<FieldKey[]>([]);
   const [tierFilter, setTierFilter] = useState<Tier | "all">("all");
   const [groupMode, setGroupMode] = useState<GroupMode>("region");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   /** 解析并校验 ATAR 输入：ATAR 取值区间为 0 至 99.95 */
   const parsed = useMemo(() => {
@@ -196,8 +198,9 @@ export default function Forward() {
     setter(list.includes(value) ? list.filter((x) => x !== value) : [...list, value]);
   }
 
-  /** 每节默认显示条数，避免 600+ 条结果一次性铺开 */
-  const SECTION_PREVIEW = 12;
+  /** 每节默认显示条数：手机端进一步收敛，避免长结果淹没筛选与分档信息 */
+  const isMobile = useIsMobile();
+  const sectionPreview = isMobile ? 6 : 12;
   const [openSections, setOpenSections] = useState<Set<string>>(() => new Set<string>());
 
   function toggleSection(key: string) {
@@ -234,6 +237,18 @@ export default function Forward() {
       <div className="container grid gap-10 py-12 lg:grid-cols-[17.5rem_1fr] lg:gap-12">
         {/* 左侧索引栏 */}
         <aside className="no-print lg:sticky lg:top-28 lg:self-start">
+          <button
+            type="button"
+            onClick={() => setFiltersOpen((open) => !open)}
+            aria-expanded={filtersOpen}
+            className="mb-4 flex w-full items-center justify-between border border-green bg-green px-4 py-3 text-left text-[0.8125rem] text-primary-foreground md:hidden">
+            <span className="inline-flex items-center gap-2">
+              <SlidersHorizontal className="h-4 w-4" />
+              {t("查询条件与筛选", "Query settings & filters")}
+            </span>
+            <ChevronDown className={cn("h-4 w-4 transition-transform", filtersOpen && "rotate-180")} />
+          </button>
+          <div className={cn("md:block", !filtersOpen && "hidden")}>
           <div className="border border-border bg-card p-5">
             <span className="almanac-index">{t("查询条件 / QUERY", "QUERY")}</span>
             <div className="mt-4 border-t border-border pt-5">
@@ -396,6 +411,7 @@ export default function Forward() {
               ))}
             </dl>
           </div>
+          </div>
         </aside>
 
         {/* 右侧结果长栏 */}
@@ -523,7 +539,7 @@ export default function Forward() {
                       const isOpen = openSections.has(section.key);
                       const shownRows = isOpen
                         ? section.rows
-                        : section.rows.slice(0, SECTION_PREVIEW);
+                        : section.rows.slice(0, sectionPreview);
                       const hiddenCount = section.rows.length - shownRows.length;
                       return (
                       <section key={section.key}>
@@ -546,7 +562,78 @@ export default function Forward() {
                         </header>
                         <div className="threshold-hairline mt-2" />
 
-                        <div className="overflow-x-auto">
+                        <div className="space-y-3 md:hidden">
+                          {shownRows.map((row, i) => {
+                            const threshold = row.programme.atar ?? row.university.minAtar;
+                            return (
+                              <article
+                                key={`${row.university.id}-${row.programme.id}`}
+                                className="border border-border bg-card p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="min-w-0">
+                                    <span className="almanac-index">{String(i + 1).padStart(2, "0")}</span>
+                                    <h4 className="mt-1 text-[1rem] leading-snug text-green">
+                                      {lang === "zh" ? row.university.nameZh : row.university.name}
+                                      <span className="mx-1 text-brass">·</span>
+                                      {lang === "zh" ? row.programme.nameZh : row.programme.name}
+                                    </h4>
+                                    <p className="mt-1 text-[0.6875rem] text-muted-foreground">
+                                      {row.university.abbr} · {lang === "zh" ? row.programme.name : row.programme.nameZh}
+                                    </p>
+                                  </div>
+                                  <TierBadge tier={row.tier} />
+                                </div>
+                                <div className="mt-3 flex items-end justify-between border-t border-border pt-3">
+                                  <div>
+                                    <span className="eyebrow text-muted-foreground">{t("门槛", "Threshold")}</span>
+                                    <p className="score mt-1 text-[1.25rem] leading-none text-green">
+                                      {threshold === null ? "—" : threshold.toFixed(2)}
+                                    </p>
+                                  </div>
+                                  <p
+                                    className={cn(
+                                      "score text-[0.875rem]",
+                                      row.gap === null
+                                        ? "text-muted-foreground"
+                                        : row.gap >= 0
+                                          ? "text-tier-safe"
+                                          : "text-tier-reach",
+                                    )}>
+                                    {t("差值", "Gap")} {row.gap === null ? "—" : `${row.gap > 0 ? "+" : ""}${row.gap.toFixed(2)}`}
+                                  </p>
+                                </div>
+                                {row.programme.atarNote && (
+                                  <p className="mt-3 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
+                                    {lang === "zh" ? row.programme.atarNote : (row.programme.atarNoteEn ?? row.programme.atarNote)}
+                                  </p>
+                                )}
+                                {row.prerequisite.satisfied ? (
+                                  row.programme.prerequisites.length > 0 && (
+                                    <p className="mt-2 inline-flex items-center gap-1.5 text-[0.75rem] text-tier-safe">
+                                      <Check className="h-3.5 w-3.5" /> {t("已选科目满足先修", "Prerequisites met")}
+                                    </p>
+                                  )
+                                ) : (
+                                  <p className="mt-2 flex items-start gap-1.5 text-[0.75rem] leading-relaxed text-tier-reach">
+                                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                                    {t("尚缺 ", "Missing: ")}
+                                    {row.prerequisite.missing.map((g) => subjectGroupLabelBy(g, lang)).join(lang === "zh" ? "；" : "; ")}
+                                  </p>
+                                )}
+                                {row.programme.extras.length > 0 && (
+                                  <div className="mt-2 flex flex-wrap gap-1.5">
+                                    {row.programme.extras.map((e) => (
+                                      <span key={e} className="border border-brass/50 bg-brass/8 px-1.5 py-0.5 text-[0.6875rem] text-[oklch(0.45_0.07_74)]">
+                                        {extraLabel(e, lang)}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </article>
+                            );
+                          })}
+                        </div>
+                        <div className="hidden overflow-x-auto md:block">
                           <table className="w-full min-w-[46rem] border-collapse">
                             <thead>
                               <tr className="border-b border-border">
@@ -663,7 +750,7 @@ export default function Forward() {
                             )}
                           </button>
                         )}
-                        {isOpen && section.rows.length > SECTION_PREVIEW && (
+                        {isOpen && section.rows.length > sectionPreview && (
                           <button
                             type="button"
                             onClick={() => toggleSection(section.key)}

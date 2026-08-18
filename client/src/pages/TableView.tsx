@@ -9,6 +9,7 @@ import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
 import { confidenceLabel, extraLabel } from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
+import { useIsMobile } from "@/hooks/useMobile";
 
 type SortKey = "region" | "atar" | "name";
 
@@ -21,9 +22,20 @@ export default function TableView() {
   const [keyword, setKeyword] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("region");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [mobileOpen, setMobileOpen] = useState<Set<string>>(new Set());
+  const isMobile = useIsMobile();
 
   function toggleExpand(id: string) {
     setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleMobileOpen(id: string) {
+    setMobileOpen((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -151,7 +163,8 @@ export default function TableView() {
           <div className="mt-8 space-y-12">
             {rows.map((u, i) => {
               const isOpen = expanded.has(u.id);
-              const shown = isOpen ? u.programmes : u.programmes.slice(0, PREVIEW_COUNT);
+              const previewCount = isMobile ? 3 : PREVIEW_COUNT;
+              const shown = isOpen ? u.programmes : u.programmes.slice(0, previewCount);
               const hidden = u.programmes.length - shown.length;
               const regionMeta = REGIONS.find((r) => r.id === u.region);
               return (
@@ -177,10 +190,50 @@ export default function TableView() {
                       {u.minAtar === null ? t("未公布", "Not published") : u.minAtar.toFixed(2)}
                     </p>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => toggleMobileOpen(u.id)}
+                    aria-expanded={mobileOpen.has(u.id)}
+                    className="mt-1 inline-flex items-center gap-1.5 border-b border-brass pb-0.5 text-[0.75rem] text-green md:hidden">
+                    {mobileOpen.has(u.id) ? t("收起详情", "Hide details") : t("查看专业与要求", "View programmes & requirements")}
+                    <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", mobileOpen.has(u.id) && "rotate-180")} />
+                  </button>
                 </header>
 
-                <div className="mt-4 grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
-                  <div className="overflow-x-auto">
+                <div className={cn("mt-4 grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:gap-10", !mobileOpen.has(u.id) && "hidden md:grid")}>
+                  <div className="space-y-3 md:hidden">
+                    {shown.map((p) => (
+                      <article key={p.id} className="border border-border bg-card p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="text-[0.9375rem] leading-snug text-green">
+                              {lang === "zh" ? p.nameZh : p.name}
+                            </h3>
+                            <p className="mt-1 text-[0.6875rem] text-muted-foreground">
+                              {lang === "zh" ? p.name : p.nameZh}
+                            </p>
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <span className="eyebrow text-muted-foreground">ATAR</span>
+                            <p className="score mt-1 text-[1.125rem] leading-none text-brass">
+                              {(p.atar ?? u.minAtar) === null ? "—" : (p.atar ?? u.minAtar)!.toFixed(2)}
+                            </p>
+                          </div>
+                        </div>
+                        {p.atarNote && (
+                          <p className="mt-3 border-t border-border pt-3 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
+                            {lang === "zh" ? p.atarNote : (p.atarNoteEn ?? p.atarNote)}
+                          </p>
+                        )}
+                        {p.extras.length > 0 && (
+                          <p className="mt-2 text-[0.75rem] text-[oklch(0.48_0.07_74)]">
+                            {t("附加：", "Extras: ")}{p.extras.map((e) => extraLabel(e, lang)).join(lang === "zh" ? "、" : ", ")}
+                          </p>
+                        )}
+                      </article>
+                    ))}
+                  </div>
+                  <div className="hidden overflow-x-auto md:block">
                     <table className="w-full min-w-[28rem] border-collapse">
                       <thead>
                         <tr className="border-b border-border">
