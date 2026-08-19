@@ -6,8 +6,10 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, Check, ChevronDown, Printer, SlidersHorizontal, X } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { PrintHeader } from "@/components/PrintHeader";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
+import { ShortlistButton } from "@/components/ShortlistButton";
 import { FIELDS, REGIONS, SUBJECTS, type FieldKey, type Region, type SubjectKey } from "@/data/universities";
 import {
   forwardMatch,
@@ -198,6 +200,51 @@ export default function Forward() {
     setter(list.includes(value) ? list.filter((x) => x !== value) : [...list, value]);
   }
 
+  /**
+   * 手机端筛选栏折叠时的「已选条件」摘要。
+   * 家长通常只想确认输入是否正确，因此摘要按 ATAR、科目数、地区、方向、档位依次列出，
+   * 未设置的筛选显式写成「全部」而不是留空，避免误以为漏填。
+   */
+  const summaryChips = useMemo(() => {
+    const chips: { key: string; label: string }[] = [];
+    chips.push({
+      key: "atar",
+      label: `ATAR ${parsed.value === null ? t("未填写", "not set") : parsed.value.toFixed(2)}`,
+    });
+    chips.push({
+      key: "subjects",
+      label: t(`${subjects.length} 门科目`, `${subjects.length} subjects`),
+    });
+    chips.push({
+      key: "regions",
+      label:
+        regions.length === 0
+          ? t("地区：全部", "Regions: all")
+          : `${t("地区：", "Regions: ")}${regions
+              .map((id) => {
+                const meta = REGIONS.find((r) => r.id === id);
+                return lang === "zh" ? meta?.label : meta?.labelEn;
+              })
+              .join(lang === "zh" ? "、" : ", ")}`,
+    });
+    chips.push({
+      key: "fields",
+      label:
+        fields.length === 0
+          ? t("方向：全部", "Fields: all")
+          : `${t("方向：", "Fields: ")}${fields
+              .map((key) => {
+                const meta = FIELDS.find((f) => f.key === key);
+                return lang === "zh" ? meta?.zh : meta?.en;
+              })
+              .join(lang === "zh" ? "、" : ", ")}`,
+    });
+    if (tierFilter !== "all") {
+      chips.push({ key: "tier", label: `${t("档位：", "Band: ")}${tierLabel(tierFilter, lang)}` });
+    }
+    return chips;
+  }, [parsed.value, subjects.length, regions, fields, tierFilter, lang, t]);
+
   /** 每节默认显示条数：手机端进一步收敛，避免长结果淹没筛选与分档信息 */
   const isMobile = useIsMobile();
   const sectionPreview = isMobile ? 6 : 12;
@@ -235,6 +282,14 @@ export default function Forward() {
       </div>
 
       <div className="container grid gap-10 py-12 lg:grid-cols-[17.5rem_1fr] lg:gap-12">
+        <PrintHeader
+          title={t("ATAR 查询结果报告", "ATAR match report")}
+          subtitle={t(
+            `预计 ATAR ${parsed.value === null ? "未填写" : parsed.value.toFixed(2)}，共匹配 ${rows.length} 个专业。门槛为官方最低要求，非录取保证。`,
+            `Projected ATAR ${parsed.value === null ? "not set" : parsed.value.toFixed(2)}; ${rows.length} programmes matched. Thresholds are official minimums and not guarantees of an offer.`,
+          )}
+        />
+
         {/* 左侧索引栏 */}
         <aside className="no-print lg:sticky lg:top-28 lg:self-start">
           <button
@@ -248,6 +303,27 @@ export default function Forward() {
             </span>
             <ChevronDown className={cn("h-4 w-4 transition-transform", filtersOpen && "rotate-180")} />
           </button>
+          {/* 折叠状态下的已选条件摘要：让家长无需展开即可复核输入 */}
+          {!filtersOpen && (
+            <div className="mb-4 border border-border bg-paper-deep/45 p-3.5 md:hidden">
+              <span className="almanac-index">{t("已选条件 / SUMMARY", "SUMMARY")}</span>
+              <div className="mt-2.5 flex flex-wrap gap-1.5 border-t border-border pt-2.5">
+                {summaryChips.map((chip) => (
+                  <span
+                    key={chip.key}
+                    className="border border-brass/45 bg-brass/8 px-2 py-0.5 text-[0.6875rem] leading-relaxed text-[oklch(0.42_0.07_74)]">
+                    {chip.label}
+                  </span>
+                ))}
+              </div>
+              {subjects.length > 0 && subjects.length < 4 && (
+                <p className="mt-2.5 flex items-start gap-1.5 text-[0.6875rem] leading-relaxed text-[oklch(0.48_0.07_74)]">
+                  <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+                  {t("科目不足四门，ATAR 计算需至少四门。", "Fewer than four subjects; an ATAR needs at least four.")}
+                </p>
+              )}
+            </div>
+          )}
           <div className={cn("md:block", !filtersOpen && "hidden")}>
           <div className="border border-border bg-card p-5">
             <span className="almanac-index">{t("查询条件 / QUERY", "QUERY")}</span>
@@ -430,9 +506,9 @@ export default function Forward() {
                   <button
                     type="button"
                     onClick={() => window.print()}
-                    className="no-print inline-flex items-center gap-1.5 border border-input px-3 py-1.5 text-[0.8125rem] text-muted-foreground transition-colors hover:border-brass hover:text-green">
+                    className="no-print inline-flex items-center gap-1.5 border border-green bg-green px-3 py-1.5 text-[0.8125rem] text-primary-foreground transition-colors hover:bg-green-soft">
                     <Printer className="h-3.5 w-3.5" />
-                    {t("打印结果", "Print")}
+                    {t("导出单页 PDF", "Export one-page PDF")}
                   </button>
                 </div>
                 <div className="mt-8">
@@ -562,7 +638,7 @@ export default function Forward() {
                         </header>
                         <div className="threshold-hairline mt-2" />
 
-                        <div className="space-y-3 md:hidden">
+                        <div className="print-hide-mobile space-y-3 md:hidden">
                           {shownRows.map((row, i) => {
                             const threshold = row.programme.atar ?? row.university.minAtar;
                             return (
@@ -581,7 +657,14 @@ export default function Forward() {
                                       {row.university.abbr} · {lang === "zh" ? row.programme.name : row.programme.nameZh}
                                     </p>
                                   </div>
-                                  <TierBadge tier={row.tier} />
+                                  <div className="flex shrink-0 flex-col items-end gap-1.5">
+                                    <TierBadge tier={row.tier} />
+                                    <ShortlistButton
+                                      universityId={row.university.id}
+                                      programmeId={row.programme.id}
+                                      label={lang === "zh" ? row.programme.nameZh : row.programme.name}
+                                    />
+                                  </div>
                                 </div>
                                 <div className="mt-3 flex items-end justify-between border-t border-border pt-3">
                                   <div>
@@ -633,7 +716,7 @@ export default function Forward() {
                             );
                           })}
                         </div>
-                        <div className="hidden overflow-x-auto md:block">
+                        <div className="print-show-table hidden overflow-x-auto md:block">
                           <table className="w-full min-w-[46rem] border-collapse">
                             <thead>
                               <tr className="border-b border-border">
@@ -729,7 +812,14 @@ export default function Forward() {
                                         : `${row.gap > 0 ? "+" : ""}${row.gap.toFixed(2)}`}
                                     </td>
                                     <td className="py-3.5 text-right">
-                                      <TierBadge tier={row.tier} />
+                                      <div className="flex flex-col items-end gap-1.5">
+                                        <TierBadge tier={row.tier} />
+                                        <ShortlistButton
+                                          universityId={row.university.id}
+                                          programmeId={row.programme.id}
+                                          label={lang === "zh" ? row.programme.nameZh : row.programme.name}
+                                        />
+                                      </div>
                                     </td>
                                   </tr>
                                 );

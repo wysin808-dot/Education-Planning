@@ -278,4 +278,58 @@
     background: #fff;
     background-image: none;
   }
+
+  /* A4 纵向单页导出：压缩字号与留白，让一次查询结果尽量落在一页内 */
+  @page {
+    size: A4 portrait;
+    margin: 12mm 12mm 14mm;
+  }
+
+  html {
+    font-size: 10.5px;
+  }
+
+  /* 打印时移除页面级留白，避免首页大段空白挤压内容 */
+  .container {
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* 条目与小节不允许跨页断裂，否则家长拿到的表格会被切开 */
+  article,
+  section,
+  tr,
+  .print-keep {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* 打印时不需要粘性定位与背景色块 */
+  header.sticky,
+  .sticky {
+    position: static !important;
+  }
+
+  /* 手机端卡片视图在打印时一律隐藏，仅输出信息密度更高的表格 */
+  .print-hide-mobile {
+    display: none !important;
+  }
+
+  .print-show-table {
+    display: block !important;
+  }
+
+  a[href]::after {
+    content: "";
+  }
+
+  /* 打印专用页眉：屏幕上隐藏，导出 PDF 时提供品牌与出处标识 */
+  .print-header {
+    display: block !important;
+  }
+}
+
+.print-header {
+  display: none;
 }

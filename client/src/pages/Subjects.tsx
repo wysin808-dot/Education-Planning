@@ -4,7 +4,8 @@
  * 统计结果必须基于目标专业的官方先修要求，不得凭经验虚构。
  */
 import { useMemo, useState } from "react";
-import { AlertTriangle, Info, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, Bookmark, Info, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { FIELDS, HEMISPHERES, SUBJECTS, UNIVERSITIES, type Hemisphere } from "@/data/universities";
@@ -18,6 +19,7 @@ import {
 } from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
+import { useShortlist } from "@/contexts/ShortlistContext";
 
 const SUBJECTS_IMG = "/manus-storage/bv-subjects_9e541983.png";
 
@@ -34,6 +36,7 @@ const LEVEL_STYLE: Record<string, string> = {
 
 export default function Subjects() {
   const { t, lang } = useLang();
+  const { has: inShortlist, toggle: toggleShortlist } = useShortlist();
   const [targets, setTargets] = useState<Target[]>([
     { universityId: "nus", programmeId: "nus-computer-science" },
     { universityId: "unimelb", programmeId: UNIVERSITIES.find((u) => u.id === "unimelb")!.programmes[0].id },
@@ -79,6 +82,25 @@ export default function Subjects() {
 
   function removeTarget(i: number) {
     setTargets(targets.filter((_, idx) => idx !== i));
+  }
+
+  /**
+   * 把当前选课目标批量写入目标清单。
+   * 只添加尚未收藏的项，避免误把已收藏项切换为取消收藏。
+   */
+  function syncTargetsToShortlist() {
+    const pending = targets.filter((tgt) => !inShortlist(tgt.universityId, tgt.programmeId));
+    if (pending.length === 0) {
+      toast(t("清单中的目标已全部收藏。", "All targets are already in the shortlist."));
+      return;
+    }
+    pending.forEach((tgt) => toggleShortlist(tgt.universityId, tgt.programmeId));
+    toast(
+      t(
+        `已把 ${pending.length} 个目标加入目标清单。`,
+        `Added ${pending.length} target${pending.length > 1 ? "s" : ""} to the shortlist.`,
+      ),
+    );
   }
 
   /** 必需科目数量用于提示是否超出四门主力科目 */
@@ -182,9 +204,20 @@ export default function Subjects() {
         <section>
           <div className="flex items-baseline justify-between gap-4 border-b-2 border-green pb-3">
             <h2 className="text-[1.25rem] text-green">{t("目标清单", "Shortlist")}</h2>
-            <span className="score text-[0.8125rem] text-muted-foreground">
-              {targets.length} {t("个目标", "targets")}
-            </span>
+            <div className="flex items-center gap-3">
+              {targets.length > 0 && (
+                <button
+                  type="button"
+                  onClick={syncTargetsToShortlist}
+                  className="no-print inline-flex items-center gap-1.5 border border-input px-2 py-1 text-[0.6875rem] text-muted-foreground transition-colors hover:border-brass hover:text-green">
+                  <Bookmark className="h-3.5 w-3.5" />
+                  {t("同步到目标清单", "Save to shortlist")}
+                </button>
+              )}
+              <span className="score text-[0.8125rem] text-muted-foreground">
+                {targets.length} {t("个目标", "targets")}
+              </span>
+            </div>
           </div>
 
           {targets.length === 0 ? (

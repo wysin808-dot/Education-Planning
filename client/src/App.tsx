@@ -8,12 +8,14 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LangProvider } from "./contexts/LangContext";
+import { ShortlistProvider } from "./contexts/ShortlistContext";
 import Home from "./pages/Home";
 import Forward from "./pages/Forward";
 import Reverse from "./pages/Reverse";
 import Subjects from "./pages/Subjects";
 import TableView from "./pages/TableView";
 import Brochure from "./pages/Brochure";
+import Shortlist from "./pages/Shortlist";
 
 function Router() {
   return (
@@ -23,6 +25,7 @@ function Router() {
       <Route path="/reverse" component={Reverse} />
       <Route path="/subjects" component={Subjects} />
       <Route path="/table" component={TableView} />
+      <Route path="/shortlist" component={Shortlist} />
       <Route path="/brochure" component={Brochure} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
@@ -35,10 +38,12 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <LangProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
+          <ShortlistProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Router />
+            </TooltipProvider>
+          </ShortlistProvider>
         </LangProvider>
       </ThemeProvider>
     </ErrorBoundary>

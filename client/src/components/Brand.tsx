@@ -8,6 +8,7 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
+import { useShortlist } from "@/contexts/ShortlistContext";
 
 const LOGO_RED = "/manus-storage/bci-logo-horizontal_ead9c912.png";
 const LOGO_WHITE = "/manus-storage/bci-logo-horizontal-white_4bd4c272.png";
@@ -80,6 +81,7 @@ const NAV = [
   { href: "/reverse", zh: "院校查门槛", en: "University → ATAR" },
   { href: "/subjects", zh: "选课规划", en: "Subject Planner" },
   { href: "/table", zh: "门槛总表", en: "Threshold Table" },
+  { href: "/shortlist", zh: "目标清单", en: "Shortlist" },
   { href: "/brochure", zh: "宣传册", en: "Brochure" },
 ];
 
@@ -123,6 +125,7 @@ function LangToggle({ variant = "dark" }: { variant?: "dark" | "light" }) {
 export function SiteHeader() {
   const [path] = useLocation();
   const { lang, t } = useLang();
+  const { count } = useShortlist();
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border bg-paper/92 backdrop-blur-md">
       <div className="container flex h-[4.5rem] items-center justify-between gap-4">
@@ -141,6 +144,11 @@ export function SiteHeader() {
                   active ? "text-green" : "text-muted-foreground hover:text-green",
                 )}>
                 {lang === "zh" ? item.zh : item.en}
+                {item.href === "/shortlist" && count > 0 && (
+                  <span className="score ml-1 border border-brass/60 bg-brass/12 px-1 text-[0.625rem] text-[oklch(0.42_0.07_74)]">
+                    {count}
+                  </span>
+                )}
                 {active && <span className="absolute inset-x-2.5 -bottom-px h-[2px] bg-brass" />}
               </Link>
             );
@@ -169,6 +177,9 @@ export function SiteHeader() {
                   active ? "bg-green text-primary-foreground" : "text-muted-foreground",
                 )}>
                 {lang === "zh" ? item.zh : item.en}
+                {item.href === "/shortlist" && count > 0 && (
+                  <span className="score ml-0.5 text-[0.625rem] text-brass">{count}</span>
+                )}
               </Link>
             );
           })}

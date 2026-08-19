@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { ChevronDown, ExternalLink, Printer, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
+import { ShortlistButton } from "@/components/ShortlistButton";
 import { confidenceLabel, extraLabel } from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
@@ -201,7 +202,7 @@ export default function TableView() {
                 </header>
 
                 <div className={cn("mt-4 grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:gap-10", !mobileOpen.has(u.id) && "hidden md:grid")}>
-                  <div className="space-y-3 md:hidden">
+                  <div className="print-hide-mobile space-y-3 md:hidden">
                     {shown.map((p) => (
                       <article key={p.id} className="border border-border bg-card p-4">
                         <div className="flex items-start justify-between gap-3">
@@ -218,6 +219,12 @@ export default function TableView() {
                             <p className="score mt-1 text-[1.125rem] leading-none text-brass">
                               {(p.atar ?? u.minAtar) === null ? "—" : (p.atar ?? u.minAtar)!.toFixed(2)}
                             </p>
+                            <ShortlistButton
+                              universityId={u.id}
+                              programmeId={p.id}
+                              label={lang === "zh" ? p.nameZh : p.name}
+                              className="mt-1.5"
+                            />
                           </div>
                         </div>
                         {p.atarNote && (
@@ -233,7 +240,7 @@ export default function TableView() {
                       </article>
                     ))}
                   </div>
-                  <div className="hidden overflow-x-auto md:block">
+                  <div className="print-show-table hidden overflow-x-auto md:block">
                     <table className="w-full min-w-[28rem] border-collapse">
                       <thead>
                         <tr className="border-b border-border">
@@ -259,6 +266,12 @@ export default function TableView() {
                               <span className="mt-0.5 block text-[0.6875rem] leading-snug text-muted-foreground">
                                 {lang === "zh" ? p.name : p.nameZh}
                               </span>
+                              <ShortlistButton
+                                universityId={u.id}
+                                programmeId={p.id}
+                                label={lang === "zh" ? p.nameZh : p.name}
+                                className="mt-1.5"
+                              />
                             </td>
                             <td className="score py-2.5 pr-3 text-right text-[0.875rem] text-ink">
                               {(p.atar ?? u.minAtar) === null ? "—" : (p.atar ?? u.minAtar)!.toFixed(2)}

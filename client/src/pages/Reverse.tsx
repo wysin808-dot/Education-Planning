@@ -4,11 +4,12 @@
  * 与正向查询共享同一份数据与同一套分层标签定义。
  */
 import { useMemo, useState } from "react";
-import { ArrowRight, ExternalLink, Printer } from "lucide-react";
+import { ArrowRight, ExternalLink, FileDown } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
+import { ShortlistButton } from "@/components/ShortlistButton";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
 import {
   classifyTier,
@@ -199,13 +200,22 @@ export default function Reverse() {
                   {lang === "zh" ? result.programme.nameZh : result.programme.name}
                 </h2>
               </div>
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="no-print inline-flex items-center gap-1.5 border border-input px-3 py-1.5 text-[0.8125rem] text-muted-foreground transition-colors hover:border-brass hover:text-green">
-                <Printer className="h-3.5 w-3.5" />
-                {t("打印", "Print")}
-              </button>
+              <div className="no-print flex flex-wrap items-center gap-2.5">
+                <ShortlistButton
+                  universityId={result.university.id}
+                  programmeId={result.programme.id}
+                  label={lang === "zh" ? result.programme.nameZh : result.programme.name}
+                  variant="full"
+                  className="px-3 py-1.5 text-[0.8125rem]"
+                />
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="inline-flex items-center gap-1.5 border border-input px-3 py-1.5 text-[0.8125rem] text-muted-foreground transition-colors hover:border-brass hover:text-green">
+                  <FileDown className="h-3.5 w-3.5" />
+                  {t("导出单页 PDF", "Export one-page PDF")}
+                </button>
+              </div>
             </div>
 
             <div className="mt-10 grid gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
