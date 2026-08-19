@@ -1,11 +1,13 @@
 /**
  * 设计风格：Admissions Almanac
- * 页头仅保留深墨绿承载的 BCI 官方反白圆形徽章、紧凑 BRENTVALE 字标与语言切换；
- * 全站导航统一收敛至页脚，避免手机端横向导航造成的访问障碍。
+ * 页头采用深墨绿承载的 BCI 官方反白圆形徽章、紧凑 BRENTVALE 字标与导航；
+ * 桌面端以横向目录呈现，手机端使用可点击的纵向「目录」菜单，避免横向滑动导航造成的访问障碍。
  * 注意：BCI 官方主色为砖红 #B02A2A，与年鉴的墨绿铜金构成双色体系——
  * 红色仅用于品牌标识与强调，版面主色仍为墨绿。
  */
-import { Link } from "wouter";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 import { useShortlist } from "@/contexts/ShortlistContext";
@@ -123,7 +125,10 @@ function LangToggle({ variant = "dark" }: { variant?: "dark" | "light" }) {
 }
 
 export function SiteHeader() {
-  const { t } = useLang();
+  const [path] = useLocation();
+  const { lang, t } = useLang();
+  const { count } = useShortlist();
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border bg-paper/92 backdrop-blur-md">
       <div className="container flex h-[4.5rem] items-center justify-between gap-4">
@@ -133,10 +138,72 @@ export function SiteHeader() {
           className="shrink-0 bg-green px-2.5 py-2 sm:px-3">
           <Wordmark compact variant="light" />
         </Link>
+        <nav className="hidden min-w-0 items-center justify-center gap-0.5 lg:flex" aria-label={t("主导航", "Primary navigation")}>
+          {NAV.map((item) => {
+            const active = path === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "relative whitespace-nowrap px-2 py-2 text-[0.75rem] transition-colors duration-150 xl:px-2.5 xl:text-[0.8125rem]",
+                  active ? "text-green" : "text-muted-foreground hover:text-green",
+                )}>
+                {lang === "zh" ? item.zh : item.en}
+                {item.href === "/shortlist" && count > 0 && (
+                  <span className="score ml-1 border border-brass/60 bg-brass/12 px-1 text-[0.625rem] text-[oklch(0.42_0.07_74)]">
+                    {count}
+                  </span>
+                )}
+                {active && <span className="absolute inset-x-2 -bottom-px h-[2px] bg-brass" />}
+              </Link>
+            );
+          })}
+        </nav>
         <div className="flex shrink-0 items-center gap-3">
           <LangToggle />
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? t("关闭目录", "Close menu") : t("打开目录", "Open menu")}
+            aria-expanded={menuOpen}
+            className="inline-flex h-8 w-8 items-center justify-center border border-border text-green transition-colors hover:border-brass lg:hidden">
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
         </div>
       </div>
+      {menuOpen && (
+        <div className="absolute inset-x-0 top-full border-b border-border bg-paper shadow-[0_14px_28px_oklch(0.2_0.02_90_/_0.12)] lg:hidden">
+          <nav className="container py-3" aria-label={t("主导航", "Primary navigation")}>
+            <p className="eyebrow border-b border-border pb-2 text-brass">{t("目录", "Contents")}</p>
+            <div className="mt-2 flex flex-col">
+              {NAV.map((item, index) => {
+                const active = path === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className={cn(
+                      "flex items-center justify-between border-b border-border px-1 py-3 text-[0.9375rem]",
+                      active ? "text-green" : "text-muted-foreground hover:text-green",
+                    )}>
+                    <span className="flex items-center gap-3">
+                      <span className="almanac-index text-brass">{String(index + 1).padStart(2, "0")}</span>
+                      {lang === "zh" ? item.zh : item.en}
+                    </span>
+                    {item.href === "/shortlist" && count > 0 && (
+                      <span className="score border border-brass/60 bg-brass/12 px-1.5 text-[0.6875rem] text-[oklch(0.42_0.07_74)]">
+                        {count}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
@@ -156,10 +223,10 @@ export function SiteFooter() {
             )}
           </p>
         </div>
-        <nav aria-label={t("全站导航", "Site navigation")}>
-          <h3 className="eyebrow text-brass-soft">{t("全站导航", "Explore")}</h3>
+        <nav aria-label={t("常用工具", "Quick tools")}>
+          <h3 className="eyebrow text-brass-soft">{t("常用工具", "Quick tools")}</h3>
           <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-2.5 text-[0.875rem] text-paper/80">
-            {NAV.map((item) => (
+            {NAV.filter((item) => ["/forward", "/reverse", "/subjects", "/shortlist"].includes(item.href)).map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="inline-flex items-center gap-1.5 hover:text-brass-soft">
                   {lang === "zh" ? item.zh : item.en}
