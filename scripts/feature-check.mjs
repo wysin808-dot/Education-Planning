@@ -17,6 +17,7 @@ const check = (cond, msg) => {
 const forward = read("client/src/pages/Forward.tsx");
 const reverse = read("client/src/pages/Reverse.tsx");
 const table = read("client/src/pages/TableView.tsx");
+const subjects = read("client/src/pages/Subjects.tsx");
 const shortlist = read("client/src/pages/Shortlist.tsx");
 const ctx = read("client/src/contexts/ShortlistContext.tsx");
 const btn = read("client/src/components/ShortlistButton.tsx");
@@ -77,6 +78,29 @@ check(
 check(
   table.includes("print-hide-mobile") && table.includes("print-show-table"),
   "TableView 打印时未让手机卡片让位给表格",
+);
+
+// 4. 去重（方案 A）：目标清单必须只有一个来源
+check(
+  !/useState<Target\[\]>/.test(subjects) && !/interface Target/.test(subjects),
+  "选课页仍自维护一份目标清单状态，与目标清单页重复",
+);
+check(
+  subjects.includes("useShortlist") && subjects.includes("resolved: shortlist"),
+  "选课页未从收藏清单读取目标",
+);
+check(
+  !subjects.includes("addTarget") && !subjects.includes("removeTarget"),
+  "选课页仍保留目标增删控件，应统一到目标清单页",
+);
+check(
+  subjects.includes('href="/shortlist"') || subjects.includes('href="/forward"'),
+  "选课页缺少指向清单页或查询页的衔接入口",
+);
+check(shortlist.includes('href="/subjects"'), "清单页缺少指向选课规划页的衔接入口");
+check(
+  !brand.includes('t("开始规划"'),
+  "页头仍保留与导航重复的「开始规划」按钮",
 );
 
 // 4. 双语覆盖：新增文件不得出现无 t() 包裹的裸中文 JSX 文本

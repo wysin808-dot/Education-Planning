@@ -1,11 +1,12 @@
 /**
  * 设计风格：Admissions Almanac
- * 选课规划页：目标清单（左）+ 科目必要度统计（右），底部为 WACE 科目年鉴条目。
+ * 选课规划页：读取「我的目标清单」（唯一目标来源）并给出科目必要度统计，底部为 WACE 科目年鉴条目。
+ * 目标的增删只在查询页与清单页进行，本页不再维护第二份清单，避免同一件事出现两个入口。
  * 统计结果必须基于目标专业的官方先修要求，不得凭经验虚构。
  */
 import { useMemo, useState } from "react";
-import { AlertTriangle, Bookmark, Info, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { AlertTriangle, ArrowRight, Info, ListChecks } from "lucide-react";
+import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { FIELDS, HEMISPHERES, SUBJECTS, UNIVERSITIES, type Hemisphere } from "@/data/universities";
@@ -23,11 +24,6 @@ import { useShortlist } from "@/contexts/ShortlistContext";
 
 const SUBJECTS_IMG = "/manus-storage/bv-subjects_9e541983.png";
 
-interface Target {
-  universityId: string;
-  programmeId: string;
-}
-
 const LEVEL_STYLE: Record<string, string> = {
   必需: "border-tier-reach text-tier-reach bg-tier-reach/8",
   强烈建议: "border-tier-target text-[oklch(0.48_0.07_74)] bg-tier-target/10",
@@ -36,20 +32,20 @@ const LEVEL_STYLE: Record<string, string> = {
 
 export default function Subjects() {
   const { t, lang } = useLang();
-  const { has: inShortlist, toggle: toggleShortlist } = useShortlist();
-  const [targets, setTargets] = useState<Target[]>([
-    { universityId: "nus", programmeId: "nus-computer-science" },
-    { universityId: "unimelb", programmeId: UNIVERSITIES.find((u) => u.id === "unimelb")!.programmes[0].id },
-    { universityId: "ucl", programmeId: UNIVERSITIES.find((u) => u.id === "ucl")!.programmes[0].id },
-  ]);
-  const [pickUni, setPickUni] = useState("hku");
-  const [pickProg, setPickProg] = useState(
-    UNIVERSITIES.find((u) => u.id === "hku")!.programmes[0].id,
-  );
+  /** 目标清单是全站唯一来源（收藏于本机浏览器），本页只读 */
+  const { resolved: shortlist } = useShortlist();
   /** BCI 提供北半球与南半球两个课程序列，开设科目不同 */
   const [hemisphere, setHemisphere] = useState<Hemisphere>("south");
 
-  const pickedUni = useMemo(() => UNIVERSITIES.find((u) => u.id === pickUni), [pickUni]);
+  /** 转换为科目统计所需的目标格式 */
+  const targets = useMemo(
+    () =>
+      shortlist.map((item) => ({
+        universityId: item.universityId,
+        programmeId: item.programmeId,
+      })),
+    [shortlist],
+  );
   const advice = useMemo(() => adviseSubjectsBy(targets, lang), [targets, lang]);
 
   /** 当前课程序列开设的科目 */
@@ -67,60 +63,21 @@ export default function Subjects() {
     [advice, availableKeys],
   );
 
-  function addTarget() {
-    if (!pickedUni) return;
-    const progId = pickedUni.programmes.some((p) => p.id === pickProg)
-      ? pickProg
-      : pickedUni.programmes[0]?.id;
-    if (!progId) return;
-    const exists = targets.some(
-      (tgt) => tgt.universityId === pickUni && tgt.programmeId === progId,
-    );
-    if (exists) return;
-    setTargets([...targets, { universityId: pickUni, programmeId: progId }]);
-  }
-
-  function removeTarget(i: number) {
-    setTargets(targets.filter((_, idx) => idx !== i));
-  }
-
-  /**
-   * 把当前选课目标批量写入目标清单。
-   * 只添加尚未收藏的项，避免误把已收藏项切换为取消收藏。
-   */
-  function syncTargetsToShortlist() {
-    const pending = targets.filter((tgt) => !inShortlist(tgt.universityId, tgt.programmeId));
-    if (pending.length === 0) {
-      toast(t("清单中的目标已全部收藏。", "All targets are already in the shortlist."));
-      return;
-    }
-    pending.forEach((tgt) => toggleShortlist(tgt.universityId, tgt.programmeId));
-    toast(
-      t(
-        `已把 ${pending.length} 个目标加入目标清单。`,
-        `Added ${pending.length} target${pending.length > 1 ? "s" : ""} to the shortlist.`,
-      ),
-    );
-  }
-
   /** 必需科目数量用于提示是否超出四门主力科目 */
   const mustCount = advice.filter((a) => a.level === "必需").length;
 
   /** 目标清单对应的门槛，用于在标尺上呈现分数跨度 */
   const targetMarkers = useMemo(
     () =>
-      targets
-        .map((tgt) => {
-          const u = UNIVERSITIES.find((x) => x.id === tgt.universityId);
-          const p = u?.programmes.find((x) => x.id === tgt.programmeId);
-          if (!u || !p) return null;
+      shortlist
+        .map(({ university: u, programme: p }) => {
           const th = p.atar ?? u.minAtar;
           if (th === null) return null;
           return { label: `${u.abbr} ${th}`, value: th, tone: "brass" as const };
         })
         .filter((m): m is { label: string; value: number; tone: "brass" } => m !== null)
         .sort((a, b) => a.value - b.value),
-    [targets],
+    [shortlist],
   );
 
   return (
@@ -138,8 +95,8 @@ export default function Subjects() {
           </h1>
           <p className="mt-4 max-w-[64ch] font-[family-name:var(--font-serif)] text-[1rem] leading-relaxed text-muted-foreground">
             {t(
-              "把候选目标加入清单，系统会统计各科目在这些目标中的出现频率，区分「必需」「强烈建议」与「可选」，帮助学生在 Year 11 选课时避免走错方向。",
-              "Add candidate programmes to a shortlist and the planner counts how often each subject appears as a prerequisite, sorting them into required, strongly recommended and optional so Year 11 choices do not close doors.",
+              "本页读取你在查询页收藏的目标清单，统计各科目在这些目标中的出现频率，区分「必需」「强烈建议」与「可选」，帮助学生在 Year 11 选课时避免走错方向。",
+              "This page reads the shortlist you saved while searching, then counts how often each subject appears as a prerequisite, sorting them into required, strongly recommended and optional so Year 11 choices do not close doors.",
             )}
           </p>
 
@@ -200,40 +157,45 @@ export default function Subjects() {
       )}
 
       <div className="container grid gap-12 py-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
-        {/* 目标清单 */}
+        {/* 目标清单（只读，来源为收藏清单） */}
         <section>
           <div className="flex items-baseline justify-between gap-4 border-b-2 border-green pb-3">
             <h2 className="text-[1.25rem] text-green">{t("目标清单", "Shortlist")}</h2>
-            <div className="flex items-center gap-3">
-              {targets.length > 0 && (
-                <button
-                  type="button"
-                  onClick={syncTargetsToShortlist}
-                  className="no-print inline-flex items-center gap-1.5 border border-input px-2 py-1 text-[0.6875rem] text-muted-foreground transition-colors hover:border-brass hover:text-green">
-                  <Bookmark className="h-3.5 w-3.5" />
-                  {t("同步到目标清单", "Save to shortlist")}
-                </button>
-              )}
-              <span className="score text-[0.8125rem] text-muted-foreground">
-                {targets.length} {t("个目标", "targets")}
-              </span>
-            </div>
+            <span className="score text-[0.8125rem] text-muted-foreground">
+              {shortlist.length} {t("个目标", "targets")}
+            </span>
           </div>
 
-          {targets.length === 0 ? (
-            <p className="border-x border-b border-border px-6 py-12 text-center font-[family-name:var(--font-serif)] text-[0.9375rem] text-muted-foreground">
-              {t("请在下方添加至少一个目标专业。", "Add at least one target programme below.")}
-            </p>
+          {shortlist.length === 0 ? (
+            <div className="border-x border-b border-border px-6 py-12 text-center">
+              <p className="mx-auto max-w-[36ch] font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
+                {t(
+                  "选课建议以目标清单为依据。请先在「分数查院校」或「院校查门槛」页收藏候选专业，本页会自动统计这些目标共同要求的科目。",
+                  "Subject advice is derived from your shortlist. Save candidate programmes on the Score or University pages first, and this page will tally the prerequisites they share.",
+                )}
+              </p>
+              <div className="no-print mt-7 flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/forward"
+                  className="inline-flex items-center gap-2 border border-green bg-green px-4 py-2 text-[0.875rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft">
+                  {t("按分数查院校", "Search by score")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/reverse"
+                  className="inline-flex items-center gap-2 border border-green px-4 py-2 text-[0.875rem] text-green transition-colors duration-150 hover:bg-green/5">
+                  {t("按院校查门槛", "Look up a university")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
           ) : (
             <ul className="divide-y divide-border border-x border-b border-border">
-              {targets.map((tgt, i) => {
-                const u = UNIVERSITIES.find((x) => x.id === tgt.universityId);
-                const p = u?.programmes.find((x) => x.id === tgt.programmeId);
-                if (!u || !p) return null;
+              {shortlist.map(({ university: u, programme: p }, i) => {
                 const threshold = p.atar ?? u.minAtar;
                 return (
                   <li
-                    key={`${tgt.universityId}-${tgt.programmeId}`}
+                    key={`${u.id}-${p.id}`}
                     className="flex items-start gap-4 bg-card px-5 py-4">
                     <span className="almanac-index mt-1">{String(i + 1).padStart(2, "0")}</span>
                     <div className="flex-1">
@@ -253,56 +215,24 @@ export default function Subjects() {
                         })()}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeTarget(i)}
-                      aria-label={t("移除该目标", "Remove this target")}
-                      className="no-print mt-0.5 shrink-0 text-muted-foreground transition-colors hover:text-tier-reach">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
                   </li>
                 );
               })}
             </ul>
           )}
 
-          {/* 添加目标 */}
-          <div className="no-print mt-6 border border-border bg-card p-5">
-            <span className="eyebrow text-brass">{t("添加目标", "Add a target")}</span>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <select
-                value={pickUni}
-                onChange={(e) => {
-                  setPickUni(e.target.value);
-                  const u = UNIVERSITIES.find((x) => x.id === e.target.value);
-                  setPickProg(u?.programmes[0]?.id ?? "");
-                }}
-                className="border border-input bg-paper px-3 py-2 text-[0.875rem] text-ink outline-none focus:border-brass">
-                {UNIVERSITIES.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {lang === "zh" ? u.nameZh : u.name}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={pickProg}
-                onChange={(e) => setPickProg(e.target.value)}
-                className="border border-input bg-paper px-3 py-2 text-[0.875rem] text-ink outline-none focus:border-brass">
-                {pickedUni?.programmes.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {lang === "zh" ? p.nameZh : p.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button
-              type="button"
-              onClick={addTarget}
-              className="mt-4 inline-flex items-center gap-2 border border-green bg-green px-4 py-2 text-[0.875rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft">
-              <Plus className="h-4 w-4" />
-              {t("加入清单", "Add to shortlist")}
-            </button>
-          </div>
+          {/* 目标增删统一在清单页进行，此处只提供入口 */}
+          {shortlist.length > 0 && (
+            <Link
+              href="/shortlist"
+              className="no-print mt-6 flex items-center justify-between gap-4 border border-border bg-card px-5 py-4 transition-colors duration-150 hover:border-brass">
+              <span className="flex items-center gap-2.5 text-[0.875rem] text-green">
+                <ListChecks className="h-4 w-4 text-brass" />
+                {t("增删目标请前往目标清单", "Add or remove targets in the shortlist")}
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-brass" />
+            </Link>
+          )}
         </section>
 
         {/* 科目必要度 */}

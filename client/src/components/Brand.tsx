@@ -156,11 +156,6 @@ export function SiteHeader() {
         </nav>
         <div className="flex shrink-0 items-center gap-3">
           <LangToggle />
-          <Link
-            href="/forward"
-            className="hidden whitespace-nowrap border border-green bg-green px-4 py-2 text-[0.8125rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft sm:inline-block">
-            {t("开始规划", "Start Planning")}
-          </Link>
         </div>
       </div>
       {/* 移动与中屏导航 */}

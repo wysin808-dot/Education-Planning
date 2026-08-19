@@ -143,6 +143,12 @@ export default function Shortlist() {
               </h2>
             </div>
             <div className="no-print flex flex-wrap items-center gap-3">
+              <Link
+                href="/subjects"
+                className="inline-flex items-center gap-1.5 border border-green px-3.5 py-2 text-[0.8125rem] text-green transition-colors hover:bg-green/5">
+                {t("据此规划选课", "Plan subjects from this list")}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
               <button
                 type="button"
                 onClick={() => window.print()}
