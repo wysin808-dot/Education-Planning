@@ -1,7 +1,7 @@
 /**
  * 设计风格：Admissions Almanac
- * 页头采用 BCI 官方圆形徽章与紧凑 BRENTVALE 短字标，降低横向占用；
- * 页脚仍使用完整官方横版 logo（红色横版 / 反白横版），保留铜金细线与放宽字距。
+ * 页头采用深墨绿承载的 BCI 官方反白圆形徽章与紧凑 BRENTVALE 字标，
+ * 与页脚的反白品牌识别统一，同时降低横向占用；页脚仍使用完整官方横版 logo。
  * 注意：BCI 官方主色为砖红 #B02A2A，与年鉴的墨绿铜金构成双色体系——
  * 红色仅用于品牌标识与强调，版面主色仍为墨绿。
  */
@@ -129,8 +129,11 @@ export function SiteHeader() {
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border bg-paper/92 backdrop-blur-md">
       <div className="container flex h-[4.5rem] items-center justify-between gap-4">
-        <Link href="/" className="shrink-0">
-          <Wordmark compact />
+        <Link
+          href="/"
+          aria-label={t("返回 Brentvale WACE 升学规划首页", "Return to Brentvale WACE Pathways home")}
+          className="shrink-0 bg-green px-2.5 py-2 sm:px-3">
+          <Wordmark compact variant="light" />
         </Link>
         <nav className="hidden items-center gap-0.5 xl:flex">
           {NAV.map((item) => {
