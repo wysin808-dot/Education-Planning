@@ -2,7 +2,8 @@
  * 设计风格：Admissions Almanac
  * 首屏为左右不对称双入口（我有目标院校 / 我有预计 ATAR），中间以竖向规则线分隔。
  * 禁止居中英雄区与卡片网格堆叠；以规则线与编号建立年鉴目录感。
- * 全站中英双语：所有面向用户的文案通过 t(中文, 英文) 输出。
+ * 全站中英双语：所有面向用户的文案通过 t(中文, 英文) 输出；本页以 WACE 为主，
+ * 以独立、低干扰的入口引导 Cambridge A-Level 学生进入对应体系。
  */
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
@@ -66,6 +67,13 @@ export default function Home() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
+            <Link
+              href="/alevel"
+              className="mt-4 inline-flex items-center gap-2 border-b border-brass pb-1 text-[0.8125rem] text-green transition-colors hover:text-brass">
+              <GraduationCap className="h-4 w-4" />
+              {t("修读 Cambridge A-Level？进入 7 门课程的独立规划器", "Taking Cambridge A-Level? Enter the dedicated seven-subject planner")}
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
 
             {recentTool && (
               <Link
@@ -89,7 +97,7 @@ export default function Home() {
                 { k: t("目标院校", "Universities"), v: stats.universities },
                 { k: t("专业条目", "Programmes"), v: stats.programmes },
                 { k: t("覆盖地区", "Regions"), v: stats.regions },
-                { k: t("BCI 批准课程", "BCI courses"), v: stats.subjects },
+                { k: t("WACE 批准课程", "WACE courses"), v: stats.subjects },
               ].map((item) => (
                 <div key={item.k}>
                   <dd className="score text-[1.75rem] leading-none text-green">{item.v}</dd>

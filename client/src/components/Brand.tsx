@@ -48,7 +48,7 @@ export function Wordmark({
               "block whitespace-nowrap pt-0.5 text-[0.5rem] tracking-[0.18em] sm:text-[0.5625rem]",
               light ? "text-paper/70" : "text-muted-foreground",
             )}>
-            {t("WACE 升学规划", "WACE PATHWAYS")}
+            {t("升学规划", "UNIVERSITY PATHWAYS")}
           </span>
         </span>
       </span>
@@ -72,7 +72,7 @@ export function Wordmark({
           "hidden whitespace-nowrap text-[0.6875rem] leading-tight tracking-[0.22em] sm:block",
           light ? "text-paper/70" : "text-muted-foreground",
         )}>
-        {t("WACE 升学规划", "WACE PATHWAYS")}
+        {t("升学规划", "UNIVERSITY PATHWAYS")}
       </span>
     </span>
   );
@@ -86,6 +86,7 @@ const NAV = [
   { href: "/table", zh: "门槛总表", en: "Threshold Table" },
   { href: "/shortlist", zh: "目标清单", en: "Shortlist" },
   { href: "/brochure", zh: "宣传册", en: "Brochure" },
+  { href: "/alevel", zh: "Cambridge A-Level", en: "Cambridge A-Level" },
 ];
 
 const NAV_DETAILS: Record<string, { zh: string; en: string }> = {
@@ -96,10 +97,11 @@ const NAV_DETAILS: Record<string, { zh: string; en: string }> = {
   "/table": { zh: "31 所院校门槛的打印速查表", en: "A printable quick-reference threshold table" },
   "/shortlist": { zh: "汇总收藏专业，形成个人目标清单", en: "Review saved programmes as a personal shortlist" },
   "/brochure": { zh: "可打印的 WACE 升学规划说明", en: "A printable WACE pathways overview" },
+  "/alevel": { zh: "以 Cambridge A-Level 预测等级规划院校与专业", en: "Plan university and programme options through Cambridge A-Level predictions" },
 };
 
-const PRIMARY_NAV = NAV.filter((item) => item.href !== "/brochure");
-const MORE_NAV = NAV.filter((item) => item.href === "/brochure");
+const PRIMARY_NAV = NAV.filter((item) => item.href !== "/brochure" && item.href !== "/alevel");
+const MORE_NAV = NAV.filter((item) => item.href === "/brochure" || item.href === "/alevel");
 
 function LangToggle({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const { lang, setLang } = useLang();
@@ -257,8 +259,8 @@ export function SiteFooter() {
           <Wordmark variant="light" />
           <p className="mt-5 max-w-md font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-paper/80">
             {t(
-              "Brentvale College International 为 WACE 学生提供升学门槛查询与选课决策支持。本工具的所有分数与要求均引自各校官方招生页面，用于规划参考。",
-              "Brentvale College International provides WACE students with admission threshold lookups and subject-selection guidance. All scores and requirements are drawn from official university admissions pages and are intended for planning reference.",
+              "Brentvale College International 为 WACE 与 Cambridge A-Level 学生提供升学门槛查询与选课决策支持。本工具的所有要求均引自各校官方招生页面，用于规划参考。",
+              "Brentvale College International provides WACE and Cambridge A-Level students with admission lookups and subject-selection guidance. All requirements are drawn from official university admissions pages and are intended for planning reference.",
             )}
           </p>
         </div>

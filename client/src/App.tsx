@@ -16,6 +16,12 @@ import Subjects from "./pages/Subjects";
 import TableView from "./pages/TableView";
 import Brochure from "./pages/Brochure";
 import Shortlist from "./pages/Shortlist";
+import AlevelHome from "./pages/AlevelHome";
+import AlevelForward from "./pages/AlevelForward";
+import AlevelReverse from "./pages/AlevelReverse";
+import AlevelSubjects from "./pages/AlevelSubjects";
+import AlevelTable from "./pages/AlevelTable";
+import AlevelShortlist from "./pages/AlevelShortlist";
 
 function Router() {
   return (
@@ -27,6 +33,12 @@ function Router() {
       <Route path="/table" component={TableView} />
       <Route path="/shortlist" component={Shortlist} />
       <Route path="/brochure" component={Brochure} />
+      <Route path="/alevel" component={AlevelHome} />
+      <Route path="/alevel/forward" component={AlevelForward} />
+      <Route path="/alevel/reverse" component={AlevelReverse} />
+      <Route path="/alevel/subjects" component={AlevelSubjects} />
+      <Route path="/alevel/table" component={AlevelTable} />
+      <Route path="/alevel/shortlist" component={AlevelShortlist} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

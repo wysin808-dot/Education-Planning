@@ -55,3 +55,11 @@
 - [x] 生成固定 A4 宣传册 PDF 并上传为稳定下载文件。
 - [x] 动态报告改为原生打印与手机端正确导出指引。
 - [x] 验证固定宣传册与动态报告的桌面、手机端行为与版式。
+
+# International A-Level 升学规划体系
+
+- [x] 核定 Cambridge International A-Level 的适用课程清单与成绩输入口径：Mathematics、Further Mathematics、Physics、Chemistry、Biology、Economics、Business。
+- [x] 核验 31 所院校、636 个专业的 A-Level 门槛、指定科目与英语要求口径。
+- [x] 建立 A-Level 数据模型、成绩匹配与选课建议规则。
+- [x] 在首页、正反查询、清单、选课与宣传材料加入课程体系切换。
+- [x] 完成桌面、手机端、双语、跨体系数据与边界条件自检。
