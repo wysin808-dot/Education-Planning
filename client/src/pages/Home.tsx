@@ -4,14 +4,16 @@
  * 禁止居中英雄区与卡片网格堆叠；以规则线与编号建立年鉴目录感。
  * 全站中英双语：所有面向用户的文案通过 t(中文, 英文) 输出。
  */
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, BookOpenText, GraduationCap, Ruler, Search } from "lucide-react";
+import { ArrowRight, BookOpenText, Clock3, GraduationCap, Ruler, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierLegend } from "@/components/TierBadge";
 import { REGIONS, UNIVERSITIES } from "@/data/universities";
 import { datasetStats } from "@/lib/matching";
 import { useLang } from "@/contexts/LangContext";
+import { getRecentTool, type RecentTool } from "@/lib/recent";
 
 const HERO = "/manus-storage/bv-hero-almanac_675b2c4b.png";
 /** 档案式文档配图优先于人物场景照，以贴合年鉴调性 */
@@ -20,6 +22,11 @@ const ARCHIVE = "/manus-storage/bv-subjects_9e541983.png";
 export default function Home() {
   const stats = datasetStats();
   const { t, lang } = useLang();
+  const [recentTool, setRecentTool] = useState<RecentTool | null>(null);
+
+  useEffect(() => {
+    setRecentTool(getRecentTool());
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -59,6 +66,23 @@ export default function Home() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
+
+            {recentTool && (
+              <Link
+                href={recentTool.href}
+                className="mt-5 flex max-w-[34rem] items-center justify-between gap-4 border-y border-border py-3 text-left transition-colors hover:border-brass">
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <Clock3 className="h-4 w-4 shrink-0 text-brass" />
+                  <span className="min-w-0">
+                    <span className="eyebrow text-muted-foreground">{t("最近使用", "Recently used")}</span>
+                    <span className="mt-0.5 block truncate text-[0.875rem] text-green">
+                      {lang === "zh" ? recentTool.zh : recentTool.en}
+                    </span>
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-brass" />
+              </Link>
+            )}
 
             <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-border pt-8 sm:grid-cols-4">
               {[

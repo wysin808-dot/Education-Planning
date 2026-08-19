@@ -5,12 +5,13 @@
  * 注意：BCI 官方主色为砖红 #B02A2A，与年鉴的墨绿铜金构成双色体系——
  * 红色仅用于品牌标识与强调，版面主色仍为墨绿。
  */
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 import { useShortlist } from "@/contexts/ShortlistContext";
+import { saveRecentTool } from "@/lib/recent";
 
 const LOGO_RED = "/manus-storage/bci-logo-horizontal_ead9c912.png";
 const LOGO_WHITE = "/manus-storage/bci-logo-horizontal-white_4bd4c272.png";
@@ -87,6 +88,19 @@ const NAV = [
   { href: "/brochure", zh: "宣传册", en: "Brochure" },
 ];
 
+const NAV_DETAILS: Record<string, { zh: string; en: string }> = {
+  "/": { zh: "总览与两种查询入口", en: "Overview and two search starting points" },
+  "/forward": { zh: "输入 ATAR，查看可申请的院校与专业", en: "Enter ATAR to find reachable universities and programmes" },
+  "/reverse": { zh: "锁定院校专业，反查 ATAR 与先修要求", en: "Start with a programme and work back to its requirements" },
+  "/subjects": { zh: "按收藏目标规划 WACE 选课组合", en: "Plan WACE subjects from your shortlisted goals" },
+  "/table": { zh: "31 所院校门槛的打印速查表", en: "A printable quick-reference threshold table" },
+  "/shortlist": { zh: "汇总收藏专业，形成个人目标清单", en: "Review saved programmes as a personal shortlist" },
+  "/brochure": { zh: "可打印的 WACE 升学规划说明", en: "A printable WACE pathways overview" },
+};
+
+const PRIMARY_NAV = NAV.filter((item) => item.href !== "/brochure");
+const MORE_NAV = NAV.filter((item) => item.href === "/brochure");
+
 function LangToggle({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const { lang, setLang } = useLang();
   const light = variant === "light";
@@ -129,6 +143,10 @@ export function SiteHeader() {
   const { lang, t } = useLang();
   const { count } = useShortlist();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    saveRecentTool(path);
+  }, [path]);
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border bg-paper/92 backdrop-blur-md">
       <div className="container flex h-[4.5rem] items-center justify-between gap-4">
@@ -139,7 +157,7 @@ export function SiteHeader() {
           <Wordmark compact variant="light" />
         </Link>
         <nav className="hidden min-w-0 items-center justify-center gap-0.5 lg:flex" aria-label={t("主导航", "Primary navigation")}>
-          {NAV.map((item) => {
+          {PRIMARY_NAV.map((item) => {
             const active = path === item.href;
             return (
               <Link
@@ -159,6 +177,22 @@ export function SiteHeader() {
               </Link>
             );
           })}
+          <details className="group relative">
+            <summary className="flex list-none cursor-pointer items-center gap-1 whitespace-nowrap px-2 py-2 text-[0.75rem] text-muted-foreground transition-colors hover:text-green xl:px-2.5 xl:text-[0.8125rem]">
+              {t("更多", "More")}
+              <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="absolute right-0 top-full z-50 mt-2 min-w-36 border border-border bg-paper p-1.5 shadow-[0_12px_24px_oklch(0.2_0.02_90_/_0.14)]">
+              {MORE_NAV.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="block whitespace-nowrap px-3 py-2 text-[0.8125rem] text-muted-foreground transition-colors hover:bg-paper-deep hover:text-green">
+                  {lang === "zh" ? item.zh : item.en}
+                </Link>
+              ))}
+            </div>
+          </details>
         </nav>
         <div className="flex shrink-0 items-center gap-3">
           <LangToggle />
@@ -188,10 +222,15 @@ export function SiteHeader() {
                       "flex items-center justify-between border-b border-border px-1 py-3 text-[0.9375rem]",
                       active ? "text-green" : "text-muted-foreground hover:text-green",
                     )}>
-                    <span className="flex items-center gap-3">
-                      <span className="almanac-index text-brass">{String(index + 1).padStart(2, "0")}</span>
-                      {lang === "zh" ? item.zh : item.en}
-                    </span>
+                      <span className="flex items-center gap-3">
+                        <span className="almanac-index text-brass">{String(index + 1).padStart(2, "0")}</span>
+                        <span>
+                          <span className="block">{lang === "zh" ? item.zh : item.en}</span>
+                          <span className="mt-0.5 block text-[0.6875rem] leading-relaxed text-muted-foreground">
+                            {lang === "zh" ? NAV_DETAILS[item.href].zh : NAV_DETAILS[item.href].en}
+                          </span>
+                        </span>
+                      </span>
                     {item.href === "/shortlist" && count > 0 && (
                       <span className="score border border-brass/60 bg-brass/12 px-1.5 text-[0.6875rem] text-[oklch(0.42_0.07_74)]">
                         {count}
