@@ -17,11 +17,13 @@ const check = (cond, msg) => {
 const forward = read("client/src/pages/Forward.tsx");
 const reverse = read("client/src/pages/Reverse.tsx");
 const table = read("client/src/pages/TableView.tsx");
+const brochure = read("client/src/pages/Brochure.tsx");
 const subjects = read("client/src/pages/Subjects.tsx");
 const shortlist = read("client/src/pages/Shortlist.tsx");
 const ctx = read("client/src/contexts/ShortlistContext.tsx");
 const btn = read("client/src/components/ShortlistButton.tsx");
 const printHeader = read("client/src/components/PrintHeader.tsx");
+const pdfExport = read("client/src/components/PdfExportButton.tsx");
 const brand = read("client/src/components/Brand.tsx");
 const app = read("client/src/App.tsx");
 const css = read("client/src/index.css");
@@ -58,7 +60,7 @@ for (const [name, src] of [
 check(btn.includes("aria-pressed"), "收藏按钮缺少 aria-pressed 无障碍状态");
 check(btn.includes('t("已收藏", "Saved")'), "收藏按钮文案缺少英文版");
 
-// 3. 单页 PDF 导出
+// 3. 跨平台 PDF 导出
 check(css.includes("size: A4 portrait"), "打印样式缺少 A4 纵向设置");
 check(css.includes("break-inside: avoid"), "打印样式未防止条目跨页断裂");
 check(css.includes(".print-header"), "缺少打印页眉样式");
@@ -66,11 +68,18 @@ check(printHeader.includes("BRENTVALE COLLEGE INTERNATIONAL"), "打印页眉缺�
 check(printHeader.includes("toLocaleDateString"), "打印页眉缺少导出日期");
 for (const [name, src] of [
   ["Forward", forward],
+  ["Reverse", reverse],
+  ["TableView", table],
   ["Shortlist", shortlist],
+  ["Brochure", brochure],
 ]) {
-  check(src.includes("PrintHeader"), `${name} 未接入打印页眉`);
-  check(src.includes("window.print()"), `${name} 缺少导出 PDF 触发`);
+  check(src.includes("PdfExportButton"), `${name} 未接入统一 PDF 导出组件`);
+  check(src.includes("data-pdf-export"), `${name} 未标记 PDF 截取范围`);
 }
+check(forward.includes("PrintHeader") && shortlist.includes("PrintHeader"), "可打印报告缺少打印页眉");
+check(pdfExport.includes("window.print()"), "PDF 组件缺少桌面系统打印回退");
+check(pdfExport.includes("window.open"), "PDF 组件缺少移动端同步打开预览窗口");
+check(pdfExport.includes("toPng") && pdfExport.includes("skipFonts"), "PDF 组件缺少现代 CSS 兼容渲染路径");
 check(
   forward.includes("print-hide-mobile") && forward.includes("print-show-table"),
   "Forward 打印时未让手机卡片让位给表格",

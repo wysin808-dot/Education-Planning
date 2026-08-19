@@ -4,12 +4,13 @@
  * 与正向查询共享同一份数据与同一套分层标签定义。
  */
 import { useMemo, useState } from "react";
-import { ArrowRight, ExternalLink, FileDown } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
 import { ShortlistButton } from "@/components/ShortlistButton";
+import { PdfExportButton } from "@/components/PdfExportButton";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
 import {
   classifyTier,
@@ -96,7 +97,7 @@ export default function Reverse() {
         </div>
       </div>
 
-      <div className="container py-12">
+      <div data-pdf-export className="container py-12">
         {/* 三段式选择 */}
         <div className="no-print grid gap-px border border-border bg-border lg:grid-cols-3">
           <div className="bg-card p-6">
@@ -208,13 +209,12 @@ export default function Reverse() {
                   variant="full"
                   className="px-3 py-1.5 text-[0.8125rem]"
                 />
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="inline-flex items-center gap-1.5 border border-input px-3 py-1.5 text-[0.8125rem] text-muted-foreground transition-colors hover:border-brass hover:text-green">
-                  <FileDown className="h-3.5 w-3.5" />
-                  {t("导出单页 PDF", "Export one-page PDF")}
-                </button>
+                <PdfExportButton
+                  title={t("院校与专业门槛报告", "University and programme threshold report")}
+                  filename="brentvale-programme-threshold-report"
+                  compact
+                  className="border-input bg-transparent text-muted-foreground hover:border-brass hover:text-green"
+                />
               </div>
             </div>
 

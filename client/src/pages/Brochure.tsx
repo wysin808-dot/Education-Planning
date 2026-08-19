@@ -3,8 +3,8 @@
  * 宣传册页：A4 纵向比例的四页版式，专为打印与 PDF 导出设计。
  * 打印时隐藏导航与操作按钮，页面之间强制分页。
  */
-import { Printer } from "lucide-react";
 import { SiteFooter, SiteHeader, Wordmark } from "@/components/Brand";
+import { PdfExportButton } from "@/components/PdfExportButton";
 import { ScoreRule } from "@/components/ScoreRule";
 import { FIELDS, REGIONS, UNIVERSITIES } from "@/data/universities";
 import { TIER_META, datasetStats, tierDefinition, tierLabel } from "@/lib/matching";
@@ -46,17 +46,14 @@ export default function Brochure() {
               )}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="inline-flex items-center gap-2 border border-green bg-green px-5 py-2.5 text-[0.875rem] text-primary-foreground transition-colors hover:bg-green-soft">
-            <Printer className="h-4 w-4" />
-            {t("打印或导出 PDF", "Print or export PDF")}
-          </button>
+          <PdfExportButton
+            title={t("WACE 升学门槛年鉴", "The WACE Admissions Almanac")}
+            filename="brentvale-wace-admissions-almanac"
+          />
         </div>
       </div>
 
-      <div className="container space-y-10 py-12 print:space-y-0 print:py-0">
+      <div data-pdf-export className="container space-y-10 py-12 print:space-y-0 print:py-0">
         {/* 第一页：封面 */}
         <section className="mx-auto w-full max-w-[52rem] border border-border bg-card print:max-w-none print:border-0 print:break-after-page">
           <div className="relative">

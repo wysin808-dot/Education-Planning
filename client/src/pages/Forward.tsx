@@ -4,9 +4,10 @@
  * 分数一律等宽右对齐；结果行以规则线分隔，不使用卡片网格。
  */
 import { useMemo, useState } from "react";
-import { AlertTriangle, Check, ChevronDown, Printer, SlidersHorizontal, X } from "lucide-react";
+import { AlertTriangle, Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { PrintHeader } from "@/components/PrintHeader";
+import { PdfExportButton } from "@/components/PdfExportButton";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
 import { ShortlistButton } from "@/components/ShortlistButton";
@@ -281,7 +282,7 @@ export default function Forward() {
         </div>
       </div>
 
-      <div className="container grid gap-10 py-12 lg:grid-cols-[17.5rem_1fr] lg:gap-12">
+      <div data-pdf-export className="container grid gap-10 py-12 lg:grid-cols-[17.5rem_1fr] lg:gap-12">
         <PrintHeader
           title={t("ATAR 查询结果报告", "ATAR match report")}
           subtitle={t(
@@ -503,13 +504,11 @@ export default function Forward() {
               <div className="border border-border bg-card px-6 pb-8 pt-6">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <h2 className="text-[1.25rem] text-green">{t("分数定位", "Where the score sits")}</h2>
-                  <button
-                    type="button"
-                    onClick={() => window.print()}
-                    className="no-print inline-flex items-center gap-1.5 border border-green bg-green px-3 py-1.5 text-[0.8125rem] text-primary-foreground transition-colors hover:bg-green-soft">
-                    <Printer className="h-3.5 w-3.5" />
-                    {t("导出单页 PDF", "Export one-page PDF")}
-                  </button>
+                  <PdfExportButton
+                    title={t("ATAR 查询结果报告", "ATAR match report")}
+                    filename="brentvale-atar-match-report"
+                    compact
+                  />
                 </div>
                 <div className="mt-8">
                   <ScoreRule

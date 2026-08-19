@@ -198,6 +198,15 @@
     min-width: 0;
   }
 
+  /* 手机 PDF 截图期间：隐藏网页交互控件，显示报告页眉，使生成文件接近桌面打印稿。 */
+  [data-pdf-export].pdf-capturing .no-print {
+    display: none !important;
+  }
+
+  [data-pdf-export].pdf-capturing .print-header {
+    display: block !important;
+  }
+
   @media (min-width: 640px) {
     .container {
       padding-left: 1.5rem;

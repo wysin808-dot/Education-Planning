@@ -5,10 +5,11 @@
  * 分数一律等宽右对齐，规则线分节，不使用卡片网格。
  */
 import { useMemo } from "react";
-import { ArrowRight, FileDown, Trash2 } from "lucide-react";
+import { ArrowRight, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { PrintHeader } from "@/components/PrintHeader";
+import { PdfExportButton } from "@/components/PdfExportButton";
 import { ScoreRule } from "@/components/ScoreRule";
 import { REGIONS, SUBJECTS } from "@/data/universities";
 import {
@@ -125,7 +126,7 @@ export default function Shortlist() {
           </div>
         </div>
       ) : (
-        <div className="container py-12">
+        <div data-pdf-export className="container py-12">
           <PrintHeader
             title={t("我的目标清单", "My shortlist")}
             subtitle={t(
@@ -149,13 +150,11 @@ export default function Shortlist() {
                 {t("据此规划选课", "Plan subjects from this list")}
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 border border-green bg-green px-3.5 py-2 text-[0.8125rem] text-primary-foreground transition-colors hover:bg-green-soft">
-                <FileDown className="h-3.5 w-3.5" />
-                {t("导出单页 PDF", "Export one-page PDF")}
-              </button>
+              <PdfExportButton
+                title={t("我的目标清单", "My shortlist")}
+                filename="brentvale-wace-shortlist"
+                compact
+              />
               <button
                 type="button"
                 onClick={clear}
