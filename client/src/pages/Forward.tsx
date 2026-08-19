@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { PrintHeader } from "@/components/PrintHeader";
-import { PdfExportButton } from "@/components/PdfExportButton";
+import { PrintReportButton } from "@/components/PrintReportButton";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
 import { ShortlistButton } from "@/components/ShortlistButton";
@@ -282,7 +282,7 @@ export default function Forward() {
         </div>
       </div>
 
-      <div data-pdf-export className="container grid gap-10 py-12 lg:grid-cols-[17.5rem_1fr] lg:gap-12">
+      <div className="container grid gap-10 py-12 lg:grid-cols-[17.5rem_1fr] lg:gap-12">
         <PrintHeader
           title={t("ATAR 查询结果报告", "ATAR match report")}
           subtitle={t(
@@ -504,11 +504,7 @@ export default function Forward() {
               <div className="border border-border bg-card px-6 pb-8 pt-6">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <h2 className="text-[1.25rem] text-green">{t("分数定位", "Where the score sits")}</h2>
-                  <PdfExportButton
-                    title={t("ATAR 查询结果报告", "ATAR match report")}
-                    filename="brentvale-atar-match-report"
-                    compact
-                  />
+                  <PrintReportButton compact />
                 </div>
                 <div className="mt-8">
                   <ScoreRule

@@ -5,7 +5,7 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ExternalLink, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
-import { PdfExportButton } from "@/components/PdfExportButton";
+import { PrintReportButton } from "@/components/PrintReportButton";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
 import { ShortlistButton } from "@/components/ShortlistButton";
 import { confidenceLabel, extraLabel } from "@/lib/matching";
@@ -94,7 +94,7 @@ export default function TableView() {
         </div>
       </div>
 
-      <div data-pdf-export className="container py-10">
+      <div className="container py-10">
         <div className="no-print flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
           <div className="flex flex-wrap items-center gap-1.5">
             <button
@@ -144,12 +144,7 @@ export default function TableView() {
               <option value="atar">{t("按门槛由高到低", "Sort by threshold, high to low")}</option>
               <option value="name">{t("按校名排序", "Sort by name")}</option>
             </select>
-            <PdfExportButton
-              title={t("31 所目标院校门槛总表", "Admission thresholds across 31 universities")}
-              filename="brentvale-31-university-threshold-table"
-              compact
-              className="border-input bg-transparent text-muted-foreground hover:border-brass hover:text-green"
-            />
+            <PrintReportButton compact className="border-input bg-transparent text-muted-foreground hover:border-brass hover:text-green" />
           </div>
         </div>
 

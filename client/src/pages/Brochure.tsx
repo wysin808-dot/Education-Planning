@@ -4,13 +4,14 @@
  * 打印时隐藏导航与操作按钮，页面之间强制分页。
  */
 import { SiteFooter, SiteHeader, Wordmark } from "@/components/Brand";
-import { PdfExportButton } from "@/components/PdfExportButton";
+import { FileDown } from "lucide-react";
 import { ScoreRule } from "@/components/ScoreRule";
 import { FIELDS, REGIONS, UNIVERSITIES } from "@/data/universities";
 import { TIER_META, datasetStats, tierDefinition, tierLabel } from "@/lib/matching";
 import { useLang } from "@/contexts/LangContext";
 
-const HERO = "/manus-storage/bv-hero-almanac_675b2c4b.png";
+const HERO = "/manus-storage/bv-hero-almanac_8d296b5d.png";
+const FIXED_BROCHURE_PDF = "/manus-storage/brentvale-wace-admissions-almanac-2026-27_60e7b1f0.pdf";
 
 export default function Brochure() {
   const stats = datasetStats();
@@ -46,21 +47,25 @@ export default function Brochure() {
               )}
             </p>
           </div>
-          <PdfExportButton
-            title={t("WACE 升学门槛年鉴", "The WACE Admissions Almanac")}
-            filename="brentvale-wace-admissions-almanac"
-          />
+          <a
+            href={FIXED_BROCHURE_PDF}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 border border-green bg-green px-5 py-2.5 text-[0.875rem] text-primary-foreground transition-colors hover:bg-green-soft">
+            <FileDown className="h-4 w-4" />
+            {t("打开固定版 PDF", "Open fixed-layout PDF")}
+          </a>
         </div>
       </div>
 
-      <div data-pdf-export className="container space-y-10 py-12 print:space-y-0 print:py-0">
+      <div className="container space-y-10 py-12 print:space-y-0 print:py-0">
         {/* 第一页：封面 */}
-        <section className="mx-auto w-full max-w-[52rem] border border-border bg-card print:max-w-none print:border-0 print:break-after-page">
+        <section className="brochure-print-page brochure-cover mx-auto w-full max-w-[52rem] border border-border bg-card print:max-w-none print:border-0 print:break-after-page">
           <div className="relative">
             <img
               src={HERO}
               alt={t("招生年鉴书桌俯拍", "An overhead view of the admissions almanac on a desk")}
-              className="h-64 w-full object-cover sm:h-80"
+              className="brochure-cover-image h-64 w-full object-cover sm:h-80"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.25_0.03_158/0.55)] to-transparent" />
             <div className="absolute bottom-6 left-8 right-8">
@@ -70,7 +75,7 @@ export default function Brochure() {
               </h2>
             </div>
           </div>
-          <div className="px-8 py-8">
+          <div className="brochure-cover-body px-8 py-8">
             <p className="max-w-[56ch] font-[family-name:var(--font-serif)] text-[1rem] leading-relaxed text-ink">
               {t(
                 "这份年鉴回答三个问题：我的目标专业需要多少 ATAR、我现在的分数能申请哪些院校、以及为了实现目标我该在 Year 11 选哪几门课。",
@@ -97,7 +102,7 @@ export default function Brochure() {
         </section>
 
         {/* 第二页：四大地区门槛 */}
-        <section className="mx-auto w-full max-w-[52rem] border border-border bg-card px-8 py-9 print:max-w-none print:border-0 print:break-after-page">
+        <section className="brochure-print-page mx-auto w-full max-w-[52rem] border border-border bg-card px-8 py-9 print:max-w-none print:border-0 print:break-after-page">
           <span className="almanac-index">{t("第一节", "Section I")}</span>
           <h2 className="mt-1 text-[1.625rem] text-green">
             {t("四大目标地区门槛概览", "Thresholds across the four target regions")}
@@ -147,7 +152,7 @@ export default function Brochure() {
         </section>
 
         {/* 第三页：分层与选课 */}
-        <section className="mx-auto w-full max-w-[52rem] border border-border bg-card px-8 py-9 print:max-w-none print:border-0 print:break-after-page">
+        <section className="brochure-print-page mx-auto w-full max-w-[52rem] border border-border bg-card px-8 py-9 print:max-w-none print:border-0 print:break-after-page">
           <span className="almanac-index">{t("第二节", "Section II")}</span>
           <h2 className="mt-1 text-[1.625rem] text-green">
             {t("机会分层与选课方向", "Opportunity bands and subject direction")}
@@ -183,7 +188,7 @@ export default function Brochure() {
         </section>
 
         {/* 第四页：使用方式与声明 */}
-        <section className="mx-auto w-full max-w-[52rem] border border-border bg-card px-8 py-9 print:max-w-none print:border-0">
+        <section className="brochure-print-page mx-auto w-full max-w-[52rem] border border-border bg-card px-8 py-9 print:max-w-none print:border-0">
           <span className="almanac-index">{t("第三节", "Section III")}</span>
           <h2 className="mt-1 text-[1.625rem] text-green">
             {t("如何使用这份年鉴", "How to use this almanac")}

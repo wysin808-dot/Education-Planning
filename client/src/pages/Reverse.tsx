@@ -10,7 +10,7 @@ import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
 import { ShortlistButton } from "@/components/ShortlistButton";
-import { PdfExportButton } from "@/components/PdfExportButton";
+import { PrintReportButton } from "@/components/PrintReportButton";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
 import {
   classifyTier,
@@ -97,7 +97,7 @@ export default function Reverse() {
         </div>
       </div>
 
-      <div data-pdf-export className="container py-12">
+      <div className="container py-12">
         {/* 三段式选择 */}
         <div className="no-print grid gap-px border border-border bg-border lg:grid-cols-3">
           <div className="bg-card p-6">
@@ -209,12 +209,7 @@ export default function Reverse() {
                   variant="full"
                   className="px-3 py-1.5 text-[0.8125rem]"
                 />
-                <PdfExportButton
-                  title={t("院校与专业门槛报告", "University and programme threshold report")}
-                  filename="brentvale-programme-threshold-report"
-                  compact
-                  className="border-input bg-transparent text-muted-foreground hover:border-brass hover:text-green"
-                />
+                <PrintReportButton compact className="border-input bg-transparent text-muted-foreground hover:border-brass hover:text-green" />
               </div>
             </div>
 

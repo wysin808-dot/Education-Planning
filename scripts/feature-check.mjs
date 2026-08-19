@@ -1,5 +1,5 @@
 /**
- * 本轮新增功能自检：手机端已选条件摘要、收藏清单、单页 PDF 导出。
+ * 本轮新增功能自检：手机端已选条件摘要、收藏清单、原生打印与固定宣传册 PDF。
  * 只做静态接线校验，覆盖容易漏改的接入点与双语覆盖。
  */
 import { readFileSync } from "node:fs";
@@ -23,7 +23,7 @@ const shortlist = read("client/src/pages/Shortlist.tsx");
 const ctx = read("client/src/contexts/ShortlistContext.tsx");
 const btn = read("client/src/components/ShortlistButton.tsx");
 const printHeader = read("client/src/components/PrintHeader.tsx");
-const pdfExport = read("client/src/components/PdfExportButton.tsx");
+const printReport = read("client/src/components/PrintReportButton.tsx");
 const brand = read("client/src/components/Brand.tsx");
 const app = read("client/src/App.tsx");
 const css = read("client/src/index.css");
@@ -60,7 +60,7 @@ for (const [name, src] of [
 check(btn.includes("aria-pressed"), "收藏按钮缺少 aria-pressed 无障碍状态");
 check(btn.includes('t("已收藏", "Saved")'), "收藏按钮文案缺少英文版");
 
-// 3. 跨平台 PDF 导出
+// 3. 固定宣传册 PDF 与动态报告原生打印
 check(css.includes("size: A4 portrait"), "打印样式缺少 A4 纵向设置");
 check(css.includes("break-inside: avoid"), "打印样式未防止条目跨页断裂");
 check(css.includes(".print-header"), "缺少打印页眉样式");
@@ -71,15 +71,16 @@ for (const [name, src] of [
   ["Reverse", reverse],
   ["TableView", table],
   ["Shortlist", shortlist],
-  ["Brochure", brochure],
 ]) {
-  check(src.includes("PdfExportButton"), `${name} 未接入统一 PDF 导出组件`);
-  check(src.includes("data-pdf-export"), `${name} 未标记 PDF 截取范围`);
+  check(src.includes("PrintReportButton"), `${name} 未接入原生打印组件`);
+  check(!src.includes("PdfExportButton"), `${name} 仍引用已停用的截图式 PDF 组件`);
 }
+check(brochure.includes("FIXED_BROCHURE_PDF"), "宣传册未链接固定版 PDF 文件");
+check(brochure.includes('target="_blank"'), "宣传册固定 PDF 未提供独立预览窗口");
 check(forward.includes("PrintHeader") && shortlist.includes("PrintHeader"), "可打印报告缺少打印页眉");
-check(pdfExport.includes("window.print()"), "PDF 组件缺少桌面系统打印回退");
-check(pdfExport.includes("window.open"), "PDF 组件缺少移动端同步打开预览窗口");
-check(pdfExport.includes("toPng") && pdfExport.includes("skipFonts"), "PDF 组件缺少现代 CSS 兼容渲染路径");
+check(printReport.includes("window.print()"), "原生打印组件缺少桌面系统打印调用");
+check(printReport.includes("matchMedia"), "原生打印组件缺少手机端适配分支");
+check(printReport.includes("toast.message"), "原生打印组件缺少手机端导出指引");
 check(
   forward.includes("print-hide-mobile") && forward.includes("print-show-table"),
   "Forward 打印时未让手机卡片让位给表格",
@@ -131,7 +132,7 @@ for (const [name, src] of [
 }
 
 if (issues.length === 0) {
-  console.log("功能自检：摘要、收藏与 PDF 导出的接线均正常。");
+  console.log("功能自检：摘要、收藏、原生打印与固定宣传册 PDF 的接线均正常。");
 } else {
   console.log(`功能自检发现 ${issues.length} 个问题：`);
   issues.forEach((m, i) => console.log(`  ${i + 1}. ${m}`));

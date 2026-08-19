@@ -9,7 +9,7 @@ import { ArrowRight, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { PrintHeader } from "@/components/PrintHeader";
-import { PdfExportButton } from "@/components/PdfExportButton";
+import { PrintReportButton } from "@/components/PrintReportButton";
 import { ScoreRule } from "@/components/ScoreRule";
 import { REGIONS, SUBJECTS } from "@/data/universities";
 import {
@@ -126,7 +126,7 @@ export default function Shortlist() {
           </div>
         </div>
       ) : (
-        <div data-pdf-export className="container py-12">
+        <div className="container py-12">
           <PrintHeader
             title={t("我的目标清单", "My shortlist")}
             subtitle={t(
@@ -150,11 +150,7 @@ export default function Shortlist() {
                 {t("据此规划选课", "Plan subjects from this list")}
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-              <PdfExportButton
-                title={t("我的目标清单", "My shortlist")}
-                filename="brentvale-wace-shortlist"
-                compact
-              />
+              <PrintReportButton compact />
               <button
                 type="button"
                 onClick={clear}
