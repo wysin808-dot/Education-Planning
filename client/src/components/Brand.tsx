@@ -5,6 +5,8 @@
  * 导航为两层年鉴结构：上层是「册」——WACE 与 A-Level 两个课程体系；
  * 下层是「章」——当前体系内的功能页，随所处体系整体更换，不与体系入口混排。
  * 手机端使用可点击的纵向「目录」菜单并按体系分组，避免横向滑动导航造成的访问障碍。
+ * 体系切换保持同类功能页：从 WACE 反查切到 A-Level 时仍落在反查页，不退回体系总览。
+ * 页脚只列各体系特有的工具，目标清单为跨体系共用的唯一一项，避免与页头重复成两份清单。
  */
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
@@ -28,9 +30,11 @@ export function Wordmark({
 }) {
   const light = variant === "light";
   const { t } = useLang();
+  /** 中文界面加注英文全称，便于家长与官方文件对照 */
+  const fullName = "Brentvale College International";
   if (compact) {
     return (
-      <span className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+      <span className="flex min-w-0 items-center gap-2.5 sm:gap-3" title={t(`博林国际学院 · ${fullName}`, fullName)}>
         <img
           src={light ? CREST_WHITE : CREST_RED}
           alt="Brentvale College"
@@ -56,7 +60,7 @@ export function Wordmark({
     );
   }
   return (
-    <span className="flex items-center gap-3.5">
+    <span className="flex items-center gap-3.5" title={t(`博林国际学院 · ${fullName}`, fullName)}>
       <img
         src={light ? LOGO_WHITE : LOGO_RED}
         alt="Brentvale College International"
@@ -196,6 +200,18 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
   const sectionNav = current === "alevel" ? ALEVEL_NAV : WACE_NAV;
   const shortlistHref = current === "alevel" ? "/alevel/shortlist" : "/wace/shortlist";
 
+  /**
+   * 体系切换保持同类功能页：两套路由的尾段一一对应，
+   * 因此把当前路径的尾段接到目标体系上即可；总览页与未知路径回落到体系首页。
+   */
+  function switchTo(target: (typeof CURRICULA)[number]) {
+    if (!current || current === target.id) return target.home;
+    const tail = path.replace(/^\/(wace|alevel)/, "");
+    const candidate = `${target.home}${tail}`;
+    const nav = target.id === "alevel" ? ALEVEL_NAV : WACE_NAV;
+    return nav.some((item) => item.href === candidate) ? candidate : target.home;
+  }
+
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border bg-paper/92 backdrop-blur-md">
       {/* 第一层：品牌 + 课程体系（册） */}
@@ -222,7 +238,7 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
                 return (
                   <Link
                     key={c.id}
-                    href={c.home}
+                    href={switchTo(c)}
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "flex flex-col justify-center whitespace-nowrap px-3 py-1.5 text-left transition-colors duration-150",
@@ -390,40 +406,43 @@ export function SiteFooter() {
         <nav aria-label={t("常用工具", "Quick tools")}>
           <h3 className="eyebrow text-brass-soft">{t("常用工具", "Quick tools")}</h3>
           <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-4 text-[0.875rem] text-paper/80">
-            <div>
-              <p className="text-[0.6875rem] tracking-[0.14em] text-brass-soft">WACE</p>
-              <ul className="mt-2 space-y-2">
-                {WACE_NAV.filter((i) => ["/wace", "/wace/forward", "/wace/shortlist"].includes(i.href)).map((item) => (
-                  <li key={item.href}>
-                    <Link href={item.href} className="inline-flex items-center gap-1.5 hover:text-brass-soft">
-                      {lang === "zh" ? item.zh : item.en}
-                      {item.href === "/wace/shortlist" && count > 0 && (
-                        <span className="score border border-brass-soft/50 bg-brass-soft/10 px-1 text-[0.625rem] text-brass-soft">
-                          {count}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="text-[0.6875rem] tracking-[0.14em] text-brass-soft">A-Level</p>
-              <ul className="mt-2 space-y-2">
-                {ALEVEL_NAV.filter((i) => ["/alevel", "/alevel/forward", "/alevel/shortlist"].includes(i.href)).map((item) => (
-                  <li key={item.href}>
-                    <Link href={item.href} className="inline-flex items-center gap-1.5 hover:text-brass-soft">
-                      {lang === "zh" ? item.zh : item.en}
-                      {item.href === "/alevel/shortlist" && count > 0 && (
-                        <span className="score border border-brass-soft/50 bg-brass-soft/10 px-1 text-[0.625rem] text-brass-soft">
-                          {count}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {(
+              [
+                { label: "WACE", home: "/wace", nav: WACE_NAV },
+                { label: "A-Level", home: "/alevel", nav: ALEVEL_NAV },
+              ] as const
+            ).map((group) => (
+              <div key={group.label}>
+                <p className="text-[0.6875rem] tracking-[0.14em] text-brass-soft">{group.label}</p>
+                <ul className="mt-2 space-y-2">
+                  {/* 只列各体系特有的工具；共享的目标清单单独提到下方，避免同一份数据出现两次 */}
+                  {group.nav
+                    .filter((item) => item.href !== `${group.home}/shortlist`)
+                    .map((item) => (
+                      <li key={item.href}>
+                        <Link href={item.href} className="hover:text-brass-soft">
+                          {lang === "zh" ? item.zh : item.en}
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 border-t border-paper/15 pt-4">
+            <p className="text-[0.6875rem] tracking-[0.14em] text-brass-soft">
+              {t("两套体系共用", "Shared across both")}
+            </p>
+            <Link
+              href="/wace/shortlist"
+              className="mt-2 inline-flex items-center gap-1.5 text-[0.875rem] text-paper/80 hover:text-brass-soft">
+              {t("我的目标清单", "My shortlist")}
+              {count > 0 && (
+                <span className="score border border-brass-soft/50 bg-brass-soft/10 px-1 text-[0.625rem] text-brass-soft">
+                  {count}
+                </span>
+              )}
+            </Link>
           </div>
         </nav>
         <div>
