@@ -5,6 +5,7 @@
 import { ArrowRight, BookOpenCheck, Heart, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { QsRank } from "@/components/QsRank";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { useLang } from "@/contexts/LangContext";
 import { useShortlist } from "@/contexts/ShortlistContext";
@@ -47,7 +48,7 @@ export default function AlevelShortlist() {
                   <article key={`${item.universityId}-${item.programmeId}`} className="border border-border bg-card p-5">
                     <div className="grid gap-4 lg:grid-cols-[1.1fr_0.8fr_1.25fr_auto]">
                       <div>
-                        <p className="almanac-index">{String(index + 1).padStart(2, "0")} · {rule.university.abbr}</p>
+                        <p className="almanac-index flex flex-wrap items-center gap-x-2 gap-y-1"><span>{String(index + 1).padStart(2, "0")} · {rule.university.abbr}</span><QsRank universityId={rule.university.id} /></p>
                         <h2 className="mt-2 font-[family-name:var(--font-serif)] text-xl text-green">{lang === "zh" ? rule.programme.nameZh : rule.programme.name}</h2>
                         <p className="mt-1 text-[0.75rem] text-muted-foreground">{lang === "zh" ? rule.university.nameZh : rule.university.name}</p>
                       </div>

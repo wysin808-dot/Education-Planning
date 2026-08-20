@@ -7,6 +7,8 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { Tick } from "@/components/Motion";
+import { QsRank } from "@/components/QsRank";
+import { qsSortKey } from "@/data/qs";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { ScoreRule } from "@/components/ScoreRule";
@@ -39,6 +41,11 @@ const GROUP_EN: Record<(typeof SUBJECT_GROUPS)[number], string> = {
 
 /** 结果分组方式：年鉴式命名小节的依据 */
 type GroupMode = "region" | "tier" | "band";
+/**
+ * 节内排序方式。QS 排名是参考坐标而非录取门槛，因此做成「节内排序」而不是分节维度：
+ * 家长仍按地区／门槛／档位理解结构，只是在每一节里换个先后顺序看。
+ */
+type SortMode = "threshold" | "qs";
 
 const BANDS: {
   key: string;
@@ -122,6 +129,7 @@ export default function Forward() {
   const [fields, setFields] = useState<FieldKey[]>([]);
   const [tierFilter, setTierFilter] = useState<Tier | "all">("all");
   const [groupMode, setGroupMode] = useState<GroupMode>("region");
+  const [sortMode, setSortMode] = useState<SortMode>("threshold");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   /** 解析并校验 ATAR 输入：ATAR 取值区间为 0 至 99.95 */
@@ -157,6 +165,11 @@ export default function Forward() {
   /** 按所选模式把结果切分为命名小节 */
   const sections = useMemo(() => {
     const out: { key: string; title: string; hint: string; rows: MatchRow[] }[] = [];
+    /** 节内排序：默认保持原有的门槛顺序，选 QS 时按世界排名升序，未列入的沉底 */
+    const order = (list: MatchRow[]) =>
+      sortMode === "qs"
+        ? [...list].sort((a, b) => qsSortKey(a.university.id) - qsSortKey(b.university.id))
+        : list;
     if (groupMode === "region") {
       for (const r of REGIONS) {
         const subset = visibleRows.filter((row) => row.university.region === r.id);
@@ -165,7 +178,7 @@ export default function Forward() {
             key: r.id,
             title: lang === "zh" ? r.label : r.labelEn,
             hint: lang === "zh" ? r.blurb : r.blurbEn,
-            rows: subset,
+            rows: order(subset),
           });
       }
     } else if (groupMode === "tier") {
@@ -176,7 +189,7 @@ export default function Forward() {
             key: t,
             title: tierLabel(t, lang),
             hint: tierDefinition(t, lang),
-            rows: subset,
+            rows: order(subset),
           });
       }
     } else {
@@ -191,12 +204,12 @@ export default function Forward() {
             key: b.key,
             title: lang === "zh" ? b.label : b.labelEn,
             hint: lang === "zh" ? b.hint : b.hintEn,
-            rows: subset,
+            rows: order(subset),
           });
       }
     }
     return out;
-  }, [visibleRows, groupMode, lang]);
+  }, [visibleRows, groupMode, sortMode, lang]);
 
   function toggle<T>(list: T[], value: T, setter: (v: T[]) => void) {
     setter(list.includes(value) ? list.filter((x) => x !== value) : [...list, value]);
@@ -590,6 +603,28 @@ export default function Forward() {
                         </button>
                       ))}
                     </div>
+                    <div className="no-print flex items-center gap-1.5">
+                      <span className="text-[0.75rem] text-muted-foreground">{t("节内排序", "Order within")}</span>
+                      {(
+                        [
+                          { k: "threshold", l: t("按门槛", "Threshold") },
+                          { k: "qs", l: t("按 QS 排名", "QS rank") },
+                        ] as { k: SortMode; l: string }[]
+                      ).map((opt) => (
+                        <button
+                          key={opt.k}
+                          type="button"
+                          onClick={() => setSortMode(opt.k)}
+                          className={cn(
+                            "border px-2 py-1 text-[0.75rem] transition-colors duration-150",
+                            sortMode === opt.k
+                              ? "border-green bg-green text-primary-foreground"
+                              : "border-input text-muted-foreground hover:border-brass hover:text-green",
+                          )}>
+                          {opt.l}
+                        </button>
+                      ))}
+                    </div>
                     <span className="score text-[0.8125rem] text-muted-foreground">
                       <Tick>{visibleRows.length}</Tick> / {rows.length}
                     </span>
@@ -610,7 +645,7 @@ export default function Forward() {
                    * key 取分组方式与命中数：切换分组或调整筛选后整块结果换页，
                    * 让家长确认列表确实按新条件重排过。
                    */
-                  <div key={`${groupMode}-${visibleRows.length}`} className="swap space-y-10">
+                  <div key={`${groupMode}-${sortMode}-${visibleRows.length}`} className="swap space-y-10">
                     {sections.map((section, si) => {
                       const isOpen = openSections.has(section.key);
                       const shownRows = isOpen
@@ -655,6 +690,9 @@ export default function Forward() {
                                     </h4>
                                     <p className="mt-1 text-[0.6875rem] text-muted-foreground">
                                       {row.university.abbr} · {lang === "zh" ? row.programme.name : row.programme.nameZh}
+                                    </p>
+                                    <p className="mt-1.5">
+                                      <QsRank universityId={row.university.id} />
                                     </p>
                                   </div>
                                   <div className="flex shrink-0 flex-col items-end gap-1.5">
@@ -757,6 +795,9 @@ export default function Forward() {
                                       <span className="mt-0.5 block text-[0.6875rem] leading-snug text-muted-foreground">
                                         {row.university.abbr} ·{" "}
                                         {lang === "zh" ? row.programme.name : row.programme.nameZh}
+                                      </span>
+                                      <span className="mt-1 block">
+                                        <QsRank universityId={row.university.id} />
                                       </span>
                                     </td>
                                     <td className="py-3.5 pr-4">

@@ -432,6 +432,12 @@ export function SiteFooter() {
             <li>{t("数据对应 2026 与 2027 年入学周期", "For 2026 and 2027 intake cycles")}</li>
             <li>
               {t(
+                "排名引自 QS 世界大学排名 2027（2026 年 6 月发布），仅供参考",
+                "Ranks cited from QS World University Rankings 2027 (published June 2026), for reference only",
+              )}
+            </li>
+            <li>
+              {t(
                 "门槛为官方最低要求，非录取保证",
                 "Thresholds are official minimums, not guarantees of an offer",
               )}

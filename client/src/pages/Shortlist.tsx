@@ -9,6 +9,7 @@ import { ArrowRight, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { Tick } from "@/components/Motion";
+import { QsRank } from "@/components/QsRank";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { ScoreRule } from "@/components/ScoreRule";
@@ -251,6 +252,9 @@ export default function Shortlist() {
                             <p className="mt-1 text-[0.6875rem] text-muted-foreground">
                               {item.university.abbr} · {lang === "zh" ? item.programme.name : item.programme.nameZh}
                             </p>
+                            <p className="mt-1.5">
+                              <QsRank universityId={item.universityId} />
+                            </p>
                           </div>
                           <button
                             type="button"
@@ -319,6 +323,9 @@ export default function Shortlist() {
                               </span>
                               <span className="mt-0.5 block text-[0.6875rem] leading-snug text-muted-foreground">
                                 {item.university.abbr} · {lang === "zh" ? item.programme.name : item.programme.nameZh}
+                              </span>
+                              <span className="mt-1 block">
+                                <QsRank universityId={item.universityId} />
                               </span>
                             </td>
                             <td className="py-3.5 pr-4">

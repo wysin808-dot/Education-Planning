@@ -5,6 +5,7 @@
 import { useMemo, useState } from "react";
 import { ExternalLink, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { QsRank } from "@/components/QsRank";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { useLang } from "@/contexts/LangContext";
@@ -80,7 +81,7 @@ export default function AlevelTable() {
                       <article key={university.id} className="border border-border bg-card p-5">
                         <div className="grid gap-4 lg:grid-cols-[1.05fr_1.6fr_0.75fr]">
                           <div>
-                            <p className="almanac-index">{String(index + 1).padStart(2, "0")} · {university.abbr}</p>
+                            <p className="almanac-index flex flex-wrap items-center gap-x-2 gap-y-1"><span>{String(index + 1).padStart(2, "0")} · {university.abbr}</span><QsRank universityId={university.id} /></p>
                             <h2 className="mt-2 font-[family-name:var(--font-serif)] text-xl text-green">{lang === "zh" ? university.nameZh : university.name}</h2>
                             <p className="mt-1 text-[0.75rem] text-muted-foreground">{university.programmes.length} {t("个专业", "programmes")}</p>
                           </div>

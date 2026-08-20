@@ -5,6 +5,8 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ExternalLink, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { QsRank } from "@/components/QsRank";
+import { qsSortKey } from "@/data/qs";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
 import { ShortlistButton } from "@/components/ShortlistButton";
@@ -13,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 import { useIsMobile } from "@/hooks/useMobile";
 
-type SortKey = "region" | "atar" | "name";
+type SortKey = "region" | "atar" | "qs" | "name";
 
 /** 每校默认显示的专业条数，超出部分折叠 */
 const PREVIEW_COUNT = 8;
@@ -66,6 +68,10 @@ export default function TableView() {
         const av = a.minAtar ?? -1;
         const bv = b.minAtar ?? -1;
         return bv - av;
+      }
+      if (sortKey === "qs") {
+        // 未列入 QS 世界排名的院校沉到最后，而不是被当作第 0 名顶到最前
+        return qsSortKey(a.id) - qsSortKey(b.id);
       }
       if (sortKey === "name") return a.nameZh.localeCompare(b.nameZh, "zh-Hans-CN");
       const ra = regionOrder.indexOf(a.region);
@@ -142,6 +148,7 @@ export default function TableView() {
               className="border border-input bg-paper px-2.5 py-1.5 text-[0.8125rem] text-ink outline-none focus:border-brass">
               <option value="region">{t("按地区排序", "Sort by region")}</option>
               <option value="atar">{t("按门槛由高到低", "Sort by threshold, high to low")}</option>
+              <option value="qs">{t("按 QS 世界排名", "Sort by QS world rank")}</option>
               <option value="name">{t("按校名排序", "Sort by name")}</option>
             </select>
             <PrintReportButton compact className="border-input bg-transparent text-muted-foreground hover:border-brass hover:text-green" />
@@ -177,6 +184,9 @@ export default function TableView() {
                         {u.abbr}
                       </span>
                     </h2>
+                    <p className="mt-1.5">
+                      <QsRank universityId={u.id} />
+                    </p>
                   </div>
                   <div className="text-right">
                     <span className="text-[0.6875rem] tracking-[0.14em] text-muted-foreground">

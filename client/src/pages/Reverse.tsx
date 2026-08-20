@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { QsRank } from "@/components/QsRank";
 import { Stagger, Tick } from "@/components/Motion";
 import { PrintHeader } from "@/components/PrintHeader";
 import { ScoreRule } from "@/components/ScoreRule";
@@ -245,8 +246,11 @@ export default function Reverse() {
 
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
                 <div>
-                  <p className="almanac-index">
-                    {result.university.abbr} · {result.university.region.toUpperCase()}
+                  <p className="almanac-index flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span>
+                      {result.university.abbr} · {result.university.region.toUpperCase()}
+                    </span>
+                    <QsRank universityId={result.university.id} />
                   </p>
                   <h2 className="mt-2 font-[family-name:var(--font-serif)] text-3xl leading-tight text-green">
                     {lang === "zh" ? result.programme.nameZh : result.programme.name}
