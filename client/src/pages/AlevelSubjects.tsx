@@ -103,7 +103,7 @@ export default function AlevelSubjects() {
       <main>
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
-            <p className="eyebrow text-brass">CAMBRIDGE A-LEVEL · SUBJECT PLANNER</p>
+            <p className="eyebrow text-brass">{t("A-Level · 选课规划", "A-Level · Subject Planner")}</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">
               {t("Year 12 与 Year 13 选课方案", "Year 12 and Year 13 subject plan")}
             </h1>

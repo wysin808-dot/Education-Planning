@@ -69,7 +69,9 @@ export default function Brochure() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.25_0.03_158/0.55)] to-transparent" />
             <div className="absolute bottom-6 left-8 right-8">
-              <span className="eyebrow text-paper">Brentvale College International</span>
+              <span className="eyebrow text-paper">
+                {t("博林国际学院 · Brentvale College International", "Brentvale College International")}
+              </span>
               <h2 className="mt-2 max-w-[22ch] font-[family-name:var(--font-display)] text-[2rem] font-semibold leading-tight text-paper sm:text-[2.5rem]">
                 {t("WACE 升学门槛年鉴", "The WACE Admissions Almanac")}
               </h2>
@@ -219,7 +221,7 @@ export default function Brochure() {
               {
                 t: t("第四步：定期复核", "Step 4 · Review each term"),
                 d: t(
-                  "每学期用最新预估成绩重跑正向查询，观察稳妥、匹配、冲刺三档的数量变化，据此调整目标与备选方案。",
+                  "每学期用最新预估成绩重跑「有成绩规划」，观察稳妥、匹配、冲刺三档的数量变化，据此调整目标与备选方案。",
                   "Re-run the forward search each term with the latest projection, watch how the safety, match and reach counts shift, and adjust the target list accordingly.",
                 ),
               },

@@ -74,7 +74,7 @@ export default function Home() {
                   )}
                 </span>
                 <span className="mt-4 inline-flex items-center gap-1 border-b border-brass pb-0.5 text-[0.75rem] text-green">
-                  {t("开始正向查询", "Open forward lookup")}
+                  {t("按成绩查询", "Start from grades")}
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </Link>
@@ -93,7 +93,7 @@ export default function Home() {
                   )}
                 </span>
                 <span className="mt-4 inline-flex items-center gap-1 border-b border-brass pb-0.5 text-[0.75rem] text-green">
-                  {t("开始反向查询", "Open reverse lookup")}
+                  {t("按目标查询", "Start from a target")}
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </Link>
@@ -212,24 +212,24 @@ export default function Home() {
               {
                 no: "I",
                 icon: Search,
-                title: t("分数查院校", "Score to universities"),
+                title: t("有成绩规划", "Plan from grades"),
                 desc: t(
                   "输入预计 ATAR 与已选科目，按稳妥、匹配、冲刺三档列出可申请的院校与专业，并标注先修科目是否满足。",
                   "Enter a projected ATAR and current subjects to see every reachable programme sorted into safety, match and reach bands, with prerequisite gaps flagged.",
                 ),
                 href: "/wace/forward",
-                cta: t("开始正向查询", "Run a forward search"),
+                cta: t("按成绩查询", "Start from grades"),
               },
               {
                 no: "II",
                 icon: GraduationCap,
-                title: t("院校查门槛", "University to threshold"),
+                title: t("由目标规划", "Plan from a target"),
                 desc: t(
                   "先选定目标院校与专业，反推所需 ATAR、必修 WACE 科目、英语要求、附加测试与申请截止日期。",
                   "Select a target university and programme to reveal the required ATAR, compulsory WACE subjects, English requirement, additional tests and application deadline.",
                 ),
                 href: "/wace/reverse",
-                cta: t("开始反向查询", "Run a reverse search"),
+                cta: t("按目标查询", "Start from a target"),
               },
               {
                 no: "III",
@@ -245,13 +245,13 @@ export default function Home() {
               {
                 no: "IV",
                 icon: Ruler,
-                title: t("门槛总表", "Threshold table"),
+                title: t("31 校速查", "31-university table"),
                 desc: t(
                   "一页对照 31 所院校的最低 ATAR、英语要求、申请窗口与数据来源，可直接打印用于家长面谈。",
                   "A single sheet comparing the minimum ATAR, English requirement, application window and source for all 31 universities, ready to print for parent meetings.",
                 ),
                 href: "/wace/table",
-                cta: t("查看总表", "Open the table"),
+                cta: t("查看速查表", "Open the table"),
               },
             ].map((row) => (
               <div

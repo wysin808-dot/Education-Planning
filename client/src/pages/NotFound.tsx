@@ -12,10 +12,10 @@ export default function NotFound() {
   const { t } = useLang();
 
   const links = [
-    { href: "/forward", zh: "按分数查院校", en: "Search by score" },
-    { href: "/reverse", zh: "按院校查门槛", en: "Look up a programme" },
-    { href: "/subjects", zh: "WACE 选课规划", en: "Subject planner" },
-    { href: "/table", zh: "31 校门槛总表", en: "Master table" },
+    { href: "/wace/forward", zh: "WACE 有成绩规划", en: "WACE · plan from grades" },
+    { href: "/wace/reverse", zh: "WACE 由目标规划", en: "WACE · plan from a target" },
+    { href: "/alevel/forward", zh: "A-Level 有成绩规划", en: "A-Level · plan from grades" },
+    { href: "/alevel/reverse", zh: "A-Level 由目标规划", en: "A-Level · plan from a target" },
   ];
 
   return (

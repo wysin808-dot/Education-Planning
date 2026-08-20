@@ -13,10 +13,14 @@ try {
     throw new Error("入口选择页不应显示功能主导航");
   }
 
-  // 第二层功能导航须随所处体系整体更换，不与体系入口混排
+  /**
+   * 两套体系的功能一一对应，导航名称刻意保持完全相同，
+   * 因此这里校验的是链接指向的路径前缀是否随体系整体更换，而不是名称差异。
+   */
+  const LABELS = ["有成绩规划", "由目标规划", "选课规划", "31 校速查", "目标清单"];
   const cases = [
-    { path: "/wace", present: ["分数查院校", "门槛总表"], absent: ["预测成绩查院校", "31 校速查"] },
-    { path: "/alevel", present: ["预测成绩查院校", "31 校速查"], absent: ["分数查院校", "门槛总表"] },
+    { path: "/wace", prefix: "/wace/", foreign: "/alevel/" },
+    { path: "/alevel", prefix: "/alevel/", foreign: "/wace/" },
   ];
 
   for (const c of cases) {
@@ -24,15 +28,19 @@ try {
     const primary = page.locator('nav[aria-label="主导航"]');
     await primary.waitFor({ state: "visible" });
 
-    for (const label of c.present) {
-      if ((await primary.getByRole("link", { name: label, exact: true }).count()) === 0) {
+    for (const label of LABELS) {
+      const link = primary.getByRole("link", { name: label, exact: true });
+      if ((await link.count()) === 0) {
         throw new Error(`${c.path} 的功能导航缺少「${label}」`);
       }
-    }
-    for (const label of c.absent) {
-      if ((await primary.getByRole("link", { name: label, exact: true }).count()) !== 0) {
-        throw new Error(`${c.path} 的功能导航不应出现另一体系的「${label}」`);
+      const href = await link.first().getAttribute("href");
+      if (!href?.startsWith(c.prefix)) {
+        throw new Error(`${c.path} 的「${label}」应指向 ${c.prefix}，实际为 ${href}`);
       }
+    }
+    const foreign = await primary.locator(`a[href^="${c.foreign}"]`).count();
+    if (foreign !== 0) {
+      throw new Error(`${c.path} 的功能导航混入了 ${c.foreign} 的链接`);
     }
 
     // 体系切换器须独立于功能导航，并高亮当前体系
@@ -50,8 +58,9 @@ try {
   await page.getByText("更多", { exact: true }).click();
   await page.getByRole("link", { name: "宣传册" }).waitFor({ state: "visible" });
 
-  console.log("桌面导航验证通过：选择页无功能导航，体系切换与功能导航分层，功能项随体系整体更换，宣传册在「更多」菜单。");
+  console.log(
+    "桌面导航验证通过：选择页无功能导航；两套体系使用同一套功能名称，链接随体系整体更换且不混入另一体系；宣传册在「更多」菜单。",
+  );
 } finally {
   await browser.close();
 }
-

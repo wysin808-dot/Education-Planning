@@ -87,9 +87,9 @@ export default function TableView() {
 
       <div className="border-b border-border bg-paper-deep/45">
         <div className="container py-10">
-          <span className="eyebrow text-brass">{t("门槛总表 · Master Table", "Master Table")}</span>
+          <span className="eyebrow text-brass">{t("WACE · 31 校速查", "WACE · 31-University Table")}</span>
           <h1 className="mt-3 text-[2.25rem] leading-tight text-green">
-            {t("31 所目标院校门槛总表", "Admission thresholds across 31 universities")}
+            {t("31 校速查：ATAR 门槛总览", "31-university table: ATAR thresholds at a glance")}
           </h1>
           <p className="mt-4 max-w-[64ch] font-[family-name:var(--font-serif)] text-[1rem] leading-relaxed text-muted-foreground">
             {t(

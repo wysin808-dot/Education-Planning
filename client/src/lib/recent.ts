@@ -10,15 +10,19 @@ export type RecentTool = {
 
 const STORAGE_KEY = "brentvale-wace-recent-tool";
 
+/**
+ * 名称与页头导航保持同一套说法（有成绩规划 / 由目标规划 / 选课规划 / 31 校速查），
+ * 仅以体系前缀区分，避免同一功能在站内出现两种叫法。
+ */
 export const RECENT_TOOLS: Record<string, RecentTool> = {
-  "/wace/forward": { href: "/wace/forward", zh: "WACE 分数查院校", en: "WACE score to universities" },
-  "/wace/reverse": { href: "/wace/reverse", zh: "WACE 院校查门槛", en: "WACE university to ATAR" },
+  "/wace/forward": { href: "/wace/forward", zh: "WACE 有成绩规划", en: "WACE · plan from grades" },
+  "/wace/reverse": { href: "/wace/reverse", zh: "WACE 由目标规划", en: "WACE · plan from a target" },
   "/wace/subjects": { href: "/wace/subjects", zh: "WACE 选课规划", en: "WACE subject planning" },
-  "/wace/table": { href: "/wace/table", zh: "WACE 门槛总表", en: "WACE threshold table" },
-  "/alevel/forward": { href: "/alevel/forward", zh: "A-Level 预测成绩查院校", en: "A-Level grades to universities" },
-  "/alevel/reverse": { href: "/alevel/reverse", zh: "A-Level 院校专业查条件", en: "A-Level programme requirements" },
+  "/wace/table": { href: "/wace/table", zh: "WACE 31 校速查", en: "WACE 31-university table" },
+  "/alevel/forward": { href: "/alevel/forward", zh: "A-Level 有成绩规划", en: "A-Level · plan from grades" },
+  "/alevel/reverse": { href: "/alevel/reverse", zh: "A-Level 由目标规划", en: "A-Level · plan from a target" },
   "/alevel/subjects": { href: "/alevel/subjects", zh: "A-Level 选课规划", en: "A-Level subject planning" },
-  "/alevel/table": { href: "/alevel/table", zh: "A-Level 门槛速查", en: "A-Level threshold reference" },
+  "/alevel/table": { href: "/alevel/table", zh: "A-Level 31 校速查", en: "A-Level 31-university table" },
 };
 
 export function saveRecentTool(path: string) {

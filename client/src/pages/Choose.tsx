@@ -43,10 +43,10 @@ export default function Choose() {
         { k: t("查询方向", "Lookup"), v: t("正向 / 反向", "Forward / Reverse") },
       ],
       index: [
-        { zh: "分数查院校", en: "Score → universities" },
-        { zh: "院校查门槛", en: "University → ATAR" },
+        { zh: "有成绩规划", en: "Plan from grades" },
+        { zh: "由目标规划", en: "Plan from a target" },
         { zh: "选课规划", en: "Subject planner" },
-        { zh: "门槛总表", en: "Threshold table" },
+        { zh: "31 校速查", en: "31-university table" },
         { zh: "目标清单", en: "Shortlist" },
       ],
       cta: t("进入 WACE 规划系统", "Enter the WACE planner"),
@@ -67,8 +67,8 @@ export default function Choose() {
         { k: t("查询方向", "Lookup"), v: t("正向 / 反向", "Forward / Reverse") },
       ],
       index: [
-        { zh: "预测成绩查院校", en: "Grades → universities" },
-        { zh: "院校专业查条件", en: "Programme → requirements" },
+        { zh: "有成绩规划", en: "Plan from grades" },
+        { zh: "由目标规划", en: "Plan from a target" },
         { zh: "选课规划", en: "Subject planner" },
         { zh: "31 校速查", en: "31-university table" },
         { zh: "目标清单", en: "Shortlist" },
@@ -93,8 +93,8 @@ export default function Choose() {
               </h1>
               <p className="mt-5 max-w-[58ch] font-[family-name:var(--font-serif)] text-[1.0625rem] leading-relaxed text-muted-foreground">
                 {t(
-                  "BCI 提供两套彼此独立的升学规划系统。两者覆盖相同的 31 所目标院校与 636 条专业条目，但成绩口径、选课清单与查询逻辑完全不同——请按学生正在修读的课程进入。",
-                  "BCI runs two independent planning systems. Both cover the same 31 target universities and 636 programme entries, but they differ entirely in grade basis, subject list and lookup logic. Enter through the curriculum the student is actually taking.",
+                  "博林国际学院提供两套彼此独立的升学规划系统。两者覆盖相同的 31 所目标院校与 636 条专业条目，功能一一对应，仅成绩口径与可选课程不同——请按学生正在修读的课程进入。",
+                  "Brentvale College International runs two independent planning systems. Both cover the same 31 target universities and 636 programme entries with matching tools; only the grade basis and available subjects differ. Enter through the curriculum the student is actually taking.",
                 )}
               </p>
             </Reveal>

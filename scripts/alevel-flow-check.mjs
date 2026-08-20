@@ -34,7 +34,7 @@ try {
   await expectVisible("text=Official sources", "English reverse interface");
 
   await page.goto(`${baseURL}/alevel/table`, { waitUntil: "networkidle" });
-  await expectVisible("text=31-university A-Level reference", "English table heading");
+  await expectVisible("text=31-university table: A-Level conditions at a glance", "English table heading");
   await expectVisible("text=Official source", "table source link");
 
   if (failures.length) throw new Error(failures.join("\n"));

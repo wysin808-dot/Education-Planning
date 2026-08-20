@@ -42,7 +42,7 @@ export function Wordmark({
               "block whitespace-nowrap font-[family-name:var(--font-serif)] text-[0.75rem] font-semibold tracking-[0.13em] sm:text-[0.8125rem]",
               light ? "text-paper" : "text-brand-red",
             )}>
-            BRENTVALE
+            {t("博林国际学院", "BRENTVALE")}
           </span>
           <span
             className={cn(
@@ -101,22 +101,28 @@ export const CURRICULA = [
   },
 ] as const;
 
-/** 「章」层：各体系内部的功能页，两套结构对位 */
+/**
+ * 「章」层：各体系内部的功能页。
+ *
+ * 两套体系的功能一一对应，因此导航名称必须完全相同——家长在入口页并排看到两栏时，
+ * 同名才读得出「功能一样，只是课程不同」。两者真正的差异（ATAR 分数 / 预测等级）
+ * 由每项下方的说明文字承担，不塞进导航名称里。
+ */
 const WACE_NAV: NavItem[] = [
   { href: "/wace", zh: "总览", en: "Overview", noteZh: "WACE 升学规划入口与两种查询路径", noteEn: "WACE pathways entry and two lookup routes" },
-  { href: "/wace/forward", zh: "分数查院校", en: "Score → Universities", noteZh: "输入 ATAR，查看可申请的院校与专业", noteEn: "Enter ATAR to find reachable universities and programmes" },
-  { href: "/wace/reverse", zh: "院校查门槛", en: "University → ATAR", noteZh: "锁定院校专业，反查 ATAR 与先修要求", noteEn: "Start with a programme and work back to its requirements" },
+  { href: "/wace/forward", zh: "有成绩规划", en: "Plan from Grades", noteZh: "输入预计 ATAR，查看可申请的院校与专业", noteEn: "Enter a projected ATAR to find reachable universities and programmes" },
+  { href: "/wace/reverse", zh: "由目标规划", en: "Plan from a Target", noteZh: "锁定院校专业，反查 ATAR、先修与分年选课", noteEn: "Start from a programme and work back to its ATAR, prerequisites and year-by-year subjects" },
   { href: "/wace/subjects", zh: "选课规划", en: "Subject Planner", noteZh: "按收藏目标规划 WACE 选课组合", noteEn: "Plan WACE subjects from your shortlisted goals" },
-  { href: "/wace/table", zh: "门槛总表", en: "Threshold Table", noteZh: "31 所院校门槛的打印速查表", noteEn: "A printable quick-reference threshold table" },
+  { href: "/wace/table", zh: "31 校速查", en: "31-University Table", noteZh: "31 所院校 ATAR 门槛的打印速查表", noteEn: "A printable quick-reference table of ATAR thresholds" },
   { href: "/wace/shortlist", zh: "目标清单", en: "Shortlist", noteZh: "汇总收藏专业，形成个人目标清单", noteEn: "Review saved programmes as a personal shortlist" },
 ];
 
 const ALEVEL_NAV: NavItem[] = [
   { href: "/alevel", zh: "总览", en: "Overview", noteZh: "以 Cambridge A-Level 预测等级规划院校与专业", noteEn: "Plan university options through Cambridge A-Level predictions" },
-  { href: "/alevel/forward", zh: "预测成绩查院校", en: "Grades → Universities", noteZh: "输入 3–4 门预测等级，查看可行院校", noteEn: "Enter three to four predicted grades to see reachable universities" },
-  { href: "/alevel/reverse", zh: "院校专业查条件", en: "Programme → Requirements", noteZh: "锁定专业，反查等级条件与指定科目", noteEn: "Start with a programme and work back to grades and required subjects" },
+  { href: "/alevel/forward", zh: "有成绩规划", en: "Plan from Grades", noteZh: "输入 3–4 门预测等级，查看可申请的院校与专业", noteEn: "Enter three to four predicted grades to find reachable universities and programmes" },
+  { href: "/alevel/reverse", zh: "由目标规划", en: "Plan from a Target", noteZh: "锁定院校专业，反查等级条件、指定科目与分年选课", noteEn: "Start from a programme and work back to its grades, required subjects and year-by-year plan" },
   { href: "/alevel/subjects", zh: "选课规划", en: "Subject Planner", noteZh: "按收藏目标规划 7 门 Cambridge 课程", noteEn: "Plan the seven Cambridge subjects from your shortlist" },
-  { href: "/alevel/table", zh: "31 校速查", en: "31-University Table", noteZh: "按地区分章的 A-Level 条件速查", noteEn: "A-Level requirements by region" },
+  { href: "/alevel/table", zh: "31 校速查", en: "31-University Table", noteZh: "31 所院校 A-Level 等级条件的分区速查", noteEn: "A printable quick-reference table of A-Level conditions by region" },
   { href: "/alevel/shortlist", zh: "目标清单", en: "Shortlist", noteZh: "与 WACE 共用的个人目标清单", noteEn: "The shared personal shortlist" },
 ];
 
@@ -376,7 +382,7 @@ export function SiteFooter() {
           <Wordmark variant="light" />
           <p className="mt-5 max-w-md font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-paper/80">
             {t(
-              "Brentvale College International 为 WACE 与 Cambridge A-Level 学生提供升学门槛查询与选课决策支持。本工具的所有要求均引自各校官方招生页面，用于规划参考。",
+              "博林国际学院为 WACE 与 Cambridge A-Level 学生提供升学门槛查询与选课决策支持。本工具的所有要求均引自各校官方招生页面，用于规划参考。",
               "Brentvale College International provides WACE and Cambridge A-Level students with admission lookups and subject-selection guidance. All requirements are drawn from official university admissions pages and are intended for planning reference.",
             )}
           </p>
@@ -455,7 +461,7 @@ export function SiteFooter() {
         <div className="container flex flex-col gap-2 py-5 text-[0.75rem] text-paper/60 md:flex-row md:items-center md:justify-between">
           <span>
             {t(
-              "© 2026 Brentvale College International · 招生与升学指导办公室",
+              "© 2026 博林国际学院 Brentvale College International · 招生与升学指导办公室",
               "© 2026 Brentvale College International · Admissions & Careers Office",
             )}
           </span>

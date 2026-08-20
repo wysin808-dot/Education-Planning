@@ -146,7 +146,7 @@ export default function Subjects() {
       {/* 标题区 */}
       <section className="border-b border-border bg-paper-deep/35">
         <div className="container py-9 lg:py-12">
-          <p className="eyebrow text-brass">WACE · SUBJECT PLANNER</p>
+          <p className="eyebrow text-brass">{t("WACE · 选课规划", "WACE · Subject Planner")}</p>
           <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">
             {t("Year 11 与 Year 12 选课方案", "Year 11 and Year 12 subject plan")}
           </h1>

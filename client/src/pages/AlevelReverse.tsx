@@ -111,7 +111,7 @@ export default function AlevelReverse() {
     <div className="min-h-screen bg-paper">
       <SiteHeader />
       <main>
-        <section className="border-b border-border bg-paper-deep/35"><div className="container py-9 lg:py-12"><p className="eyebrow text-brass">CAMBRIDGE A-LEVEL · REVERSE LOOKUP</p><h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("院校专业查条件", "Programme → requirements")}</h1><p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("选择院校与专业，查看 Cambridge International A-Level 的公开等级条件、BCI 可用科目、英语、截止日期与附加选拔。", "Choose a university and programme to review published Cambridge International A-Level conditions, BCI-compatible subjects, English, deadlines and additional selection.")}</p></div></section>
+        <section className="border-b border-border bg-paper-deep/35"><div className="container py-9 lg:py-12"><p className="eyebrow text-brass">{t("A-Level · 由目标规划", "A-Level · Plan from a Target")}</p><h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("由目标规划", "Plan from a Target")}</h1><p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("选择院校与专业，查看 Cambridge International A-Level 的公开等级条件、BCI 可用科目、英语、截止日期与附加选拔。", "Choose a university and programme to review published Cambridge International A-Level conditions, BCI-compatible subjects, English, deadlines and additional selection.")}</p></div></section>
         <section className="container grid gap-8 py-9 lg:grid-cols-[22rem_1fr] lg:gap-12">
           <aside className="no-print lg:sticky lg:top-24 lg:self-start">
             <div className="border border-border bg-card p-5">

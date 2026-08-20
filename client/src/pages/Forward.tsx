@@ -280,10 +280,10 @@ export default function Forward() {
 
       <div className="border-b border-border bg-paper-deep/45">
         <div className="container py-10">
-          <span className="eyebrow text-brass">{t("正向查询 · Forward Match", "Forward Match")}</span>
+          <span className="eyebrow text-brass">{t("WACE · 有成绩规划", "WACE · Plan from Grades")}</span>
           <h1 className="mt-3 text-[2.25rem] leading-tight text-green">
             {t(
-              "按预计 ATAR 查可申请的院校与专业",
+              "有成绩规划：按预计 ATAR 查院校与专业",
               "Find reachable universities and programmes by projected ATAR",
             )}
           </h1>

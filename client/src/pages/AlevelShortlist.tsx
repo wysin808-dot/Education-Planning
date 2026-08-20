@@ -22,7 +22,7 @@ export default function AlevelShortlist() {
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
             
-            <p className="eyebrow text-brass">CAMBRIDGE A-LEVEL · SHORTLIST</p>
+            <p className="eyebrow text-brass">{t("A-Level · 目标清单", "A-Level · Shortlist")}</p>
             <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
               <div>
                 <h1 className="font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("A-Level 目标清单", "A-Level shortlist")}</h1>
@@ -71,7 +71,7 @@ export default function AlevelShortlist() {
             <div className="border-l-2 border-brass bg-paper-deep/35 p-8">
               <Heart className="h-5 w-5 text-brass" />
               <h2 className="mt-3 font-[family-name:var(--font-serif)] text-2xl text-green">{t("还没有收藏的目标。", "No saved goals yet.")}</h2>
-              <p className="mt-3 max-w-xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("从 A-Level 正向查询或院校专业查询中，把候选专业加入清单；这里会自动显示其 A-Level 等级条件与 BCI 科目映射。", "Save programmes from the A-Level forward or reverse lookup. This page will automatically show their grade conditions and BCI subject mapping.")}</p>
+              <p className="mt-3 max-w-xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("在「有成绩规划」或「由目标规划」页把候选专业加入清单；这里会自动显示其 A-Level 等级条件与 BCI 科目映射。", "Save programmes from Plan from Grades or Plan from a Target. This page will automatically show their grade conditions and BCI subject mapping.")}</p>
               <Link href="/alevel/forward" className="mt-5 inline-flex items-center gap-2 bg-green px-4 py-2.5 text-[0.8125rem] text-primary-foreground">{t("开始查询", "Start lookup")} <ArrowRight className="h-4 w-4" /></Link>
             </div>
           )}

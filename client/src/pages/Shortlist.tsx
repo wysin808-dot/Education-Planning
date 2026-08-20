@@ -107,7 +107,7 @@ export default function Shortlist() {
           <div className="border border-dashed border-border px-8 py-20 text-center">
             <p className="font-[family-name:var(--font-serif)] text-[1rem] leading-relaxed text-muted-foreground">
               {t(
-                "清单还是空的。在「分数查院校」或「院校查门槛」页点击收藏按钮，即可把候选专业加入这里。",
+                "清单还是空的。在「有成绩规划」或「由目标规划」页点击收藏按钮，即可把候选专业加入这里。",
                 "The shortlist is empty. Use the save button on the forward or reverse lookup pages to add candidate programmes.",
               )}
             </p>
@@ -115,13 +115,13 @@ export default function Shortlist() {
               <Link
                 href="/wace/forward"
                 className="inline-flex items-center gap-2 border border-green bg-green px-5 py-2.5 text-[0.875rem] text-primary-foreground transition-colors hover:bg-green-soft">
-                {t("按分数查院校", "Search by ATAR")}
+                {t("有成绩规划", "Plan from grades")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/wace/reverse"
                 className="inline-flex items-center gap-2 border border-green px-5 py-2.5 text-[0.875rem] text-green transition-colors hover:bg-green/8">
-                {t("按院校查门槛", "Search by university")}
+                {t("由目标规划", "Plan from a target")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>

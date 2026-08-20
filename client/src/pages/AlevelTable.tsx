@@ -42,9 +42,9 @@ export default function AlevelTable() {
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
             
-            <p className="eyebrow text-brass">CAMBRIDGE A-LEVEL · REFERENCE TABLE</p>
-            <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("31 校 A-Level 口径速查", "31-university A-Level reference")}</h1>
-            <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("显示每校公开的 Cambridge/International A-Level 通用资格与口径类型。专业级条件请进入反向查询复核。", "Shows each university's published Cambridge/International A-Level general qualification and requirement type. Use reverse lookup for programme-level review.")}</p>
+            <p className="eyebrow text-brass">{t("A-Level · 31 校速查", "A-Level · 31-University Table")}</p>
+            <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("31 校速查：A-Level 等级条件总览", "31-university table: A-Level conditions at a glance")}</h1>
+            <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("显示每校公开的 Cambridge/International A-Level 通用资格与口径类型。专业级条件请到「由目标规划」页复核。", "Shows each university's published Cambridge/International A-Level general qualification and requirement type. Use Plan from a Target for programme-level review.")}</p>
           </div>
         </section>
 

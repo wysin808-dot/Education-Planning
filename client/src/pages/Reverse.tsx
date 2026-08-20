@@ -161,9 +161,9 @@ export default function Reverse() {
         {/* 标题区：与 A-Level 反查页同一规格 */}
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
-            <p className="eyebrow text-brass">WACE · REVERSE LOOKUP</p>
+            <p className="eyebrow text-brass">{t("WACE · 由目标规划", "WACE · Plan from a Target")}</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">
-              {t("院校专业查门槛", "Programme → requirements")}
+              {t("由目标规划", "Plan from a Target")}
             </h1>
             <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">
               {t(

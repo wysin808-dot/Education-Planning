@@ -43,10 +43,10 @@ export default function AlevelForward() {
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
             
-            <p className="eyebrow text-brass">CAMBRIDGE A-LEVEL · FORWARD MATCH</p>
+            <p className="eyebrow text-brass">{t("A-Level · 有成绩规划", "A-Level · Plan from Grades")}</p>
             <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <h1 className="font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("预测成绩查院校", "Predicted grades → universities")}</h1>
+                <h1 className="font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("有成绩规划：按预测等级查院校与专业", "Find reachable universities and programmes by predicted grades")}</h1>
                 <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("输入至少 3 门预测 A-Level 成绩。公开等级条件会被分层；未公布等级的课程保留为顾问复核。", "Enter predicted grades for at least three A-Level subjects. Published grade profiles are tiered; unpublished thresholds remain for counsellor review.")}</p>
                 <OfferGradeRule compact className="mt-5 max-w-3xl" />
               </div>
