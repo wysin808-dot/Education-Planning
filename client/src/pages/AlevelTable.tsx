@@ -5,7 +5,7 @@
 import { useMemo, useState } from "react";
 import { ExternalLink, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
-import { AlevelNav, CurriculumSwitch } from "@/components/CurriculumSwitch";
+import { AlevelNav } from "@/components/CurriculumSwitch";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { useLang } from "@/contexts/LangContext";
@@ -41,7 +41,6 @@ export default function AlevelTable() {
       <main>
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
-            <CurriculumSwitch active="alevel" />
             <AlevelNav active="/alevel/table" />
             <p className="eyebrow mt-7 text-brass">CAMBRIDGE A-LEVEL · REFERENCE TABLE</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("31 校 A-Level 口径速查", "31-university A-Level reference")}</h1>

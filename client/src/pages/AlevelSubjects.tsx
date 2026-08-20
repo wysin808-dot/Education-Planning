@@ -4,7 +4,7 @@
 import { BookOpenCheck, ChevronRight, CircleAlert, GraduationCap } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
-import { AlevelNav, CurriculumSwitch } from "@/components/CurriculumSwitch";
+import { AlevelNav } from "@/components/CurriculumSwitch";
 import { useLang } from "@/contexts/LangContext";
 import { useShortlist } from "@/contexts/ShortlistContext";
 import { ALEVEL_FIELD_ADVICE, ALEVEL_SUBJECTS } from "@/data/alevel";
@@ -23,7 +23,6 @@ export default function AlevelSubjects() {
       <main>
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
-            <CurriculumSwitch active="alevel" />
             <AlevelNav active="/alevel/subjects" />
             <p className="eyebrow mt-7 text-brass">CAMBRIDGE A-LEVEL · SUBJECT PLANNER</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">

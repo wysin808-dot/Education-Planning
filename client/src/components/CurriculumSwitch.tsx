@@ -3,24 +3,6 @@ import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 
-export function CurriculumSwitch({ active, className }: { active: "wace" | "alevel"; className?: string }) {
-  const { t } = useLang();
-  return (
-    <div className={cn("no-print inline-flex border border-border bg-paper-deep/40 p-1", className)} aria-label={t("课程体系切换", "Curriculum switcher")}>
-      <Link
-        href="/"
-        className={cn("px-3 py-1.5 text-[0.75rem] transition-colors", active === "wace" ? "bg-green text-primary-foreground" : "text-muted-foreground hover:text-green")}>
-        WACE
-      </Link>
-      <Link
-        href="/alevel"
-        className={cn("px-3 py-1.5 text-[0.75rem] transition-colors", active === "alevel" ? "bg-green text-primary-foreground" : "text-muted-foreground hover:text-green")}>
-        Cambridge A-Level
-      </Link>
-    </div>
-  );
-}
-
 const ALEVEL_LINKS = [
   { href: "/alevel", zh: "总览", en: "Overview" },
   { href: "/alevel/forward", zh: "预测成绩查院校", en: "Grades → Universities" },

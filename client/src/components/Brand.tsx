@@ -79,18 +79,18 @@ export function Wordmark({
 }
 
 const NAV = [
-  { href: "/", zh: "首页", en: "Home" },
+  { href: "/", zh: "WACE", en: "WACE" },
+  { href: "/alevel", zh: "A-Level", en: "A-Level" },
   { href: "/forward", zh: "分数查院校", en: "Score → Universities" },
   { href: "/reverse", zh: "院校查门槛", en: "University → ATAR" },
   { href: "/subjects", zh: "选课规划", en: "Subject Planner" },
   { href: "/table", zh: "门槛总表", en: "Threshold Table" },
   { href: "/shortlist", zh: "目标清单", en: "Shortlist" },
   { href: "/brochure", zh: "宣传册", en: "Brochure" },
-  { href: "/alevel", zh: "Cambridge A-Level", en: "Cambridge A-Level" },
 ];
 
 const NAV_DETAILS: Record<string, { zh: string; en: string }> = {
-  "/": { zh: "总览与两种查询入口", en: "Overview and two search starting points" },
+  "/": { zh: "WACE 升学规划入口与两种查询路径", en: "WACE pathways entry and two lookup routes" },
   "/forward": { zh: "输入 ATAR，查看可申请的院校与专业", en: "Enter ATAR to find reachable universities and programmes" },
   "/reverse": { zh: "锁定院校专业，反查 ATAR 与先修要求", en: "Start with a programme and work back to its requirements" },
   "/subjects": { zh: "按收藏目标规划 WACE 选课组合", en: "Plan WACE subjects from your shortlisted goals" },
@@ -100,8 +100,8 @@ const NAV_DETAILS: Record<string, { zh: string; en: string }> = {
   "/alevel": { zh: "以 Cambridge A-Level 预测等级规划院校与专业", en: "Plan university and programme options through Cambridge A-Level predictions" },
 };
 
-const PRIMARY_NAV = NAV.filter((item) => item.href !== "/brochure" && item.href !== "/alevel");
-const MORE_NAV = NAV.filter((item) => item.href === "/brochure" || item.href === "/alevel");
+const PRIMARY_NAV = NAV.filter((item) => item.href !== "/brochure");
+const MORE_NAV = NAV.filter((item) => item.href === "/brochure");
 
 function LangToggle({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const { lang, setLang } = useLang();
@@ -160,14 +160,16 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden min-w-0 items-center justify-center gap-0.5 lg:flex" aria-label={t("主导航", "Primary navigation")}>
           {PRIMARY_NAV.map((item) => {
-            const active = path === item.href;
+            const isCurriculumLink = item.href === "/" || item.href === "/alevel";
+            const active = item.href === "/" ? !path.startsWith("/alevel") : item.href === "/alevel" ? path.startsWith("/alevel") : path === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "relative whitespace-nowrap px-2 py-2 text-[0.75rem] transition-colors duration-150 xl:px-2.5 xl:text-[0.8125rem]",
-                  active ? "text-green" : "text-muted-foreground hover:text-green",
+                  isCurriculumLink && "border border-border px-2.5 xl:px-3",
+                  active ? "bg-green text-primary-foreground" : "text-muted-foreground hover:text-green",
                 )}>
                 {lang === "zh" ? item.zh : item.en}
                 {item.href === "/shortlist" && count > 0 && (
@@ -175,7 +177,7 @@ export function SiteHeader() {
                     {count}
                   </span>
                 )}
-                {active && <span className="absolute inset-x-2 -bottom-px h-[2px] bg-brass" />}
+                {active && !isCurriculumLink && <span className="absolute inset-x-2 -bottom-px h-[2px] bg-brass" />}
               </Link>
             );
           })}
