@@ -1,6 +1,7 @@
 /**
  * Cambridge International A-Level 结构化规则。
- * 仅包含 BCI 已确认的 7 门课程；publishedGradeProfile 仅在官方明确公开等级组合时才允许填写。
+ * 仅包含 BCI 官网课程页公布的可选课程（English Language 按雅思门槛单独处理，不占选课名额）；
+ * publishedGradeProfile 仅在官方明确公开等级组合时才允许填写。
  */
 
 export type AlevelSubjectKey =
@@ -9,8 +10,11 @@ export type AlevelSubjectKey =
   | "physics"
   | "chemistry"
   | "biology"
+  | "computerScience"
   | "economics"
-  | "business";
+  | "business"
+  | "accounting"
+  | "geography";
 
 export type AlevelProfileType =
   | "published_grade"
@@ -121,9 +125,10 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "biology",
           "physics",
           "mathematics",
-          "furtherMathematics"
+          "furtherMathematics",
+          "computerScience"
         ],
-        "noteZh": "官方未为广义 Science 统一公布 Cambridge A-Level 等级或科目组合。代表性课程中，Food Science and Technology 要求指定六类科目中任意两科的 Year 12 or higher level pass；Pharmacy/Pharmaceutical Science 要求 Chemistry 加 Biology、Physics 或 Mathematics 中之一的 strong Year 12 pass 或 strong higher level pass。",
+        "noteZh": "官方未为广义 Science 统一公布 Cambridge A-Level 等级或科目组合。代表性课程中，Food Science and Technology 要求指定六类科目中任意两科（含 Computing）的 Year 12 or higher level pass；Pharmacy/Pharmaceutical Science 要求 Chemistry 加 Biology、Physics 或 Mathematics 中之一的 strong Year 12 pass 或 strong higher level pass。",
         "noteEn": "Food Science and Technology requires any two of Chemistry, Biology, Physics, Physical Science, Computing, Mathematics or Further Mathematics. Pharmacy and Pharmaceutical Science require a strong Year 12 pass or strong higher level pass in Chemistry and Biology or Physics or Mathematics. No uniform Cambridge A-Level threshold is published for Environmental Studies.",
         "extras": []
       },
@@ -136,7 +141,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "physics",
           "economics"
         ],
-        "noteZh": "Architecture 要求 Chemistry 或 Mathematics 或 Physics 的 Year 12 or higher level pass；Industrial Design 要求 Arts 或 Economics 或 Mathematics 或 Physics 的 Year 12 or higher level pass。Arts 不属于允许映射的七个 BCI 科目，因此未列入 subjects；未公布字母等级组合。",
+        "noteZh": "Architecture 要求 Chemistry 或 Mathematics 或 Physics 的 Year 12 or higher level pass；Industrial Design 要求 Arts 或 Economics 或 Mathematics 或 Physics 的 Year 12 or higher level pass。Arts 不属于允许映射的BCI 可选课程，因此未列入 subjects；未公布字母等级组合。",
         "noteEn": "Architecture requires a Year 12 or higher level pass in Chemistry or Mathematics or Physics or Physical Science. Industrial Design requires a Year 12 or higher level pass in Arts or Economics or Mathematics or Physics and includes an interview. Shortlisted applicants for Architecture, Industrial Design and Landscape Architecture may have a test or interview.",
         "extras": []
       },
@@ -144,7 +149,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "Humanities and Sciences、Philosophy, Politics, and Economics 等代表性课程未在已核验国际资格先修资料中统一列出 Cambridge A-Level 字母等级门槛或七个 BCI 科目必修组合；按课程页面及具体 programme prerequisites 执行。",
+        "noteZh": "Humanities and Sciences、Philosophy, Politics, and Economics 等代表性课程未在已核验国际资格先修资料中统一列出 Cambridge A-Level 字母等级门槛或BCI 可选课程必修组合；按课程页面及具体 programme prerequisites 执行。",
         "noteEn": "For Humanities and Sciences, refer to the NUS majors pages; the official prerequisite PDF does not set out a uniform Cambridge A-Level letter-grade threshold. For Philosophy, Politics, and Economics, refer to the CHS programme page. No additional examination or interview is published for the other representative courses noted.",
         "extras": []
       },
@@ -190,6 +195,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "mathematics"
         ],
         "recommendedSubjects": [
+          "computerScience",
           "physics"
         ],
         "noteZh": "Computer Science 要求 Senior High School Level Mathematics 或 Physics；指定 UK CIE A-Level Computer Science 可替代表中 Physics 选项。Computer Engineering 要求 Mathematics 加 Physics/Chemistry/Biology，并另需 Junior High School Physics；Data Science and Artificial Intelligence 要求 Mathematics。官方未公布 Cambridge A-Level 固定等级线。",
@@ -218,7 +224,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "economics",
           "business"
         ],
-        "noteZh": "Business 单独课程的国际 Cambridge A-Level 固定等级门槛未在所查官方页面公布。相关 Economics 课程要求 Junior High School Level Additional Mathematics 及 Senior High School Level English，并按 selective basis 审核；Economics and Data Science 要求 Mathematics 及 good English。English 不属于本字段限定的七个 BCI 科目。",
+        "noteZh": "Business 单独课程的国际 Cambridge A-Level 固定等级门槛未在所查官方页面公布。相关 Economics 课程要求 Junior High School Level Additional Mathematics 及 Senior High School Level English，并按 selective basis 审核；Economics and Data Science 要求 Mathematics 及 good English。English 不属于本字段限定的BCI 可选课程。",
         "noteEn": "Economics requires a good grade in Additional Mathematics at Junior High School Level and a good grade in English at Senior High School Level, on a selective basis. Economics and Data Science requires Mathematics at Senior High School Level plus good English. No fixed international Cambridge A-Level grade threshold for a standalone Business programme was published in the reviewed official pages.",
         "extras": []
       },
@@ -232,7 +238,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [
           "mathematics"
         ],
-        "noteZh": "Biological Sciences、Biomedical Sciences and BioBusiness 要求 Junior High School Level Additional Mathematics 加 Senior High School Level Physics/Chemistry/Biology；Chemistry and Biological Chemistry 要求 Chemistry 加 Mathematics/Physics。此处仅映射七个 BCI 科目，Additional Mathematics 的层级要求保留在说明中。官方未公布 Cambridge A-Level 固定等级线。",
+        "noteZh": "Biological Sciences、Biomedical Sciences and BioBusiness 要求 Junior High School Level Additional Mathematics 加 Senior High School Level Physics/Chemistry/Biology；Chemistry and Biological Chemistry 要求 Chemistry 加 Mathematics/Physics。此处仅映射BCI 可选课程，Additional Mathematics 的层级要求保留在说明中。官方未公布 Cambridge A-Level 固定等级线。",
         "noteEn": "Biological Sciences requires a good grade in Additional Mathematics at Junior High School Level plus Physics/Chemistry/Biology at Senior High School Level. Biomedical Sciences and BioBusiness require a good grade in Additional Mathematics plus Physics/Chemistry/Biology. Chemistry and Biological Chemistry require Chemistry plus Mathematics/Physics. No fixed Cambridge A-Level grade threshold was published.",
         "extras": []
       },
@@ -242,7 +248,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "mathematics"
         ],
         "recommendedSubjects": [],
-        "noteZh": "Art, Design & Media 要求 Junior High School Mathematics 及 Senior High School English，并需 portfolio、personal statement/writing samples、creative project 和 observational drawing。English 不属于本字段限定的七个 BCI 科目；官方未公布 Cambridge A-Level 固定等级线。",
+        "noteZh": "Art, Design & Media 要求 Junior High School Mathematics 及 Senior High School English，并需 portfolio、personal statement/writing samples、creative project 和 observational drawing。English 不属于本字段限定的BCI 可选课程；官方未公布 Cambridge A-Level 固定等级线。",
         "noteEn": "Art, Design & Media requires Junior High School Mathematics and good Senior High School English, together with a portfolio, personal statement/writing samples, creative project, and observational drawing. No fixed Cambridge A-Level grade threshold was published.",
         "extras": []
       },
@@ -250,7 +256,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "English、History、Philosophy 等部分 Arts/Humanities 课程要求 Senior High School Level General Paper/English，部分课程有 selection interview；Chinese 相关课程另要求 Chinese at GCE O-Level 或 HSK Level 6。上述科目不在七个 BCI 科目范围内，因此未填入 subjects。官方未公布 Cambridge A-Level 固定等级线。",
+        "noteZh": "English、History、Philosophy 等部分 Arts/Humanities 课程要求 Senior High School Level General Paper/English，部分课程有 selection interview；Chinese 相关课程另要求 Chinese at GCE O-Level 或 HSK Level 6。上述科目不在BCI 可选课程范围内，因此未填入 subjects。官方未公布 Cambridge A-Level 固定等级线。",
         "noteEn": "English requires a good grade in General Paper/English at Senior High School Level and a selection interview; some History and Philosophy programmes also require a good grade in General Paper/English. Chinese-related programmes additionally require Chinese at GCE O-Level/HSK Level 6. No fixed Cambridge A-Level grade threshold was published.",
         "extras": []
       },
@@ -735,7 +741,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": "AAA in 3 non-language GCE/IAL Advanced Level subjects，或 English + 2 non-language GCE/IAL Advanced Level subjects",
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "LLB官网明确列出至少AAA，且应在one sitting；科目规则为非语言科目，或English加两门非语言AL科目。七个BCI科目中未指定必修或推荐科目。",
+        "noteZh": "LLB官网明确列出至少AAA，且应在one sitting；科目规则为非语言科目，或English加两门非语言AL科目。BCI 可选课程中未指定必修或推荐科目。",
         "noteEn": "LLB: at least AAA in 3 non-language GCE/IAL Advanced Level subjects, or English plus 2 non-language GCE/IAL Advanced Level subjects, normally in one sitting. The official page states that most admitted applicants in the past exceeded this threshold.",
         "extras": []
       },
@@ -781,7 +787,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "已核验官方研究未识别或公布可归入Design类别的课程级A-Level等级或七个BCI科目规则，不适用。",
+        "noteZh": "已核验官方研究未识别或公布可归入Design类别的课程级A-Level等级或BCI 可选课程规则，不适用。",
         "noteEn": "For the relevant arts, humanities and social science programmes, no programme-level minimum grades or prerequisite subjects for International A-Level have been published. The CUHK general requirement applies; individual programmes may have language or programme-specific requirements.",
         "extras": []
       },
@@ -797,7 +803,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "已核验官方研究未识别或公布可归入Education类别的课程级A-Level等级或七个BCI科目规则，不适用。",
+        "noteZh": "已核验官方研究未识别或公布可归入Education类别的课程级A-Level等级或BCI 可选课程规则，不适用。",
         "noteEn": "No programme-level Cambridge A-Level minimum grades or subject requirements were published in the verified official materials for Education. Do not infer additional requirements; apply the CUHK general requirement of 3AL passes / 2AL+2AS passes and check the specific programme.",
         "extras": []
       }
@@ -1024,7 +1030,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [
           "mathematics"
         ],
-        "noteZh": "官方未公布计算机相关专业最低A-Level等级。Computer and Mathematical Sciences整体及Computing and AI组合标示无偏好科目；Applied Mathematics and Finance Analytics偏好English Language及Mathematics。因English Language不属于允许映射的七个BCI科目，唯一可映射的偏好科目为mathematics。",
+        "noteZh": "官方未公布计算机相关专业最低A-Level等级。Computer and Mathematical Sciences整体及Computing and AI组合标示无偏好科目；Applied Mathematics and Finance Analytics偏好English Language及Mathematics。因English Language不属于允许映射的BCI 可选课程，唯一可映射的偏好科目为mathematics。",
         "noteEn": "Computer and Mathematical Sciences has no preferred subjects overall. Applied Mathematics and Finance Analytics prefers English Language and Mathematics. The Computing and AI combination has no preferred subjects. No programme-specific minimum A-Level grade is published.",
         "extras": []
       },
@@ -1066,7 +1072,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "不适用：本次已核验研究未提供可归入Design方向的明确课程等级或七个BCI科目规则；官方未公布统一设计类A-Level等级门槛。",
+        "noteZh": "不适用：本次已核验研究未提供可归入Design方向的明确课程等级或BCI 可选课程规则；官方未公布统一设计类A-Level等级门槛。",
         "noteEn": "No unified portfolio requirement for A-Level applicants was identified for the representative programmes reviewed; no official requirement is published.",
         "extras": []
       },
@@ -1074,7 +1080,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "官方未公布Humanities/Arts方向专业最低A-Level等级或七个BCI科目的先修要求。Humanities组合涵盖Chinese History and Culture、English and Applied Linguistics、Language Science and Technology、Speech Therapy，但偏好科目资料未公布。",
+        "noteZh": "官方未公布Humanities/Arts方向专业最低A-Level等级或BCI 可选课程的先修要求。Humanities组合涵盖Chinese History and Culture、English and Applied Linguistics、Language Science and Technology、Speech Therapy，但偏好科目资料未公布。",
         "noteEn": "The Humanities combination covers Chinese History and Culture, English and Applied Linguistics, Language Science and Technology, and Speech Therapy. Preferred subjects and programme-specific minimum A-Level grades are not published.",
         "extras": []
       },
@@ -1359,7 +1365,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [
           "biology"
         ],
-        "noteZh": "可用于医学相关本科前置路径的官方等级为 Biomedicine ABB (13) 与 Oral Health AAA (15)。Biomedicine 要求 Chemistry + Mathematics；Oral Health 要求 Biology 或 Chemistry。MBBS/JD 等研究生路径不适用直接 A-Level 本科门槛映射。两者均另需获认可的 A/AS Level English 科目；该英语科目不属于七个 BCI 科目。",
+        "noteZh": "可用于医学相关本科前置路径的官方等级为 Biomedicine ABB (13) 与 Oral Health AAA (15)。Biomedicine 要求 Chemistry + Mathematics；Oral Health 要求 Biology 或 Chemistry。MBBS/JD 等研究生路径不适用直接 A-Level 本科门槛映射。两者均另需获认可的 A/AS Level English 科目；该英语科目不属于BCI 可选课程。",
         "noteEn": "Bachelor of Biomedicine: ABB (13), with Chemistry, Mathematics and an approved A/AS Level English subject. Bachelor of Oral Health: AAA (15), with Biology or Chemistry and an approved A/AS Level English subject at least grade B. No undergraduate Medicine/MBBS A-Level benchmark is published because Medicine is a graduate-entry pathway.",
         "extras": []
       },
@@ -1426,7 +1432,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": "Bachelor of Design：BBB (12)",
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "Bachelor of Design 官方 A-Level benchmark 为 BBB (12)，另需获认可的 A/AS Level English 科目；七个 BCI 科目中无官方列明的必修科目。",
+        "noteZh": "Bachelor of Design 官方 A-Level benchmark 为 BBB (12)，另需获认可的 A/AS Level English 科目；BCI 可选课程中无官方列明的必修科目。",
         "noteEn": "Bachelor of Design: BBB (12), with an approved A/AS Level English subject.",
         "extras": []
       },
@@ -1434,7 +1440,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": "Bachelor of Arts：BBC (11)",
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "Bachelor of Arts 官方 A-Level benchmark 为 BBC (11)，另需获认可的 A/AS Level English 科目；七个 BCI 科目中无官方列明的必修或推荐科目。",
+        "noteZh": "Bachelor of Arts 官方 A-Level benchmark 为 BBC (11)，另需获认可的 A/AS Level English 科目；BCI 可选课程中无官方列明的必修或推荐科目。",
         "noteEn": "Bachelor of Arts: BBC (11), with an approved A/AS Level English subject. Bachelor of Fine Arts and Bachelor of Music require course-specific supplementary requirements, typically including audition/interview tasks; no grade benchmark is stated here.",
         "extras": []
       },
@@ -1442,7 +1448,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "不适用：已核验官方研究未提供可直接映射的教育类本科 A-Level 等级或七个 BCI 科目规则。",
+        "noteZh": "不适用：已核验官方研究未提供可直接映射的教育类本科 A-Level 等级或BCI 可选课程规则。",
         "noteEn": "No separate Education A-Level benchmark or field-specific requirement is published in the available official research.",
         "extras": []
       }
@@ -1829,7 +1835,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [
           "biology"
         ],
-        "noteZh": "官方医学直入要求 A Level Chemistry minimum D；best 3 A-Level subjects within 2 years 换算 Equivalent Year 12 15。该 15 分是官方换算分数，不将其改写为 A-Level 等级组合。A Level English General Paper minimum D 可满足所列英语路径，但不属于七个 BCI 科目。另需 ISAT 与 MMI。",
+        "noteZh": "官方医学直入要求 A Level Chemistry minimum D；best 3 A-Level subjects within 2 years 换算 Equivalent Year 12 15。该 15 分是官方换算分数，不将其改写为 A-Level 等级组合。A Level English General Paper minimum D 可满足所列英语路径，但不属于BCI 可选课程。另需 ISAT 与 MMI。",
         "noteEn": "Direct-entry Medicine: best 3 A-Level subjects within 2 years must convert to an Equivalent Year 12 score of 15; A Level Chemistry minimum D. D in A Level English General Paper may satisfy the listed English route. All international applicants must take ISAT and attend the MMI if shortlisted.\n\n",
         "extras": []
       },
@@ -1893,7 +1899,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "已核官方研究未提供可映射至 Design 方向的 Cambridge A-Level 等级或七个 BCI 科目先修规则；不能据此推断门槛。",
+        "noteZh": "已核官方研究未提供可映射至 Design 方向的 Cambridge A-Level 等级或BCI 可选课程先修规则；不能据此推断门槛。",
         "noteEn": "No Cambridge-specific A-Level minimum grade, prerequisite subject, or other published requirement was identified for Design. Course-specific requirements must be checked.\n\n",
         "extras": []
       },
@@ -1909,7 +1915,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "已核官方研究未提供可映射至 Education 方向的 Cambridge A-Level 等级或七个 BCI 科目先修规则；不能据此推断门槛。",
+        "noteZh": "已核官方研究未提供可映射至 Education 方向的 Cambridge A-Level 等级或BCI 可选课程先修规则；不能据此推断门槛。",
         "noteEn": "No Cambridge-specific A-Level minimum grade, prerequisite subject, or other published requirement was identified for Education. Course-specific requirements must be checked.",
         "extras": []
       }
@@ -2185,7 +2191,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": "AAA",
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "艺术/人文学科规则按已列课程映射：English Language and Literature 要求 English Literature 或 English Language and Literature；Fine Art 推荐 Art，但该科目不在七个 BCI 科目范围内；History 推荐 History；PPE 推荐 Maths。",
+        "noteZh": "艺术/人文学科规则按已列课程映射：English Language and Literature 要求 English Literature 或 English Language and Literature；Fine Art 推荐 Art，但该科目不在BCI 可选课程范围内；History 推荐 History；PPE 推荐 Maths。",
         "noteEn": "English Language and Literature: AAA; English Literature or English Language and Literature; one piece of written work. History: AAA; History recommended; one piece of written work. Fine Art: AAA, or AAB for post-A-level applicants who have completed an Art Foundation; digital portfolio. PPE: AAA; Maths and History-related subjects recommended; TARA.",
         "extras": []
       },
@@ -2296,7 +2302,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [
           "mathematics"
         ],
-        "noteZh": "研究文件未提供统一 Arts 课程基准；History（文史代表）为 A*AA 且要求 History，但 History 不在允许的七个 BCI 科目范围内，不能将其转为本字段的必修科目。",
+        "noteZh": "研究文件未提供统一 Arts 课程基准；History（文史代表）为 A*AA 且要求 History，但 History 不在允许的BCI 可选课程范围内，不能将其转为本字段的必修科目。",
         "noteEn": "History: A*AA, with History required. For Arts, Social Sciences and Humanities generally, combinations including English Literature, Languages, History and Mathematics are commonly recommended, but requirements vary by course. Some courses or Colleges may require written work or additional assessments.",
         "extras": []
       },
@@ -2476,7 +2482,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "mathematics",
           "physics"
         ],
-        "noteZh": "代表性 Psychology BSc 官方要求 A*AA；Biology、Chemistry、Mathematics、Physics、Psychology 五科中须有两科达到 A*A。由于 Psychology 不在允许的七个 BCI 科目范围内，仅保留其中四个可映射科目作为推荐科目，不能据此虚构完整先修组合。",
+        "noteZh": "代表性 Psychology BSc 官方要求 A*AA；Biology、Chemistry、Mathematics、Physics、Psychology 五科中须有两科达到 A*A。由于 Psychology 不在允许的BCI 可选课程范围内，仅保留其中四个可映射科目作为推荐科目，不能据此虚构完整先修组合。",
         "noteEn": "Psychology BSc: A*AA; A*A in two of Biology, Chemistry, Mathematics, Physics, and Psychology. Requirements for other science courses vary by course and are not specified in the research.",
         "extras": []
       },
@@ -2484,15 +2490,17 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "不适用：研究文件未提供可对应的 Design 专业课程等级或七个 BCI 科目规则。",
+        "noteZh": "不适用：研究文件未提供可对应的 Design 专业课程等级或BCI 可选课程规则。",
         "noteEn": "No specific Cambridge International A-Level benchmark or subject requirement for Design is published in the research.",
         "extras": []
       },
       "arts": {
         "publishedGradeProfile": "A*AA",
         "requiredSubjects": [],
-        "recommendedSubjects": [],
-        "noteZh": "代表性 Arts and Sciences BASc 官方要求 A*AA；具体 pathway 另有动态学科要求。Creative Arts and Humanities BA 要求一门 essay-based Humanities 或 Social Sciences 科目，但研究文件未将其映射为允许的七个 BCI 科目。",
+        "recommendedSubjects": [
+          "geography"
+        ],
+        "noteZh": "代表性 Arts and Sciences BASc 官方要求 A*AA；具体 pathway 另有动态学科要求。Health and Environment pathway 明确接受 Geography 作为指定科目之一；Creative Arts and Humanities BA 要求一门 essay-based Humanities 或 Social Sciences 科目，BCI 现有课程中 Geography 属该类。",
         "noteEn": "Arts and Sciences BASc: A*AA. Pathway-specific subjects may apply; for example, Health and Environment requires one of Biology, Chemistry, Environmental Science, Geography, or Psychology plus one further science/social science, while Creative Arts and Humanities BA requires an essay-based Humanities or Social Sciences subject.",
         "extras": []
       },
@@ -2500,7 +2508,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "不适用：研究文件未提供可对应的 Education 专业课程等级或七个 BCI 科目规则。",
+        "noteZh": "不适用：研究文件未提供可对应的 Education 专业课程等级或BCI 可选课程规则。",
         "noteEn": "No specific Cambridge International A-Level benchmark or subject requirement for Education is published in the research.",
         "extras": []
       }
@@ -2576,7 +2584,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "physics",
           "mathematics"
         ],
-        "noteZh": "LSE未见一般性科学学院统一门槛；BSc Psychological and Behavioural Science官方标准为A*AA，且至少一门Biology、Chemistry、Physics、Mathematics或Psychology须达到A。因Psychology不属于规划器七个BCI科目，未列入subjects。",
+        "noteZh": "LSE未见一般性科学学院统一门槛；BSc Psychological and Behavioural Science官方标准为A*AA，且至少一门Biology、Chemistry、Physics、Mathematics或Psychology须达到A。因Psychology不属于规划器BCI 可选课程，未列入subjects。",
         "noteEn": "BSc Psychological and Behavioural Science: A*AA, with at least one of Biology, Chemistry, Physics, Mathematics or Psychology, including grade A in at least one of these subjects.",
         "extras": []
       },
@@ -2593,10 +2601,11 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "requiredSubjects": [],
         "recommendedSubjects": [
           "economics",
+          "geography",
           "biology",
           "mathematics"
         ],
-        "noteZh": "BSc International Relations官方标准为AAA，无固定科目组合，偏好至少两门传统学术科目；官方示例包括History、English、Economics、Government and Politics、Sociology、Geography、languages、Psychology、Philosophy。七个BCI科目中仅将Economics、Mathematics列作可用推荐科目；biology虽属传统学术科目但非典型方向推荐。",
+        "noteZh": "BSc International Relations官方标准为AAA，无固定科目组合，偏好至少两门传统学术科目；官方示例包括History、English、Economics、Government and Politics、Sociology、Geography、languages、Psychology、Philosophy。BCI 现有课程中 Economics、Geography、Mathematics 属官方示例的传统学术科目；biology虽属传统学术科目但非典型方向推荐。",
         "noteEn": "BSc International Relations: AAA. No fixed subject combination; at least two traditional academic subjects are preferred, typically including History, English, Economics, Government and Politics, Sociology, Geography, languages, Psychology or Philosophy.",
         "extras": []
       },
@@ -2646,7 +2655,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "furtherMathematics"
         ],
         "recommendedSubjects": [],
-        "noteZh": "Computer Science BSc 官方课程标准为 A*A*A；Mathematics 或 Further Mathematics 需达到 A。Computing/Computer Science 为 preferred subjects，但不属于指定七个 BCI 科目，因此未写入科目数组。",
+        "noteZh": "Computer Science BSc 官方课程标准为 A*A*A；Mathematics 或 Further Mathematics 需达到 A。Computing/Computer Science 为 preferred subjects，但不属于指定BCI 可选课程，因此未写入科目数组。",
         "noteEn": "Computer Science BSc: A*A*A. Mathematics or Further Mathematics at A is required; Computing/Computer Science is preferred. English requirement: Band B.",
         "extras": []
       },
@@ -2664,7 +2673,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": "A*AA",
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "Business Management BSc 官方课程标准为 A*AA，要求 Humanities/Social Science A（不含 Modern Languages）；该要求不对应指定七个 BCI 科目，故不虚构映射。",
+        "noteZh": "Business Management BSc 官方课程标准为 A*AA，要求 Humanities/Social Science A（不含 Modern Languages）；该要求不对应指定BCI 可选课程，故不虚构映射。",
         "noteEn": "Economics & Management BSc: A*AA, including Mathematics A and a Humanities/Social Science subject at A, excluding Modern Languages. Business Management BSc: A*AA, including a Humanities/Social Science subject at A, excluding Modern Languages.",
         "extras": []
       },
@@ -2680,7 +2689,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "biology",
           "mathematics"
         ],
-        "noteZh": "以官方 Psychology BSc 作为科学方向代表：标准为 A*AA，Biology、Chemistry、Mathematics 或 Physics 其中一科须为 A；Biology 与 Mathematics 为 preferred subjects。Psychology 不在指定七个 BCI 科目范围内，未列入数组。",
+        "noteZh": "以官方 Psychology BSc 作为科学方向代表：标准为 A*AA，Biology、Chemistry、Mathematics 或 Physics 其中一科须为 A；Biology 与 Mathematics 为 preferred subjects。Psychology 不在指定BCI 可选课程范围内，未列入数组。",
         "noteEn": "Psychology BSc: A*AA, with one of Biology, Chemistry, Mathematics, Physics or Psychology at A; Biology and Mathematics are preferred. Other science-course requirements vary by course and are not stated as a single general rule.",
         "extras": []
       },
@@ -2688,7 +2697,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": "AAA",
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "已核验的 Culture, Media & Creative Industries BA 代表性课程标准为 AAA，要求 essay-based 或 creative-based subject；该科目类别不属于指定七个 BCI 科目，故不虚构映射。未发现可据此代表所有 Design 课程的统一规则。",
+        "noteZh": "已核验的 Culture, Media & Creative Industries BA 代表性课程标准为 AAA，要求 essay-based 或 creative-based subject；该科目类别不属于指定BCI 可选课程，故不虚构映射。未发现可据此代表所有 Design 课程的统一规则。",
         "noteEn": "No specific Cambridge International A-level threshold or subject requirement for a design course was published in the reviewed official material. No additional portfolio requirement was identified in the research.",
         "extras": []
       },
@@ -2696,7 +2705,7 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "publishedGradeProfile": "AAA",
         "requiredSubjects": [],
         "recommendedSubjects": [],
-        "noteZh": "以 Culture, Media & Creative Industries BA 作为艺术/人文方向代表：官方标准为 AAA，要求 essay-based 或 creative-based subject；该类别不属于指定七个 BCI 科目。Law LLB 可作社科/人文参照，但不构成艺术方向统一门槛。",
+        "noteZh": "以 Culture, Media & Creative Industries BA 作为艺术/人文方向代表：官方标准为 AAA，要求 essay-based 或 creative-based subject；该类别不属于指定BCI 可选课程。Law LLB 可作社科/人文参照，但不构成艺术方向统一门槛。",
         "noteEn": "Culture, Media & Creative Industries BA: AAA, including an essay-based or creative-based subject. Law LLB may serve as a humanities/social-science reference point: A*AA with no specified subject.",
         "extras": []
       },

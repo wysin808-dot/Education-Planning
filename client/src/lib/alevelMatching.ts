@@ -157,8 +157,11 @@ export function alevelSubjectLabel(key: AlevelSubjectKey, lang: "zh" | "en") {
     physics: { zh: "物理", en: "Physics" },
     chemistry: { zh: "化学", en: "Chemistry" },
     biology: { zh: "生物", en: "Biology" },
+    computerScience: { zh: "计算机科学", en: "Computer Science" },
     economics: { zh: "经济学", en: "Economics" },
     business: { zh: "商科", en: "Business" },
+    accounting: { zh: "会计", en: "Accounting" },
+    geography: { zh: "地理", en: "Geography" },
   };
   return labels[key][lang];
 }
@@ -227,7 +230,10 @@ const ALEVEL_GENERAL_ORDER: AlevelSubjectKey[] = [
   "economics",
   "biology",
   "furtherMathematics",
+  "computerScience",
   "business",
+  "accounting",
+  "geography",
 ];
 
 export interface AlevelPlanSubject {

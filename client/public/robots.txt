@@ -1,0 +1,5 @@
+# Brentvale College International — 内部升学规划工具
+# 本站仅供招生与升学指导办公室内部使用，不对外公开，禁止任何搜索引擎收录。
+User-agent: *
+Disallow: /
+

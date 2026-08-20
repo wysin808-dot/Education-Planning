@@ -163,7 +163,7 @@ export default function AlevelReverse() {
 
               <p className="mt-6 border-t border-border pt-4 text-[0.75rem] leading-relaxed text-muted-foreground">
                 {t(
-                  "提示：仅显示 BCI 当前确认的 7 门课可覆盖的科目映射；其他院校要求会保留在官方原文说明中。",
+                  "提示：仅显示 BCI 官网公布的 10 门可选课程可覆盖的科目映射；其他院校要求会保留在官方原文说明中。",
                   "Note: subject mapping is limited to BCI's seven confirmed subjects. Other university requirements remain in the official wording.",
                 )}
               </p>
@@ -189,7 +189,7 @@ export default function AlevelReverse() {
                   )}
                 </p>
 
-                {/* 英语门槛：七门 Cambridge 课程中不含英语，雅思单列且不占选课名额 */}
+                {/* 英语门槛：十门可选 Cambridge 课程中不含英语，雅思单列且不占选课名额 */}
                 <div className="mt-4 border-l-2 border-tier-reach bg-tier-reach/6 px-4 py-3.5">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <p className="eyebrow text-tier-reach">

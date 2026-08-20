@@ -1,6 +1,6 @@
 /**
  * Admissions Almanac：Cambridge International A-Level 首页。
- * 与 WACE 入口并列，但明确以 BCI 已确认的七门 Cambridge A-Level 课程和 3–4 门成绩结构为核心。
+ * 与 WACE 入口并列，但明确以 BCI 官网公布的十门 Cambridge A-Level 可选课程和 3–4 门成绩结构为核心。
  * 动效与 WACE 首页对位：开场与侧栏滚动浮现，课程标签错落显现；
  * 减动偏好与打印时退化为静态。
  */
@@ -27,8 +27,8 @@ export default function AlevelHome() {
             </h1>
             <p className="mt-6 max-w-2xl font-[family-name:var(--font-serif)] text-[1.05rem] leading-relaxed text-muted-foreground">
               {t(
-                "以 BCI 已确认的 Cambridge International A-Level 课程为边界，按预测等级、指定科目与院校官方口径，反推可行的大学与专业路径。",
-                "Bounded by BCI's confirmed Cambridge International A-Level subjects, this planner works back from predicted grades, required subjects and official university wording to map viable routes.",
+                "以 BCI 官网公布的 Cambridge International A-Level 可选课程为边界，按预测等级、指定科目与院校官方口径，反推可行的大学与专业路径。",
+                "Bounded by the Cambridge International A-Level subjects published on the BCI programmes page, this planner works back from predicted grades, required subjects and official university wording to map viable routes.",
               )}
             </p>
             <div className="mt-9 grid border-y border-border sm:grid-cols-2">
@@ -41,14 +41,14 @@ export default function AlevelHome() {
               <Link href="/alevel/reverse" className="group p-5 transition-colors hover:bg-paper-deep">
                 <span className="almanac-index text-brass">02 · {t("由目标规划", "Plan from a target")}</span>
                 <span className="mt-4 flex items-center gap-2 text-[1.1rem] text-green"><GraduationCap className="h-4 w-4" />{t("院校专业 → 条件", "Programme → requirements")}</span>
-                <span className="mt-2 block text-[0.8125rem] leading-relaxed text-muted-foreground">{t("先锁定专业，再反查 A-Level 条件、BCI 7 门课映射、英语和附加选拔。", "Start with a programme, then work back to A-Level conditions, BCI's seven-subject mapping, English and additional selection.")}</span>
+                <span className="mt-2 block text-[0.8125rem] leading-relaxed text-muted-foreground">{t("先锁定专业，再反查 A-Level 条件、BCI 10 门课映射、英语和附加选拔。", "Start with a programme, then work back to A-Level conditions, BCI's ten-subject mapping, English and additional selection.")}</span>
                 <span className="mt-4 inline-flex items-center gap-1 border-b border-brass pb-0.5 text-[0.75rem] text-green">{t("按目标查询", "Start from a target")} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
               </Link>
             </div>
 
             <OfferGradeRule className="mt-8 max-w-3xl" />
             <div className="mt-8 border-t border-border pt-6">
-              <p className="eyebrow text-muted-foreground">{t("已确认可开设课程", "BCI-confirmed subjects")}</p>
+              <p className="eyebrow text-muted-foreground">{t("官网公布的可选课程", "Subjects published on the BCI site")}</p>
               <Stagger className="mt-4 flex flex-wrap gap-2">
                 {ALEVEL_SUBJECTS.map((subject) => (
                   <span key={subject.key} className="border border-border bg-card px-3 py-1.5 text-[0.8125rem] text-green">
@@ -68,7 +68,7 @@ export default function AlevelHome() {
               <p>{t("新加坡、香港与澳洲部分院校仅写 good passes、课程级表格或综合审核。此类结果一律标为“顾问复核”，不会被伪装为确定概率。", "Some Singapore, Hong Kong and Australian institutions use good passes, course tables or holistic review. These are always marked Counsellor review rather than turned into a false probability.")}</p>
             </div>
             <Link href="/alevel/subjects" className="mt-8 inline-flex items-center gap-2 border-b border-brass pb-1 text-[0.8125rem] text-green">
-              <BookOpenCheck className="h-4 w-4" /> {t("按目标规划 7 门课程", "Plan the seven subjects from goals")}
+              <BookOpenCheck className="h-4 w-4" /> {t("按目标规划 10 门课程", "Plan the ten subjects from goals")}
             </Link>
           </Reveal>
         </section>

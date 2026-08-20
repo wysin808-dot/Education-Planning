@@ -4,11 +4,13 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Redirect, Route, Switch } from "wouter";
+import { useEffect } from "react";
+import { Redirect, Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LangProvider } from "./contexts/LangContext";
 import { ShortlistProvider } from "./contexts/ShortlistContext";
+import { INTERNAL_ONLY, WACE_PUBLIC } from "./lib/curriculum";
 import Choose from "./pages/Choose";
 import Home from "./pages/Home";
 import Forward from "./pages/Forward";
@@ -24,10 +26,35 @@ import AlevelSubjects from "./pages/AlevelSubjects";
 import AlevelTable from "./pages/AlevelTable";
 import AlevelShortlist from "./pages/AlevelShortlist";
 
+/**
+ * 本站为 BCI 内部工具，默认为全站注入 noindex/nofollow，避免被搜索引擎收录。
+ * 与 client/public/robots.txt 配合使用；对外发布时把 VITE_INTERNAL_ONLY 设为 false 即可解除。
+ */
+function SearchIndexPolicy() {
+  const [location] = useLocation();
+  useEffect(() => {
+    const shouldBlock = INTERNAL_ONLY;
+    const id = "manus-robots-policy";
+    const existing = document.getElementById(id);
+    if (!shouldBlock) {
+      existing?.remove();
+      return;
+    }
+    if (existing) return;
+    const meta = document.createElement("meta");
+    meta.id = id;
+    meta.name = "robots";
+    meta.content = "noindex, nofollow";
+    document.head.appendChild(meta);
+  }, [location]);
+  return null;
+}
+
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Choose} />
+      {/* WACE 未对外公开时，根路径直接进入 A-Level，不出现体系选择页 */}
+      <Route path="/">{() => (WACE_PUBLIC ? <Choose /> : <Redirect to="/alevel" replace />)}</Route>
       <Route path="/wace" component={Home} />
       <Route path="/wace/forward" component={Forward} />
       <Route path="/wace/reverse" component={Reverse} />
@@ -61,6 +88,7 @@ function App() {
           <ShortlistProvider>
             <TooltipProvider>
               <Toaster />
+              <SearchIndexPolicy />
               <Router />
             </TooltipProvider>
           </ShortlistProvider>

@@ -8,7 +8,20 @@ const start = rulesSource.indexOf("= {");
 const end = rulesSource.lastIndexOf(" as const;");
 if (start < 0 || end < 0) throw new Error("Cannot parse A-Level rules module.");
 const rules = JSON.parse(rulesSource.slice(start + 2, end));
-const expectedSubjects = new Set(["mathematics", "furtherMathematics", "physics", "chemistry", "biology", "economics", "business"]);
+// BCI 官网课程页公布的可选课程（2026-08-20 核对）。
+// English Language 虽为官网核心科目，但按招生总监确认改以雅思门槛呈现，不占选课名额，故不列入。
+const expectedSubjects = new Set([
+  "mathematics",
+  "furtherMathematics",
+  "physics",
+  "chemistry",
+  "biology",
+  "computerScience",
+  "economics",
+  "business",
+  "accounting",
+  "geography",
+]);
 const chinese = /[\u3400-\u9fff]/;
 const failures = [];
 
@@ -25,8 +38,12 @@ for (const [university, rule] of Object.entries(rules)) {
   }
 }
 for (const subject of expectedSubjects) if (!subjectsSource.includes(`key: "${subject}"`)) failures.push(`A-Level subject module is missing ${subject}.`);
+// 英语不得作为可选课程出现在选课体系中（一律按雅思门槛处理）
+for (const banned of ["englishLanguage", "english"]) {
+  if (subjectsSource.includes(`key: "${banned}"`)) failures.push(`English must be handled as an IELTS gate, not a selectable subject (${banned}).`);
+}
 for (const route of ["/alevel", "/alevel/forward", "/alevel/reverse", "/alevel/subjects", "/alevel/table", "/alevel/shortlist"]) {
   if (!appSource.includes(`path="${route}"`)) failures.push(`Missing A-Level route ${route}.`);
 }
 if (failures.length) throw new Error(failures.join("\n"));
-console.log("A-Level data integrity check passed: 31 universities, seven BCI subjects, bilingual rules and six routes.");
+console.log(`A-Level data integrity check passed: 31 universities, ${expectedSubjects.size} BCI subjects, English as IELTS gate, bilingual rules and six routes.`);

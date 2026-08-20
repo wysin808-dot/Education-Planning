@@ -1,6 +1,6 @@
 /**
  * Admissions Almanac：A-Level 目标清单只读取统一收藏来源，
- * 通过 A-Level 公开等级条件和 BCI 七门课映射解释每个已收藏目标。
+ * 通过 A-Level 公开等级条件和 BCI 十门课映射解释每个已收藏目标。
  */
 import { ArrowRight, BookOpenCheck, Heart, Trash2 } from "lucide-react";
 import { Link } from "wouter";
@@ -10,6 +10,7 @@ import { PrintReportButton } from "@/components/PrintReportButton";
 import { useLang } from "@/contexts/LangContext";
 import { useShortlist } from "@/contexts/ShortlistContext";
 import { alevelReverseLookup, alevelSubjectLabel } from "@/lib/alevelMatching";
+import { WACE_PUBLIC } from "@/lib/curriculum";
 
 export default function AlevelShortlist() {
   const { lang, t } = useLang();
@@ -26,7 +27,11 @@ export default function AlevelShortlist() {
             <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
               <div>
                 <h1 className="font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("A-Level 目标清单", "A-Level shortlist")}</h1>
-                <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("与 WACE 共用同一份收藏目标，但在这里以 Cambridge A-Level 的公开等级条件和 7 门课映射解读。", "This uses the same saved goals as WACE, but reads them through Cambridge A-Level published profiles and the seven-subject mapping.")}</p>
+                <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">
+                  {WACE_PUBLIC
+                    ? t("与 WACE 共用同一份收藏目标，但在这里以 Cambridge A-Level 的公开等级条件和 10 门课映射解读。", "This uses the same saved goals as WACE, but reads them through Cambridge A-Level published profiles and the ten-subject mapping.")
+                    : t("汇总已收藏的目标，并以 Cambridge A-Level 的公开等级条件和 10 门课映射解读。", "Your saved targets, read through Cambridge A-Level published profiles and the ten-subject mapping.")}
+                </p>
               </div>
               {resolved.length > 0 && (
                 <div className="flex gap-2">

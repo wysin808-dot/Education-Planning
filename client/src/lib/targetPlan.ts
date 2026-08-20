@@ -626,28 +626,31 @@ export interface AlevelTargetPlan {
   };
 }
 
-/** 各方向在 BCI 七门 A-Level 中的支撑科目 */
+/** 各方向在 BCI 十门可选 A-Level 课程中的支撑科目 */
 const ALEVEL_FIELD_SUPPORT: Record<FieldKey, AlevelSubjectKey[]> = {
   medicine: ["chemistry", "biology", "mathematics"],
-  law: ["economics", "mathematics", "business"],
-  computing: ["mathematics", "furtherMathematics", "physics"],
+  law: ["economics", "geography", "mathematics"],
+  computing: ["mathematics", "computerScience", "furtherMathematics", "physics"],
   engineering: ["mathematics", "physics", "furtherMathematics"],
-  business: ["mathematics", "economics", "business"],
-  science: ["mathematics", "chemistry", "physics"],
-  design: ["mathematics", "physics", "business"],
-  arts: ["economics", "business", "mathematics"],
-  education: ["mathematics", "biology", "economics"],
+  business: ["mathematics", "economics", "accounting", "business"],
+  science: ["mathematics", "chemistry", "physics", "geography"],
+  design: ["mathematics", "physics", "geography"],
+  arts: ["geography", "economics", "business"],
+  education: ["mathematics", "biology", "geography", "economics"],
 };
 
-/** BCI 七门课的通用优先序 */
+/** BCI 十门可选课程的通用优先序 */
 const ALEVEL_FALLBACK: AlevelSubjectKey[] = [
   "mathematics",
   "physics",
   "chemistry",
   "economics",
   "biology",
+  "computerScience",
   "business",
   "furtherMathematics",
+  "accounting",
+  "geography",
 ];
 
 /**

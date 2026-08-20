@@ -7,13 +7,18 @@
  * 手机端使用可点击的纵向「目录」菜单并按体系分组，避免横向滑动导航造成的访问障碍。
  * 体系切换保持同类功能页：从 WACE 反查切到 A-Level 时仍落在反查页，不退回体系总览。
  * 页脚只列各体系特有的工具，目标清单为跨体系共用的唯一一项，避免与页头重复成两份清单。
- */
+ *
+ * 本站为 BCI 招生与升学指导办公室的内部工具：WACE 与 A-Level 双体系并列呈现，
+ * 页脚标注内部使用提示，全站不对外公开分发（收录策略见 App.tsx 与 robots.txt）。
+ * WACE_PUBLIC 保留为可配置开关，便于日后按需只对外呈现单一体系。
+  */
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 import { useShortlist } from "@/contexts/ShortlistContext";
+import { INTERNAL_ONLY, WACE_PUBLIC } from "@/lib/curriculum";
 import { saveRecentTool } from "@/lib/recent";
 
 const LOGO_RED = "/manus-storage/bci-logo-horizontal_ead9c912.png";
@@ -125,7 +130,7 @@ const ALEVEL_NAV: NavItem[] = [
   { href: "/alevel", zh: "总览", en: "Overview", noteZh: "以 Cambridge A-Level 预测等级规划院校与专业", noteEn: "Plan university options through Cambridge A-Level predictions" },
   { href: "/alevel/forward", zh: "有成绩规划", en: "Plan from Grades", noteZh: "输入 3–4 门预测等级，查看可申请的院校与专业", noteEn: "Enter three to four predicted grades to find reachable universities and programmes" },
   { href: "/alevel/reverse", zh: "由目标规划", en: "Plan from a Target", noteZh: "锁定院校专业，反查等级条件、指定科目与分年选课", noteEn: "Start from a programme and work back to its grades, required subjects and year-by-year plan" },
-  { href: "/alevel/subjects", zh: "选课规划", en: "Subject Planner", noteZh: "按收藏目标规划 7 门 Cambridge 课程", noteEn: "Plan the seven Cambridge subjects from your shortlist" },
+  { href: "/alevel/subjects", zh: "选课规划", en: "Subject Planner", noteZh: "按收藏目标规划 10 门 Cambridge 课程", noteEn: "Plan the ten Cambridge subjects from your shortlist" },
   { href: "/alevel/table", zh: "31 校速查", en: "31-University Table", noteZh: "31 所院校 A-Level 等级条件的分区速查", noteEn: "A printable quick-reference table of A-Level conditions by region" },
   { href: "/alevel/shortlist", zh: "目标清单", en: "Shortlist", noteZh: "与 WACE 共用的个人目标清单", noteEn: "The shared personal shortlist" },
 ];
@@ -199,6 +204,9 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
   const current = curriculumOf(path);
   const sectionNav = current === "alevel" ? ALEVEL_NAV : WACE_NAV;
   const shortlistHref = current === "alevel" ? "/alevel/shortlist" : "/wace/shortlist";
+  /** WACE 未公开时，导航只呈现 A-Level 单一体系 */
+  const curricula = WACE_PUBLIC ? CURRICULA : CURRICULA.filter((c) => c.id === "alevel");
+  const showCurriculumRow = !chooser && curricula.length > 1;
 
   /**
    * 体系切换保持同类功能页：两套路由的尾段一一对应，
@@ -217,23 +225,27 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
       {/* 第一层：品牌 + 课程体系（册） */}
       <div className="container flex h-[3.75rem] items-center justify-between gap-4">
         <Link
-          href="/"
-          aria-label={t("返回课程体系选择页", "Return to the curriculum chooser")}
+          href={WACE_PUBLIC ? "/" : "/alevel"}
+          aria-label={
+            WACE_PUBLIC
+              ? t("返回课程体系选择页", "Return to the curriculum chooser")
+              : t("返回首页", "Return to the home page")
+          }
           className="shrink-0 border border-brand-red/25 bg-paper px-2.5 py-1.5 transition-colors duration-150 hover:border-brand-red/55 sm:px-3">
           <Wordmark compact />
         </Link>
 
         <div className="flex min-w-0 shrink-0 items-center gap-3">
-          {!chooser && (
+          {showCurriculumRow && (
             <span className="border border-green bg-green px-2 py-1 text-[0.6875rem] tracking-[0.08em] text-primary-foreground sm:hidden">
               {current === "alevel" ? "A-Level" : "WACE"}
             </span>
           )}
-          {!chooser && (
+          {showCurriculumRow && (
             <nav
               aria-label={t("课程体系", "Curriculum")}
               className="hidden items-stretch border border-border sm:flex">
-              {CURRICULA.map((c) => {
+              {curricula.map((c) => {
                 const active = current === c.id;
                 return (
                   <Link
@@ -281,7 +293,7 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
               className="flex min-w-0 items-center gap-1"
               aria-label={t("主导航", "Primary navigation")}>
               <span className="almanac-index mr-2 shrink-0 text-brass">
-                {current === "alevel" ? "02" : "01"}
+                {!WACE_PUBLIC ? "01" : current === "alevel" ? "02" : "01"}
               </span>
               {sectionNav.map((item) => {
                 const active = path === item.href;
@@ -333,6 +345,7 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
               ] as const
             )
               .slice()
+              .filter((group) => WACE_PUBLIC || group.id !== "wace")
               .sort((a) => (a.id === current ? -1 : 1))
               .map((group) => (
                 <section key={group.id} className="mb-2">
@@ -397,10 +410,15 @@ export function SiteFooter() {
         <div>
           <Wordmark variant="light" />
           <p className="mt-5 max-w-md font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-paper/80">
-            {t(
-              "博林国际学院为 WACE 与 Cambridge A-Level 学生提供升学门槛查询与选课决策支持。本工具的所有要求均引自各校官方招生页面，用于规划参考。",
-              "Brentvale College International provides WACE and Cambridge A-Level students with admission lookups and subject-selection guidance. All requirements are drawn from official university admissions pages and are intended for planning reference.",
-            )}
+            {WACE_PUBLIC
+              ? t(
+                  "博林国际学院为 WACE 与 Cambridge A-Level 学生提供升学门槛查询与选课决策支持。本工具的所有要求均引自各校官方招生页面，用于规划参考。",
+                  "Brentvale College International provides WACE and Cambridge A-Level students with admission lookups and subject-selection guidance. All requirements are drawn from official university admissions pages and are intended for planning reference.",
+                )
+              : t(
+                  "博林国际学院为 Cambridge International A-Level 学生提供升学门槛查询与选课决策支持。本工具的所有要求均引自各校官方招生页面，用于规划参考。",
+                  "Brentvale College International provides Cambridge International A-Level students with admission lookups and subject-selection guidance. All requirements are drawn from official university admissions pages and are intended for planning reference.",
+                )}
           </p>
         </div>
         <nav aria-label={t("常用工具", "Quick tools")}>
@@ -411,7 +429,9 @@ export function SiteFooter() {
                 { label: "WACE", home: "/wace", nav: WACE_NAV },
                 { label: "A-Level", home: "/alevel", nav: ALEVEL_NAV },
               ] as const
-            ).map((group) => (
+            )
+              .filter((group) => WACE_PUBLIC || group.label !== "WACE")
+              .map((group) => (
               <div key={group.label}>
                 <p className="text-[0.6875rem] tracking-[0.14em] text-brass-soft">{group.label}</p>
                 <ul className="mt-2 space-y-2">
@@ -434,7 +454,7 @@ export function SiteFooter() {
               {t("两套体系共用", "Shared across both")}
             </p>
             <Link
-              href="/wace/shortlist"
+              href={WACE_PUBLIC ? "/wace/shortlist" : "/alevel/shortlist"}
               className="mt-2 inline-flex items-center gap-1.5 text-[0.875rem] text-paper/80 hover:text-brass-soft">
               {t("我的目标清单", "My shortlist")}
               {count > 0 && (
@@ -478,7 +498,12 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-paper/15">
         <div className="container flex flex-col gap-2 py-5 text-[0.75rem] text-paper/60 md:flex-row md:items-center md:justify-between">
-          <span>
+          <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+            {INTERNAL_ONLY && (
+              <span className="border border-paper/30 px-1.5 py-0.5 text-[0.625rem] tracking-[0.08em] text-paper/75">
+                {t("内部使用", "INTERNAL USE")}
+              </span>
+            )}
             {t(
               "© 2026 博林国际学院 Brentvale College International · 招生与升学指导办公室",
               "© 2026 Brentvale College International · Admissions & Careers Office",

@@ -129,8 +129,8 @@ export default function AlevelSubjects() {
                 </>
               ) : (
                 t(
-                  "目标清单为空，以下为 BCI 七门课中学术通用性最高的组合，收藏目标后会按官方要求重新计算。",
-                  "The shortlist is empty, so the most broadly accepted combination of BCI's seven subjects is shown. Save targets and the plan recalculates from official requirements.",
+                  "目标清单为空，以下为 BCI 十门课中学术通用性最高的组合，收藏目标后会按官方要求重新计算。",
+                  "The shortlist is empty, so the most broadly accepted combination of BCI's ten subjects is shown. Save targets and the plan recalculates from official requirements.",
                 )
               )}
             </p>
@@ -293,7 +293,7 @@ export default function AlevelSubjects() {
                   <p className="eyebrow text-brass">{t("口径声明", "Basis")}</p>
                   <p className="mt-2 text-[0.8125rem] leading-relaxed text-muted-foreground">
                     {t(
-                      "先修与建议科目均引自各校官方招生页，且只映射到 BCI 已确认开设的七门课程；其他院校要求保留在反查页的官方原文中。最终选课须经升学指导办公室确认。",
+                      "先修与建议科目均引自各校官方招生页，且只映射到 BCI 官网公布的十门可选课程；其他院校要求保留在反查页的官方原文中。最终选课须经升学指导办公室确认。",
                       "Prerequisites and recommendations are taken from each university's official admissions pages and mapped only to BCI's seven confirmed subjects; other requirements remain in the official wording on the reverse lookup page. Final choices must be confirmed with the Admissions Office.",
                     )}
                   </p>
@@ -369,8 +369,8 @@ export default function AlevelSubjects() {
                 </span>
                 <h2 className="mt-1 font-[family-name:var(--font-serif)] text-[1.5rem] text-green">
                   {t(
-                    `BCI 已确认的 Cambridge A-Level 课程（${ALEVEL_SUBJECTS.length} 门）`,
-                    `BCI-confirmed Cambridge A-Level subjects (${ALEVEL_SUBJECTS.length})`,
+                    `BCI 官网公布的 Cambridge A-Level 可选课程（${ALEVEL_SUBJECTS.length} 门）`,
+                    `Cambridge A-Level subjects published on the BCI site (${ALEVEL_SUBJECTS.length})`,
                   )}
                 </h2>
               </div>

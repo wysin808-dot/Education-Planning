@@ -12,8 +12,12 @@ export default function NotFound() {
   const { t } = useLang();
 
   const links = [
-    { href: "/wace/forward", zh: "WACE 有成绩规划", en: "WACE · plan from grades" },
-    { href: "/wace/reverse", zh: "WACE 由目标规划", en: "WACE · plan from a target" },
+    ...(WACE_PUBLIC
+      ? [
+          { href: "/wace/forward", zh: "WACE 有成绩规划", en: "WACE · plan from grades" },
+          { href: "/wace/reverse", zh: "WACE 由目标规划", en: "WACE · plan from a target" },
+        ]
+      : []),
     { href: "/alevel/forward", zh: "A-Level 有成绩规划", en: "A-Level · plan from grades" },
     { href: "/alevel/reverse", zh: "A-Level 由目标规划", en: "A-Level · plan from a target" },
   ];
@@ -53,3 +57,4 @@ export default function NotFound() {
     </div>
   );
 }
+import { WACE_PUBLIC } from "@/lib/curriculum";

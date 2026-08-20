@@ -2,6 +2,8 @@
  * Admissions Almanac：记录最近使用的查询模块，帮助家长回到上次的工作流。
  * 仅保存模块路径，不保存 ATAR、科目或任何学生个人输入；数据仅驻留当前浏览器。
  */
+import { WACE_PUBLIC } from "./curriculum";
+
 export type RecentTool = {
   href: string;
   zh: string;
@@ -33,5 +35,8 @@ export function saveRecentTool(path: string) {
 export function getRecentTool(): RecentTool | null {
   if (typeof window === "undefined") return null;
   const path = window.localStorage.getItem(STORAGE_KEY);
-  return path ? (RECENT_TOOLS[path] ?? null) : null;
+  if (!path) return null;
+  // WACE 未对外公开时，不把内部演示访问过的 WACE 模块暴露给访客
+  if (!WACE_PUBLIC && path.startsWith("/wace")) return null;
+  return RECENT_TOOLS[path] ?? null;
 }

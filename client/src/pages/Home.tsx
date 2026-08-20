@@ -102,7 +102,7 @@ export default function Home() {
               href="/alevel"
               className="mt-6 inline-flex items-center gap-2 border-b border-brass pb-1 text-[0.8125rem] text-green transition-colors hover:text-brass">
               <GraduationCap className="h-4 w-4" />
-              {t("修读 Cambridge A-Level？进入 7 门课程的独立规划器", "Taking Cambridge A-Level? Enter the dedicated seven-subject planner")}
+              {t("修读 Cambridge A-Level？进入 10 门课程的独立规划器", "Taking Cambridge A-Level? Enter the dedicated ten-subject planner")}
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
 

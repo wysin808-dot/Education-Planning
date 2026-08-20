@@ -58,12 +58,12 @@ export default function Choose() {
       title: "A-Level",
       subtitle: t("以预测等级校准大学目标", "Calibrate goals through predicted grades"),
       desc: t(
-        "以 3–4 门预测等级为单位，按 A*AA、AAA、AAB 等院校公开口径比对同样 31 所院校的条件，并规划 BCI 已确认的 7 门 Cambridge 课程。",
-        "Working in units of three to four predicted grades, compare A*AA, AAA and AAB style published conditions across the same 31 universities and plan BCI's seven confirmed Cambridge subjects.",
+        "以 3–4 门预测等级为单位，按 A*AA、AAA、AAB 等院校公开口径比对同样 31 所院校的条件，并规划 BCI 官网公布的 10 门 Cambridge 课程。",
+        "Working in units of three to four predicted grades, compare A*AA, AAA and AAB style published conditions across the same 31 universities and plan the ten Cambridge subjects published on the BCI site.",
       ),
       facts: [
         { k: t("成绩口径", "Grade basis"), v: t("A*–E 等级", "Grades A*–E") },
-        { k: t("已确认课程", "Confirmed subjects"), v: t(`${ALEVEL_SUBJECTS.length} 门`, `${ALEVEL_SUBJECTS.length} subjects`) },
+        { k: t("可选课程", "Available subjects"), v: t(`${ALEVEL_SUBJECTS.length} 门`, `${ALEVEL_SUBJECTS.length} subjects`) },
         { k: t("查询方向", "Lookup"), v: t("正向 / 反向", "Forward / Reverse") },
       ],
       index: [
