@@ -5,6 +5,7 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, Check, ChevronDown, Printer, SlidersHorizontal } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { Tick } from "@/components/Motion";
 import { OfferGradeRule } from "@/components/OfferGradeRule";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
@@ -86,8 +87,8 @@ export default function AlevelForward() {
               <div className="border-l-2 border-brass bg-paper-deep/35 p-7"><p className="eyebrow text-brass">{t("开始前", "Before you begin")}</p><h2 className="mt-3 font-[family-name:var(--font-serif)] text-2xl text-green">{t("请先填入至少 3 门预测成绩。", "Enter at least three predicted subjects.")}</h2><p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-foreground">{t("BCI 的 Cambridge A-Level 规划以 3–4 门课程为单位。系统会先判断公开等级条件，再检查课程先修。", "BCI's Cambridge A-Level planning is built around three to four subjects. The system checks published grade profiles before subject prerequisites.")}</p><OfferGradeRule className="mt-7" /></div>
             ) : (
               <>
-                <div className="no-print flex flex-wrap items-center justify-between gap-3 border-y border-border py-3"><p className="text-[0.8125rem] text-muted-foreground">{t("已选：", "Entered: ")}{gradeText}</p><p className="text-[0.75rem] text-muted-foreground">{t(`${rows.length} 个专业结果`, `${rows.length} programme results`)}</p></div>
-                <div className="mt-6 space-y-8">
+                <div className="no-print flex flex-wrap items-center justify-between gap-3 border-y border-border py-3"><p className="text-[0.8125rem] text-muted-foreground">{t("已选：", "Entered: ")}{gradeText}</p><p className="text-[0.75rem] text-muted-foreground"><Tick>{t(`${rows.length} 个专业结果`, `${rows.length} programme results`)}</Tick></p></div>
+                <div key={rows.length} className="swap mt-6 space-y-8">
                   {ORDER.map((tier) => {
                     const group = rows.filter((row) => row.tier === tier);
                     if (!group.length) return null;

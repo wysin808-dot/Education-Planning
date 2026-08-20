@@ -1,10 +1,13 @@
 /**
  * Admissions Almanac：Cambridge International A-Level 首页。
  * 与 WACE 入口并列，但明确以 BCI 已确认的七门 Cambridge A-Level 课程和 3–4 门成绩结构为核心。
+ * 动效与 WACE 首页对位：开场与侧栏滚动浮现，课程标签错落显现；
+ * 减动偏好与打印时退化为静态。
  */
 import { ArrowRight, BookOpenCheck, GraduationCap, Scale } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { Reveal, Stagger } from "@/components/Motion";
 import { OfferGradeRule } from "@/components/OfferGradeRule";
 import { useLang } from "@/contexts/LangContext";
 import { ALEVEL_SUBJECTS } from "@/data/alevel";
@@ -16,7 +19,7 @@ export default function AlevelHome() {
       <SiteHeader />
       <main>
         <section className="container grid gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr] lg:py-20">
-          <div>
+          <Reveal>
             
             <p className="eyebrow text-brass">CAMBRIDGE INTERNATIONAL · AS & A LEVEL</p>
             <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-serif)] text-[2.6rem] leading-[0.98] text-green sm:text-[4rem]">
@@ -46,16 +49,16 @@ export default function AlevelHome() {
             <OfferGradeRule className="mt-8 max-w-3xl" />
             <div className="mt-8 border-t border-border pt-6">
               <p className="eyebrow text-muted-foreground">{t("已确认可开设课程", "BCI-confirmed subjects")}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <Stagger className="mt-4 flex flex-wrap gap-2">
                 {ALEVEL_SUBJECTS.map((subject) => (
                   <span key={subject.key} className="border border-border bg-card px-3 py-1.5 text-[0.8125rem] text-green">
                     {lang === "zh" ? subject.zh : subject.en}
                   </span>
                 ))}
-              </div>
+              </Stagger>
             </div>
-          </div>
-          <aside className="border-l-2 border-brass bg-paper-deep/40 p-7 lg:mt-8">
+          </Reveal>
+          <Reveal as="aside" delay={90} className="border-l-2 border-brass bg-paper-deep/40 p-7 lg:mt-8">
             <p className="eyebrow text-brass">{t("口径说明", "How this works")}</p>
             <h2 className="mt-3 font-[family-name:var(--font-serif)] text-2xl text-green">
               {t("不把不同体系硬换算。", "No forced cross-system conversion.")}
@@ -67,7 +70,7 @@ export default function AlevelHome() {
             <Link href="/alevel/subjects" className="mt-8 inline-flex items-center gap-2 border-b border-brass pb-1 text-[0.8125rem] text-green">
               <BookOpenCheck className="h-4 w-4" /> {t("按目标规划 7 门课程", "Plan the seven subjects from goals")}
             </Link>
-          </aside>
+          </Reveal>
         </section>
       </main>
       <SiteFooter />

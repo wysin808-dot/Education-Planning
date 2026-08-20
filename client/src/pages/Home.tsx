@@ -5,11 +5,14 @@
  * 禁止居中英雄区与卡片网格堆叠；以规则线与编号建立年鉴目录感。
  * 全站中英双语：所有面向用户的文案通过 t(中文, 英文) 输出；本页以 WACE 为主，
  * 以独立、低干扰的入口引导 Cambridge A-Level 学生进入对应体系。
+ * 动效：各章节滚动浮现，功能行与地区名录错落显现，统计数字滚动计数；
+ * 减动偏好与打印时一律退化为静态最终态。
  */
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, BookOpenText, Clock3, GraduationCap, Ruler, Scale, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { CountUp, Reveal, Stagger } from "@/components/Motion";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierLegend } from "@/components/TierBadge";
 import { REGIONS, UNIVERSITIES } from "@/data/universities";
@@ -128,7 +131,9 @@ export default function Home() {
                 { k: t("WACE 批准课程", "WACE courses"), v: stats.subjects },
               ].map((item) => (
                 <div key={item.k}>
-                  <dd className="score text-[1.75rem] leading-none text-green">{item.v}</dd>
+                  <dd className="score text-[1.75rem] leading-none text-green">
+                    <CountUp value={item.v} />
+                  </dd>
                   <dt className="mt-2 text-[0.75rem] tracking-[0.14em] text-muted-foreground">
                     {item.k}
                   </dt>
@@ -163,7 +168,7 @@ export default function Home() {
 
       {/* ATAR 标尺示意 */}
       <section className="border-b border-border bg-paper-deep/45">
-        <div className="container py-14">
+        <Reveal className="container py-14">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <span className="almanac-index">01</span>
@@ -191,18 +196,18 @@ export default function Home() {
               ]}
             />
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* 四大功能：横向规则行而非卡片网格 */}
       <section className="border-b border-border">
-        <div className="container py-16">
+        <Reveal className="container py-16">
           <span className="almanac-index">02</span>
           <h2 className="mt-1 text-[1.75rem] text-green">
             {t("四种查阅方式", "Four ways to consult")}
           </h2>
 
-          <div className="mt-10 divide-y divide-border border-y border-border">
+          <Stagger className="mt-10 divide-y divide-border border-y border-border">
             {[
               {
                 no: "I",
@@ -270,18 +275,18 @@ export default function Home() {
                 </Link>
               </div>
             ))}
-          </div>
-        </div>
+          </Stagger>
+        </Reveal>
       </section>
 
       {/* 地区覆盖 */}
       <section className="border-b border-border bg-paper-deep/45">
-        <div className="container py-16">
+        <Reveal className="container py-16">
           <span className="almanac-index">03</span>
           <h2 className="mt-1 text-[1.75rem] text-green">
             {t("四大目标地区", "Four target regions")}
           </h2>
-          <div className="mt-10 grid gap-x-12 gap-y-8 md:grid-cols-2">
+          <Stagger className="mt-10 grid gap-x-12 gap-y-8 md:grid-cols-2">
             {REGIONS.map((region, i) => {
               const count = UNIVERSITIES.filter((u) => u.region === region.id).length;
               return (
@@ -305,13 +310,13 @@ export default function Home() {
                 </div>
               );
             })}
-          </div>
-        </div>
+          </Stagger>
+        </Reveal>
       </section>
 
       {/* 分层定义 + 图片 */}
       <section>
-        <div className="container grid gap-12 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <Reveal className="container grid gap-12 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div className="relative">
             <img
               src={ARCHIVE}
@@ -347,7 +352,7 @@ export default function Home() {
               )}
             </p>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <SiteFooter />

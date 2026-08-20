@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { Stagger, Tick } from "@/components/Motion";
 import { PrintHeader } from "@/components/PrintHeader";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierBadge } from "@/components/TierBadge";
@@ -233,7 +234,13 @@ export default function Reverse() {
 
           {/* 右：结果 */}
           {result && (
-            <article className="fade-rise min-w-0">
+            /*
+             * key 取当前院校与专业的组合：切换目标时整块结果重新挂载，
+             * 触发一次轻微换页，让家长察觉内容确实换了一份。
+             */
+            <article
+              key={`${result.university.id}-${result.programme.id}`}
+              className="swap min-w-0">
               <PrintHeader title={t("WACE 院校专业门槛报告", "WACE programme requirements report")} />
 
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
@@ -264,10 +271,13 @@ export default function Reverse() {
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <section className="border-l-2 border-brass bg-paper-deep/35 p-5">
                   <p className="eyebrow text-brass">{t("所需 ATAR", "Required ATAR")}</p>
+                  {/* 分数不做滚动计数，避免家长读到不存在的中间值 */}
                   <p className="score mt-3 text-3xl text-green">
-                    {result.requiredAtar === null
-                      ? t("顾问复核", "Adviser review")
-                      : result.requiredAtar.toFixed(2)}
+                    <Tick>
+                      {result.requiredAtar === null
+                        ? t("顾问复核", "Adviser review")
+                        : result.requiredAtar.toFixed(2)}
+                    </Tick>
                   </p>
                   <p className="mt-3 font-[family-name:var(--font-serif)] text-[0.875rem] leading-relaxed text-muted-foreground">
                     {result.requiredAtarNote}
@@ -680,7 +690,7 @@ export default function Reverse() {
                       "Australian undergraduate admission rests mainly on the ATAR and prerequisites; competitions and extracurriculars are usually not mandatory. The table separates official requirements from advantages so the two are not confused.",
                     )}
                   </p>
-                  <ul className="mt-5 border border-border">
+                  <Stagger as="ul" className="mt-5 border border-border">
                     {plan.preparation.map((item, i) => (
                       <li
                         key={`${item.kind}-${i}`}
@@ -710,7 +720,7 @@ export default function Reverse() {
                         </p>
                       </li>
                     ))}
-                  </ul>
+                  </Stagger>
                 </section>
               )}
 

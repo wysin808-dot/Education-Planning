@@ -3,11 +3,14 @@
  * 根路径为全站课程体系选择页：左右两栏对称，中缝以竖向规则线分隔，
  * 分别通向 WACE 与 Cambridge International A-Level 两套独立的升学规划系统。
  * 本页不承载查询功能，仅做一次明确的体系分流；页头在此隐藏体系导航。
+ * 动效：开场与各节采用滚动浮现，目录条目错落显现，统计数字滚动计数，
+ * 悬停时铜金规则线自左向右延展——全部在减动偏好与打印时退化为静态。
  */
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Clock3 } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { CountUp, Reveal, Stagger } from "@/components/Motion";
 import { useLang } from "@/contexts/LangContext";
 import { datasetStats } from "@/lib/matching";
 import { REGIONS, UNIVERSITIES } from "@/data/universities";
@@ -81,7 +84,7 @@ export default function Choose() {
         {/* 目录页开场：左为总目录题名，右为数据口径栏 */}
         <section className="border-b border-border">
           <div className="container grid gap-x-14 gap-y-8 pt-12 pb-10 lg:grid-cols-[1.25fr_0.75fr] lg:pt-16">
-            <div>
+            <Reveal>
               <span className="eyebrow text-brass">
                 {t("Brentvale 招生年鉴 · 2026/27 · 总目录", "Brentvale Admissions Almanac · 2026/27 · Contents")}
               </span>
@@ -94,10 +97,10 @@ export default function Choose() {
                   "BCI runs two independent planning systems. Both cover the same 31 target universities and 636 programme entries, but they differ entirely in grade basis, subject list and lookup logic. Enter through the curriculum the student is actually taking.",
                 )}
               </p>
-            </div>
-            <aside className="border-l-2 border-brass pl-6 lg:mt-10">
+            </Reveal>
+            <Reveal as="aside" delay={80} className="border-l-2 border-brass pl-6 lg:mt-10">
               <p className="eyebrow text-brass">{t("数据口径", "Data basis")}</p>
-              <dl className="mt-4 divide-y divide-border border-y border-border">
+              <Stagger as="dl" className="mt-4 divide-y divide-border border-y border-border">
                 {[
                   { k: t("数据年份", "Data year"), v: t("2026 / 2027 入学周期", "2026 / 2027 intakes") },
                   { k: t("核验时间", "Verified"), v: t("2026 年 8 月", "August 2026") },
@@ -109,8 +112,8 @@ export default function Choose() {
                     <dd className="text-right text-[0.8125rem] text-green">{row.v}</dd>
                   </div>
                 ))}
-              </dl>
-            </aside>
+              </Stagger>
+            </Reveal>
           </div>
         </section>
 
@@ -118,11 +121,14 @@ export default function Choose() {
         <section className="border-y border-border">
           <div className="container grid lg:grid-cols-2">
             {tracks.map((track, index) => (
-              <Link
+              <Reveal
                 key={track.href}
+                delay={index * 90}
+                className={index === 0 ? "" : "lg:contents"}>
+              <Link
                 href={track.href}
                 className={[
-                  "group flex flex-col justify-between py-10 transition-colors duration-150 hover:bg-paper-deep/55",
+                  "group flex h-full flex-col justify-between py-10 transition-colors duration-150 hover:bg-paper-deep/55",
                   index === 0
                     ? "border-b border-border lg:border-b-0 lg:border-r lg:pr-12"
                     : "lg:pl-12",
@@ -134,7 +140,7 @@ export default function Choose() {
                   </p>
                   <h2 className="mt-3 flex items-baseline gap-3 font-[family-name:var(--font-serif)] text-[2.75rem] leading-none text-green sm:text-[3.25rem]">
                     {track.title}
-                    <span className="h-px flex-1 translate-y-[-0.6rem] bg-brass/45" />
+                    <span className="h-px flex-1 origin-left translate-y-[-0.6rem] bg-brass/45 transition-opacity duration-300 group-hover:bg-brass/80" />
                   </h2>
                   <p className="mt-3 text-[1.0625rem] text-green/85">{track.subtitle}</p>
                   <p className="mt-4 max-w-[46ch] font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
@@ -153,7 +159,7 @@ export default function Choose() {
                   </dl>
 
                   {/* 章节索引：让每个体系读起来像一册可翻检的手册 */}
-                  <ul className="mt-6 divide-y divide-border border-t border-border">
+                  <Stagger as="ul" className="mt-6 divide-y divide-border border-t border-border">
                     {track.index.map((entry, entryIndex) => (
                       <li
                         key={entry.en}
@@ -167,7 +173,7 @@ export default function Choose() {
                         <span className="h-px min-w-6 flex-1 translate-y-[-0.25rem] bg-border" />
                       </li>
                     ))}
-                  </ul>
+                  </Stagger>
                 </div>
 
                 <span className="mt-9 inline-flex items-center gap-2 self-start border-b border-brass pb-1 text-[0.9375rem] text-green transition-colors group-hover:text-brass">
@@ -175,6 +181,7 @@ export default function Choose() {
                   <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                 </span>
               </Link>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -198,9 +205,9 @@ export default function Choose() {
           )}
 
           {/* 地区名录：两套系统共享的院校覆盖 */}
-          <div className="mt-10 border-t border-border pt-8">
+          <Reveal className="mt-10 border-t border-border pt-8">
             <p className="eyebrow text-brass">{t("共同覆盖的目标地区", "Shared target regions")}</p>
-            <dl className="mt-4 grid gap-x-10 gap-y-2.5 sm:grid-cols-2">
+            <Stagger as="dl" className="mt-4 grid gap-x-10 gap-y-2.5 sm:grid-cols-2">
               {REGIONS.map((region, index) => (
                 <div
                   key={region.id}
@@ -216,10 +223,12 @@ export default function Choose() {
                   </dd>
                 </div>
               ))}
-            </dl>
-          </div>
+            </Stagger>
+          </Reveal>
 
-          <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-border pt-8 sm:grid-cols-4">
+          <Reveal
+            as="dl"
+            className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-border pt-8 sm:grid-cols-4">
             {[
               { k: t("目标院校", "Universities"), v: stats.universities },
               { k: t("专业条目", "Programmes"), v: stats.programmes },
@@ -227,11 +236,13 @@ export default function Choose() {
               { k: t("课程体系", "Curricula"), v: 2 },
             ].map((item) => (
               <div key={item.k}>
-                <dd className="score text-[1.75rem] leading-none text-green">{item.v}</dd>
+                <dd className="score text-[1.75rem] leading-none text-green">
+                  <CountUp value={item.v} />
+                </dd>
                 <dt className="mt-2 text-[0.75rem] tracking-[0.14em] text-muted-foreground">{item.k}</dt>
               </div>
             ))}
-          </dl>
+          </Reveal>
 
           <p className="mt-8 max-w-[70ch] text-[0.8125rem] leading-relaxed text-muted-foreground">
             {t(

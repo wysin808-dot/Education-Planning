@@ -269,9 +269,165 @@
   }
 }
 
+/* ------------------------------------------------------------------
+ * 动效层：Admissions Almanac 的动效应当像「翻阅纸页」而非「界面特效」。
+ * 规则：只动 opacity 与 transform；进场位移不超过 10px；时长 ≤ 320ms；
+ * 一律 ease-out；错落间隔 40ms，最多累计 8 级，避免长列表出现瀑布感。
+ * 所有动效都必须在 prefers-reduced-motion 与打印时完全失效。
+ * ------------------------------------------------------------------ */
+
+/* 进入视口时浮现：默认态即最终态，避免 JS 未执行时内容不可见 */
+.reveal {
+  opacity: 1;
+}
+
+/* 数字翻动：门槛分数、统计数字变化时的一次性提示 */
+.tick {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 章节浮现：由 IntersectionObserver 添加 data-reveal 属性驱动 */
+  .reveal[data-reveal="pending"] {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .reveal[data-reveal="shown"] {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 320ms var(--ease-out),
+      transform 320ms var(--ease-out);
+  }
+
+  /* 错落：同组条目按序号递增延迟，最多 8 级 */
+  .stagger > * {
+    animation: fadeRise 300ms var(--ease-out) both;
+  }
+
+  .stagger > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .stagger > *:nth-child(2) {
+    animation-delay: 40ms;
+  }
+  .stagger > *:nth-child(3) {
+    animation-delay: 80ms;
+  }
+  .stagger > *:nth-child(4) {
+    animation-delay: 120ms;
+  }
+  .stagger > *:nth-child(5) {
+    animation-delay: 160ms;
+  }
+  .stagger > *:nth-child(6) {
+    animation-delay: 200ms;
+  }
+  .stagger > *:nth-child(7) {
+    animation-delay: 240ms;
+  }
+  .stagger > *:nth-child(n + 8) {
+    animation-delay: 280ms;
+  }
+
+  /* 结果切换：查询条件改变后，结果区整体轻微换页 */
+  .swap {
+    animation: swapIn 260ms var(--ease-out) both;
+  }
+
+  @keyframes swapIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 数字翻动：分数或统计值更新时的一次性强调 */
+  .tick[data-tick] {
+    animation: tickIn 260ms var(--ease-out) both;
+  }
+
+  @keyframes tickIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 年鉴条目：悬停时铜金规则线自左向右延展 */
+  .rule-grow {
+    position: relative;
+  }
+
+  .rule-grow::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 1px;
+    width: 100%;
+    background: var(--brass);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 240ms var(--ease-out);
+  }
+
+  .rule-grow:hover::after,
+  .rule-grow:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* 手机目录展开 */
+  .menu-open {
+    animation: menuIn 200ms var(--ease-out) both;
+    transform-origin: top;
+  }
+
+  @keyframes menuIn {
+    from {
+      opacity: 0;
+      transform: scaleY(0.96) translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1) translateY(0);
+    }
+  }
+}
+
 @media print {
   .no-print {
     display: none !important;
+  }
+
+  /*
+   * 打印时彻底关闭动效：未触发滚动浮现的区块若保持 opacity:0，
+   * 导出的 PDF 会出现整段空白，因此强制所有元素回到最终态。
+   */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .reveal,
+  .reveal[data-reveal="pending"],
+  .reveal[data-reveal="shown"],
+  .stagger > *,
+  .swap,
+  .tick[data-tick] {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   body {

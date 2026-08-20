@@ -302,7 +302,7 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
 
       {/* 手机目录：按体系分组，当前体系展开在前 */}
       {!chooser && menuOpen && (
-        <div className="absolute inset-x-0 top-full max-h-[calc(100dvh-3.75rem)] overflow-y-auto border-b border-border bg-paper shadow-[0_14px_28px_oklch(0.2_0.02_90_/_0.12)] lg:hidden">
+        <div className="menu-open absolute inset-x-0 top-full max-h-[calc(100dvh-3.75rem)] overflow-y-auto border-b border-border bg-paper shadow-[0_14px_28px_oklch(0.2_0.02_90_/_0.12)] lg:hidden">
           <nav className="container py-3" aria-label={t("主导航", "Primary navigation")}>
             {(
               [

@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, ArrowRight, ChevronDown, ListChecks } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { Stagger } from "@/components/Motion";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { FIELDS, HEMISPHERES, SUBJECTS, type Hemisphere } from "@/data/universities";
@@ -292,11 +293,11 @@ export default function Subjects() {
                 "Five courses in Year 11. With EALD and Chinese: First Language locked, the remaining slots follow the official prerequisites of the shortlist so that no pathway closes prematurely.",
               )}
             </p>
-            <ul className="mt-4 border border-border">
+            <Stagger as="ul" className="mt-4 border border-border">
               {plan.year11.map((item, i) => (
                 <SubjectRow key={item.subject} item={item} index={i} />
               ))}
-            </ul>
+            </Stagger>
           </section>
 
           <section>
@@ -317,11 +318,11 @@ export default function Subjects() {
                 "Five courses again in Year 12, with the best four counting towards the ATAR. The extra course acts as a buffer against one weak result.",
               )}
             </p>
-            <ul className="mt-4 border border-border">
+            <Stagger as="ul" className="mt-4 border border-border">
               {plan.year12.map((item, i) => (
                 <SubjectRow key={item.subject} item={item} index={i} />
               ))}
-            </ul>
+            </Stagger>
 
             {plan.dropped.length > 0 && (
               <div className="mt-4 border border-dashed border-border bg-paper-deep/30 px-5 py-4">

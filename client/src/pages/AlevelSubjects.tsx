@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, ChevronDown, ChevronRight, ListChecks } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { Stagger } from "@/components/Motion";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { useLang } from "@/contexts/LangContext";
@@ -195,11 +196,11 @@ export default function AlevelSubjects() {
                   "Four subjects in the AS year leave one to drop at A2, so no pathway closes prematurely.",
                 )}
               </p>
-              <ul className="mt-4 border border-border">
+              <Stagger as="ul" className="mt-4 border border-border">
                 {plan.as.map((item, i) => (
                   <SubjectRow key={item.subject} item={item} index={i} />
                 ))}
-              </ul>
+              </Stagger>
             </section>
 
             <section>
@@ -220,11 +221,11 @@ export default function AlevelSubjects() {
                   "Offers are normally expressed over three grades (A*AA, AAA), so the A2 year concentrates on these three.",
                 )}
               </p>
-              <ul className="mt-4 border border-border">
+              <Stagger as="ul" className="mt-4 border border-border">
                 {plan.a2.map((item, i) => (
                   <SubjectRow key={item.subject} item={item} index={i} />
                 ))}
-              </ul>
+              </Stagger>
 
               {plan.dropped.length > 0 && (
                 <div className="mt-4 border border-dashed border-border bg-paper-deep/30 px-5 py-4">

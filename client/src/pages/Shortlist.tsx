@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import { ArrowRight, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { Tick } from "@/components/Motion";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { ScoreRule } from "@/components/ScoreRule";
@@ -163,20 +164,20 @@ export default function Shortlist() {
 
           <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-6 border-b border-border pb-8 sm:grid-cols-4">
             <div>
-              <dd className="score text-[1.75rem] leading-none text-green">{count}</dd>
+              <dd className="score text-[1.75rem] leading-none text-green"><Tick>{count}</Tick></dd>
               <dt className="mt-1.5 text-[0.75rem] text-muted-foreground">
                 {t("收藏专业", "Programmes")}
               </dt>
             </div>
             <div>
-              <dd className="score text-[1.75rem] leading-none text-green">{stats.universities}</dd>
+              <dd className="score text-[1.75rem] leading-none text-green"><Tick>{stats.universities}</Tick></dd>
               <dt className="mt-1.5 text-[0.75rem] text-muted-foreground">
                 {t("涉及院校", "Universities")}
               </dt>
             </div>
             <div>
               <dd className="score text-[1.75rem] leading-none text-green">
-                {stats.highest === null ? "—" : stats.highest.toFixed(2)}
+                <Tick>{stats.highest === null ? "—" : stats.highest.toFixed(2)}</Tick>
               </dd>
               <dt className="mt-1.5 text-[0.75rem] text-muted-foreground">
                 {t("最高门槛", "Highest threshold")}
@@ -184,7 +185,7 @@ export default function Shortlist() {
             </div>
             <div>
               <dd className="score text-[1.75rem] leading-none text-green">
-                {stats.lowest === null ? "—" : stats.lowest.toFixed(2)}
+                <Tick>{stats.lowest === null ? "—" : stats.lowest.toFixed(2)}</Tick>
               </dd>
               <dt className="mt-1.5 text-[0.75rem] text-muted-foreground">
                 {t("最低门槛", "Lowest threshold")}

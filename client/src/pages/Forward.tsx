@@ -6,6 +6,7 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { Tick } from "@/components/Motion";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { ScoreRule } from "@/components/ScoreRule";
@@ -590,7 +591,7 @@ export default function Forward() {
                       ))}
                     </div>
                     <span className="score text-[0.8125rem] text-muted-foreground">
-                      {visibleRows.length} / {rows.length}
+                      <Tick>{visibleRows.length}</Tick> / {rows.length}
                     </span>
                   </div>
                 </div>
@@ -605,7 +606,11 @@ export default function Forward() {
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-10">
+                  /*
+                   * key 取分组方式与命中数：切换分组或调整筛选后整块结果换页，
+                   * 让家长确认列表确实按新条件重排过。
+                   */
+                  <div key={`${groupMode}-${visibleRows.length}`} className="swap space-y-10">
                     {sections.map((section, si) => {
                       const isOpen = openSections.has(section.key);
                       const shownRows = isOpen
