@@ -423,7 +423,7 @@ export default function Reverse() {
                 </div>
 
                 <Link
-                  href="/subjects"
+                  href="/wace/subjects"
                   className="mt-6 inline-flex items-center gap-2 border-b border-brass pb-0.5 text-[0.875rem] text-green transition-colors hover:text-brass">
                   {t("据此规划 WACE 选课", "Plan WACE subjects from here")}
                   <ArrowRight className="h-3.5 w-3.5" />

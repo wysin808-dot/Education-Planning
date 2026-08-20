@@ -4,11 +4,12 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Redirect, Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LangProvider } from "./contexts/LangContext";
 import { ShortlistProvider } from "./contexts/ShortlistContext";
+import Choose from "./pages/Choose";
 import Home from "./pages/Home";
 import Forward from "./pages/Forward";
 import Reverse from "./pages/Reverse";
@@ -26,13 +27,20 @@ import AlevelShortlist from "./pages/AlevelShortlist";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/forward" component={Forward} />
-      <Route path="/reverse" component={Reverse} />
-      <Route path="/subjects" component={Subjects} />
-      <Route path="/table" component={TableView} />
-      <Route path="/shortlist" component={Shortlist} />
+      <Route path="/" component={Choose} />
+      <Route path="/wace" component={Home} />
+      <Route path="/wace/forward" component={Forward} />
+      <Route path="/wace/reverse" component={Reverse} />
+      <Route path="/wace/subjects" component={Subjects} />
+      <Route path="/wace/table" component={TableView} />
+      <Route path="/wace/shortlist" component={Shortlist} />
       <Route path="/brochure" component={Brochure} />
+      {/* 旧版根级 WACE 路径保持可用，统一重定向到 /wace/* */}
+      <Route path="/forward">{() => <Redirect to="/wace/forward" replace />}</Route>
+      <Route path="/reverse">{() => <Redirect to="/wace/reverse" replace />}</Route>
+      <Route path="/subjects">{() => <Redirect to="/wace/subjects" replace />}</Route>
+      <Route path="/table">{() => <Redirect to="/wace/table" replace />}</Route>
+      <Route path="/shortlist">{() => <Redirect to="/wace/shortlist" replace />}</Route>
       <Route path="/alevel" component={AlevelHome} />
       <Route path="/alevel/forward" component={AlevelForward} />
       <Route path="/alevel/reverse" component={AlevelReverse} />

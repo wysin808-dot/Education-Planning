@@ -1,6 +1,7 @@
 /**
  * 设计风格：Admissions Almanac
- * 页头采用深墨绿承载的 BCI 官方反白圆形徽章、紧凑 BRENTVALE 字标与导航；
+ * 页头以 BCI 官方砖红圆形徽章与砖红字标作为第一品牌信号（承载于纸感底），
+ * 深墨绿只用于导航当前状态、版面结构与页脚反白场景，不替代官方品牌色；
  * 桌面端以横向目录呈现，手机端使用可点击的纵向「目录」菜单，避免横向滑动导航造成的访问障碍。
  * 注意：BCI 官方主色为砖红 #B02A2A，与年鉴的墨绿铜金构成双色体系——
  * 红色仅用于品牌标识与强调，版面主色仍为墨绿。
@@ -79,23 +80,23 @@ export function Wordmark({
 }
 
 const NAV = [
-  { href: "/", zh: "WACE", en: "WACE" },
+  { href: "/wace", zh: "WACE", en: "WACE" },
   { href: "/alevel", zh: "A-Level", en: "A-Level" },
-  { href: "/forward", zh: "分数查院校", en: "Score → Universities" },
-  { href: "/reverse", zh: "院校查门槛", en: "University → ATAR" },
-  { href: "/subjects", zh: "选课规划", en: "Subject Planner" },
-  { href: "/table", zh: "门槛总表", en: "Threshold Table" },
-  { href: "/shortlist", zh: "目标清单", en: "Shortlist" },
+  { href: "/wace/forward", zh: "分数查院校", en: "Score → Universities" },
+  { href: "/wace/reverse", zh: "院校查门槛", en: "University → ATAR" },
+  { href: "/wace/subjects", zh: "选课规划", en: "Subject Planner" },
+  { href: "/wace/table", zh: "门槛总表", en: "Threshold Table" },
+  { href: "/wace/shortlist", zh: "目标清单", en: "Shortlist" },
   { href: "/brochure", zh: "宣传册", en: "Brochure" },
 ];
 
 const NAV_DETAILS: Record<string, { zh: string; en: string }> = {
-  "/": { zh: "WACE 升学规划入口与两种查询路径", en: "WACE pathways entry and two lookup routes" },
-  "/forward": { zh: "输入 ATAR，查看可申请的院校与专业", en: "Enter ATAR to find reachable universities and programmes" },
-  "/reverse": { zh: "锁定院校专业，反查 ATAR 与先修要求", en: "Start with a programme and work back to its requirements" },
-  "/subjects": { zh: "按收藏目标规划 WACE 选课组合", en: "Plan WACE subjects from your shortlisted goals" },
-  "/table": { zh: "31 所院校门槛的打印速查表", en: "A printable quick-reference threshold table" },
-  "/shortlist": { zh: "汇总收藏专业，形成个人目标清单", en: "Review saved programmes as a personal shortlist" },
+  "/wace": { zh: "WACE 升学规划入口与两种查询路径", en: "WACE pathways entry and two lookup routes" },
+  "/wace/forward": { zh: "输入 ATAR，查看可申请的院校与专业", en: "Enter ATAR to find reachable universities and programmes" },
+  "/wace/reverse": { zh: "锁定院校专业，反查 ATAR 与先修要求", en: "Start with a programme and work back to its requirements" },
+  "/wace/subjects": { zh: "按收藏目标规划 WACE 选课组合", en: "Plan WACE subjects from your shortlisted goals" },
+  "/wace/table": { zh: "31 所院校门槛的打印速查表", en: "A printable quick-reference threshold table" },
+  "/wace/shortlist": { zh: "汇总收藏专业，形成个人目标清单", en: "Review saved programmes as a personal shortlist" },
   "/brochure": { zh: "可打印的 WACE 升学规划说明", en: "A printable WACE pathways overview" },
   "/alevel": { zh: "以 Cambridge A-Level 预测等级规划院校与专业", en: "Plan university and programme options through Cambridge A-Level predictions" },
 };
@@ -140,7 +141,7 @@ function LangToggle({ variant = "dark" }: { variant?: "dark" | "light" }) {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
   const [path] = useLocation();
   const { lang, t } = useLang();
   const { count } = useShortlist();
@@ -154,14 +155,15 @@ export function SiteHeader() {
       <div className="container flex h-[4.5rem] items-center justify-between gap-4">
         <Link
           href="/"
-          aria-label={t("返回 Brentvale WACE 升学规划首页", "Return to Brentvale WACE Pathways home")}
-          className="shrink-0 bg-green px-2.5 py-2 sm:px-3">
-          <Wordmark compact variant="light" />
+          aria-label={t("返回课程体系选择页", "Return to the curriculum chooser")}
+          className="shrink-0 border border-brand-red/25 bg-paper px-2.5 py-2 transition-colors duration-150 hover:border-brand-red/55 sm:px-3">
+          <Wordmark compact />
         </Link>
+        {!chooser && (
         <nav className="hidden min-w-0 items-center justify-center gap-0.5 lg:flex" aria-label={t("主导航", "Primary navigation")}>
           {PRIMARY_NAV.map((item) => {
-            const isCurriculumLink = item.href === "/" || item.href === "/alevel";
-            const active = item.href === "/" ? !path.startsWith("/alevel") : item.href === "/alevel" ? path.startsWith("/alevel") : path === item.href;
+            const isCurriculumLink = item.href === "/wace" || item.href === "/alevel";
+            const active = item.href === "/wace" ? !path.startsWith("/alevel") : item.href === "/alevel" ? path.startsWith("/alevel") : path === item.href;
             return (
               <Link
                 key={item.href}
@@ -172,7 +174,7 @@ export function SiteHeader() {
                   active ? "bg-green text-primary-foreground" : "text-muted-foreground hover:text-green",
                 )}>
                 {lang === "zh" ? item.zh : item.en}
-                {item.href === "/shortlist" && count > 0 && (
+                {item.href === "/wace/shortlist" && count > 0 && (
                   <span className="score ml-1 border border-brass/60 bg-brass/12 px-1 text-[0.625rem] text-[oklch(0.42_0.07_74)]">
                     {count}
                   </span>
@@ -198,8 +200,10 @@ export function SiteHeader() {
             </div>
           </details>
         </nav>
+        )}
         <div className="flex shrink-0 items-center gap-3">
           <LangToggle />
+          {!chooser && (
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
@@ -208,9 +212,10 @@ export function SiteHeader() {
             className="inline-flex h-8 w-8 items-center justify-center border border-border text-green transition-colors hover:border-brass lg:hidden">
             {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
+          )}
         </div>
       </div>
-      {menuOpen && (
+      {!chooser && menuOpen && (
         <div className="absolute inset-x-0 top-full border-b border-border bg-paper shadow-[0_14px_28px_oklch(0.2_0.02_90_/_0.12)] lg:hidden">
           <nav className="container py-3" aria-label={t("主导航", "Primary navigation")}>
             <p className="eyebrow border-b border-border pb-2 text-brass">{t("目录", "Contents")}</p>
@@ -235,7 +240,7 @@ export function SiteHeader() {
                           </span>
                         </span>
                       </span>
-                    {item.href === "/shortlist" && count > 0 && (
+                    {item.href === "/wace/shortlist" && count > 0 && (
                       <span className="score border border-brass/60 bg-brass/12 px-1.5 text-[0.6875rem] text-[oklch(0.42_0.07_74)]">
                         {count}
                       </span>
@@ -269,11 +274,11 @@ export function SiteFooter() {
         <nav aria-label={t("常用工具", "Quick tools")}>
           <h3 className="eyebrow text-brass-soft">{t("常用工具", "Quick tools")}</h3>
           <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-2.5 text-[0.875rem] text-paper/80">
-            {NAV.filter((item) => ["/forward", "/reverse", "/subjects", "/shortlist"].includes(item.href)).map((item) => (
+            {NAV.filter((item) => ["/wace", "/alevel", "/wace/forward", "/wace/shortlist"].includes(item.href)).map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="inline-flex items-center gap-1.5 hover:text-brass-soft">
                   {lang === "zh" ? item.zh : item.en}
-                  {item.href === "/shortlist" && count > 0 && (
+                  {item.href === "/wace/shortlist" && count > 0 && (
                     <span className="score border border-brass-soft/50 bg-brass-soft/10 px-1 text-[0.625rem] text-brass-soft">
                       {count}
                     </span>

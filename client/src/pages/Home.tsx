@@ -55,13 +55,13 @@ export default function Home() {
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Link
-                href="/forward"
+                href="/wace/forward"
                 className="inline-flex items-center gap-2 border border-green bg-green px-6 py-3 text-[0.9375rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft">
                 {t("我有预计 ATAR", "I have a projected ATAR")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/reverse"
+                href="/wace/reverse"
                 className="inline-flex items-center gap-2 border border-green px-6 py-3 text-[0.9375rem] text-green transition-colors duration-150 hover:bg-green/6">
                 {t("我有目标院校", "I have a target university")}
                 <ArrowRight className="h-4 w-4" />

@@ -176,13 +176,13 @@ export default function Subjects() {
               </p>
               <div className="no-print mt-7 flex flex-wrap justify-center gap-3">
                 <Link
-                  href="/forward"
+                  href="/wace/forward"
                   className="inline-flex items-center gap-2 border border-green bg-green px-4 py-2 text-[0.875rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft">
                   {t("按分数查院校", "Search by score")}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="/reverse"
+                  href="/wace/reverse"
                   className="inline-flex items-center gap-2 border border-green px-4 py-2 text-[0.875rem] text-green transition-colors duration-150 hover:bg-green/5">
                   {t("按院校查门槛", "Look up a university")}
                   <ArrowRight className="h-4 w-4" />
@@ -224,7 +224,7 @@ export default function Subjects() {
           {/* 目标增删统一在清单页进行，此处只提供入口 */}
           {shortlist.length > 0 && (
             <Link
-              href="/shortlist"
+              href="/wace/shortlist"
               className="no-print mt-6 flex items-center justify-between gap-4 border border-border bg-card px-5 py-4 transition-colors duration-150 hover:border-brass">
               <span className="flex items-center gap-2.5 text-[0.875rem] text-green">
                 <ListChecks className="h-4 w-4 text-brass" />

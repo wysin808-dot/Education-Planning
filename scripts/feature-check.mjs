@@ -47,8 +47,8 @@ check(
   "收藏 Context 未回数据层解析，可能导致清单过期",
 );
 check(app.includes("ShortlistProvider"), "App 未挂载 ShortlistProvider");
-check(app.includes('path="/shortlist"'), "App 未注册 /shortlist 路由");
-check(brand.includes('href: "/shortlist"'), "导航缺少目标清单入口");
+check(app.includes('path="/wace/shortlist"'), "App 未注册 /shortlist 路由");
+check(brand.includes('href: "/wace/shortlist"'), "导航缺少目标清单入口");
 check(brand.includes("count > 0"), "导航缺少收藏数量角标");
 for (const [name, src] of [
   ["Forward", forward],
@@ -104,10 +104,10 @@ check(
   "选课页仍保留目标增删控件，应统一到目标清单页",
 );
 check(
-  subjects.includes('href="/shortlist"') || subjects.includes('href="/forward"'),
+  subjects.includes('href="/wace/shortlist"') || subjects.includes('href="/wace/forward"'),
   "选课页缺少指向清单页或查询页的衔接入口",
 );
-check(shortlist.includes('href="/subjects"'), "清单页缺少指向选课规划页的衔接入口");
+check(shortlist.includes('href="/wace/subjects"'), "清单页缺少指向选课规划页的衔接入口");
 check(
   !brand.includes('t("开始规划"'),
   "页头仍保留与导航重复的「开始规划」按钮",

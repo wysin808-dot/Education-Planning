@@ -8,7 +8,7 @@ const browser = await chromium.launch({
 try {
   const mobileContext = await browser.newContext({ viewport: { width: 375, height: 812 }, hasTouch: true });
   const mobile = await mobileContext.newPage();
-  await mobile.goto("http://localhost:3000/forward", { waitUntil: "networkidle" });
+  await mobile.goto("http://localhost:3000/wace/forward", { waitUntil: "networkidle" });
   await mobile.getByRole("button", { name: "打印 / 存为 PDF" }).click();
   await mobile.getByText("请用浏览器菜单打印或存储为 PDF").waitFor({ state: "visible" });
   await mobileContext.close();
@@ -20,7 +20,7 @@ try {
     };
   });
   const desktop = await desktopContext.newPage();
-  await desktop.goto("http://localhost:3000/reverse", { waitUntil: "networkidle" });
+  await desktop.goto("http://localhost:3000/wace/reverse", { waitUntil: "networkidle" });
   await desktop.getByRole("button", { name: "打印 / 存为 PDF" }).click();
   if ((await desktop.locator("html").getAttribute("data-print-called")) !== "yes") {
     throw new Error("桌面动态报告未调用系统打印");

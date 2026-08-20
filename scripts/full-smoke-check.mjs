@@ -2,13 +2,15 @@ import { chromium } from "playwright";
 
 const BASE_URL = "http://localhost:3000";
 const routes = [
-  ["/", /ATAR|升学/],
-  ["/forward", /ATAR|分数/],
-  ["/reverse", /院校|University/],
-  ["/subjects", /选课|Subject/],
-  ["/table", /门槛|Threshold/],
-  ["/shortlist", /清单|Shortlist/],
+  ["/", /先选择你的课程体系|WACE/],
+  ["/wace", /ATAR|升学/],
+  ["/wace/forward", /ATAR|分数/],
+  ["/wace/reverse", /院校|University/],
+  ["/wace/subjects", /选课|Subject/],
+  ["/wace/table", /门槛|Threshold/],
+  ["/wace/shortlist", /清单|Shortlist/],
   ["/brochure", /宣传册|Brochure/],
+  ["/alevel", /A-Level/],
   ["/not-a-real-route", /404|页面|Page/],
 ];
 
@@ -38,11 +40,31 @@ try {
 
   await page.goto(`${BASE_URL}/`, { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "EN" }).click();
-  await page.getByText("An ATAR of 92 is not one university.").waitFor({ state: "visible" });
+  await page.getByText("Start by choosing your curriculum.").waitFor({ state: "visible" });
   await page.getByRole("button", { name: "中文" }).click();
-  await page.getByText("ATAR 92 能进的不是一所大学").waitFor({ state: "visible" });
+  await page.getByText("先选择你的课程体系").waitFor({ state: "visible" });
 
-  await page.goto(`${BASE_URL}/forward`, { waitUntil: "networkidle" });
+  // 选择页的两个入口必须分别通向两套系统
+  await page.getByRole("link", { name: /进入 WACE 规划系统/ }).click();
+  await page.waitForURL("**/wace");
+  await page.goBack({ waitUntil: "networkidle" });
+  await page.getByRole("link", { name: /进入 A-Level 规划系统/ }).click();
+  await page.waitForURL("**/alevel");
+
+  // 旧版根级 WACE 路径需重定向到 /wace/*
+  for (const [legacy, target] of [
+    ["/forward", "/wace/forward"],
+    ["/reverse", "/wace/reverse"],
+    ["/subjects", "/wace/subjects"],
+    ["/table", "/wace/table"],
+    ["/shortlist", "/wace/shortlist"],
+  ]) {
+    await page.goto(`${BASE_URL}${legacy}`, { waitUntil: "networkidle" });
+    const url = new URL(page.url());
+    if (url.pathname !== target) throw new Error(`${legacy} 未重定向到 ${target}，实际为 ${url.pathname}`);
+  }
+
+  await page.goto(`${BASE_URL}/wace/forward`, { waitUntil: "networkidle" });
   const atarInput = page.locator('input[type="number"]').first();
   await atarInput.fill("100");
   await page.getByText("ATAR 的有效区间为 0 至 99.95。").waitFor({ state: "visible" });
@@ -53,7 +75,7 @@ try {
     throw new Error(`检测到运行时错误：${runtimeErrors.join(" | ")}`);
   }
 
-  console.log("全站烟雾测试通过：核心路由、404、双语切换、正向查询边界与运行时控制台均正常。");
+  console.log("全站烟雾测试通过：入口选择页、双体系路由、旧路径重定向、404、双语切换、正向查询边界与运行时控制台均正常。");
 } finally {
   await browser.close();
 }

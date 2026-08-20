@@ -11,10 +11,10 @@ export type RecentTool = {
 const STORAGE_KEY = "brentvale-wace-recent-tool";
 
 export const RECENT_TOOLS: Record<string, RecentTool> = {
-  "/forward": { href: "/forward", zh: "分数查院校", en: "Score to universities" },
-  "/reverse": { href: "/reverse", zh: "院校查门槛", en: "University to ATAR" },
-  "/subjects": { href: "/subjects", zh: "选课规划", en: "Subject planning" },
-  "/table": { href: "/table", zh: "门槛总表", en: "Threshold table" },
+  "/wace/forward": { href: "/wace/forward", zh: "WACE 分数查院校", en: "WACE score to universities" },
+  "/wace/reverse": { href: "/wace/reverse", zh: "WACE 院校查门槛", en: "WACE university to ATAR" },
+  "/wace/subjects": { href: "/wace/subjects", zh: "WACE 选课规划", en: "WACE subject planning" },
+  "/wace/table": { href: "/wace/table", zh: "WACE 门槛总表", en: "WACE threshold table" },
   "/alevel/forward": { href: "/alevel/forward", zh: "A-Level 预测成绩查院校", en: "A-Level grades to universities" },
   "/alevel/reverse": { href: "/alevel/reverse", zh: "A-Level 院校专业查条件", en: "A-Level programme requirements" },
   "/alevel/subjects": { href: "/alevel/subjects", zh: "A-Level 选课规划", en: "A-Level subject planning" },

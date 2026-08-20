@@ -111,13 +111,13 @@ export default function Shortlist() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link
-                href="/forward"
+                href="/wace/forward"
                 className="inline-flex items-center gap-2 border border-green bg-green px-5 py-2.5 text-[0.875rem] text-primary-foreground transition-colors hover:bg-green-soft">
                 {t("按分数查院校", "Search by ATAR")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/reverse"
+                href="/wace/reverse"
                 className="inline-flex items-center gap-2 border border-green px-5 py-2.5 text-[0.875rem] text-green transition-colors hover:bg-green/8">
                 {t("按院校查门槛", "Search by university")}
                 <ArrowRight className="h-4 w-4" />
@@ -145,7 +145,7 @@ export default function Shortlist() {
             </div>
             <div className="no-print flex flex-wrap items-center gap-3">
               <Link
-                href="/subjects"
+                href="/wace/subjects"
                 className="inline-flex items-center gap-1.5 border border-green px-3.5 py-2 text-[0.8125rem] text-green transition-colors hover:bg-green/5">
                 {t("据此规划选课", "Plan subjects from this list")}
                 <ArrowRight className="h-3.5 w-3.5" />
