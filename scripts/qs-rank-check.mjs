@@ -10,7 +10,10 @@
 import { chromium } from "playwright";
 import { readFileSync } from "fs";
 
-const BASE = "http://localhost:3000";
+/** 预览服务地址，默认本地 3000；跑在其他端口时用 BASE_URL 覆盖 */
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
+const BASE = `${BASE_URL}`;
 const problems = [];
 
 /* ---------- 1. 数据层校验 ---------- */

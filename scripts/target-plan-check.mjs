@@ -7,6 +7,9 @@
  */
 import { chromium } from "playwright";
 
+/** 预览服务地址，默认本地 3000；跑在其他端口时用 BASE_URL 覆盖 */
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROMIUM_PATH ?? "/usr/bin/chromium",
@@ -15,7 +18,7 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 const problems = [];
 
 try {
-  await page.goto("http://localhost:3000/wace/reverse", { waitUntil: "networkidle" });
+  await page.goto(`${BASE_URL}/wace/reverse`, { waitUntil: "networkidle" });
 
   const report = await page.evaluate(async () => {
     const mod = await import("/src/lib/targetPlan.ts");
@@ -397,7 +400,7 @@ try {
   }
 
   // A-Level 反查页
-  await page.goto("http://localhost:3000/alevel/reverse", { waitUntil: "networkidle" });
+  await page.goto(`${BASE_URL}/alevel/reverse`, { waitUntil: "networkidle" });
   await page.waitForTimeout(500);
 
   // 地区选择必须与 WACE 对位：三个下拉，切换地区后院校随之更换

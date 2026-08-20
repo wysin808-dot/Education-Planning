@@ -7,8 +7,11 @@
  */
 import { chromium } from "playwright";
 
-const BASE = "http://localhost:3000";
-const PAGES = ["/", "/wace", "/alevel", "/wace/reverse", "/wace/subjects"];
+/** 预览服务地址，默认本地 3000；跑在其他端口时用 BASE_URL 覆盖 */
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
+const BASE = `${BASE_URL}`;
+const PAGES = ["/", "/wace", "/alevel", "/wace/reverse", "/wace/subjects", "/wace/field", "/alevel/field"];
 const problems = [];
 
 const browser = await chromium.launch({

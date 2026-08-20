@@ -1,5 +1,8 @@
 import { chromium } from "playwright";
 
+/** 预览服务地址，默认本地 3000；跑在其他端口时用 BASE_URL 覆盖 */
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROMIUM_PATH ?? "/usr/bin/chromium",
@@ -7,9 +10,9 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 
 try {
-  await page.goto("http://localhost:3000/wace/forward", { waitUntil: "networkidle" });
+  await page.goto(`${BASE_URL}/wace/forward`, { waitUntil: "networkidle" });
   await page.waitForTimeout(80);
-  await page.goto("http://localhost:3000/", { waitUntil: "networkidle" });
+  await page.goto(`${BASE_URL}/`, { waitUntil: "networkidle" });
 
   const recentLink = page.getByRole("link", { name: /最近使用/ });
   await recentLink.waitFor({ state: "visible" });

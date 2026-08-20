@@ -139,6 +139,10 @@ export const ALEVEL_FIELD_ADVICE: Record<FieldKey, { zh: string; en: string }> =
     zh: "现有课程不含 Art & Design；建筑与技术设计方向建议 Mathematics + Physics，城市与空间规划方向可加 Geography。作品集须在课外持续建设。",
     en: "The current offering does not include Art & Design. Mathematics plus Physics is advisable for architecture and technical design, with Geography suiting urban and spatial planning. Portfolio development must continue outside class.",
   },
+  creative: {
+    zh: "BCI 十门课程中没有任何艺术科目，这一点必须先说清楚：A-Level 组合不承担专业能力的证明，作品集与试音才是。分数与科目在此的作用是满足并行门槛——影视、戏剧与艺术史类专业普遍要求一门论文写作型科目，Geography 是十门中唯一对口的选择，可与 Economics 或 Business 组合；数字艺术与游戏方向可用 Computer Science 佐证技术基础。音乐方向另需 ABRSM 乐理等级：剑桥要求第八级达 Merit 以上，国王学院与曼彻斯特接受第五级乐理替代 A-Level 音乐；爱丁堡里德音乐学院不要求任何音乐资格，是本数据集中唯一无需乐理即可申请的音乐路径。",
+    en: "None of BCI's ten courses is an art subject, and this has to be said first: the A-Level combination does not evidence artistic ability — the portfolio and the audition do. Grades and subjects here serve a parallel threshold. Film, drama and art-history programmes commonly require an essay-based subject, and Geography is the only fit among the ten, pairing with Economics or Business. Computer Science evidences the technical foundation for digital art and games routes. Music routes additionally require ABRSM theory: Cambridge asks for Grade 8 at Merit or above, while King's and Manchester accept Grade 5 Theory in place of A Level Music. The Reid School of Music at Edinburgh requires no music qualification at all and is the only music route in this dataset open without theory grades.",
+  },
   arts: {
     zh: "现有组合以量化与商科为主；Geography 是唯一的人文类选择，与 Economics 组合可支持社会科学、国际关系与发展研究方向。语言、文学及传媒专业仍需额外核对英语与作品要求。",
     en: "The current set is quantitatively and business oriented. Geography is the only humanities option and, combined with Economics, supports social science, international relations and development studies. Language, literature and media programmes still require separate checks for English and portfolio requirements.",

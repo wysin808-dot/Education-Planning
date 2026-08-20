@@ -205,3 +205,18 @@
 - [x] 全站加 noindex/nofollow，并提供 robots.txt 禁止收录
 - [x] 页面标注「内部使用」标识，避免误当作对外页面分发
 - [x] 完成 A-Level 十门课程补齐后的全量回归测试
+
+## 新增「艺术与创意」方向与「由方向规划」动线（2026-08-20）
+- [x] 新建第 10 个学科方向 `creative`（艺术与创意），与既有 `design`（建筑与设计）、`arts`（人文社科与传媒）划清边界。
+- [x] 将散落在 design / arts / science / education 下的 25 个艺术类专业重新归类到 creative。
+- [x] 补齐数据缺口：PolyU、USyd、UNSW、UQ、Monash、Adelaide、Cambridge、KCL、Edinburgh、Manchester 十校的艺术专业逐校核验后新增 15 条，并写入官方来源。
+- [x] 核定 SMU、SUTD、SUSS、HKUST、Imperial、LSE 六校确无艺术类本科，页面显式写明「不适用」而非留空。
+- [x] 为 creative 补齐五张 Record<FieldKey> 映射：WACE 支撑科目、竞赛建议、新加坡本地义工、A-Level 支撑科目、A-Level 方向建议。
+- [x] 为 31 所院校补齐 creative 的 A-Level 规则；已核验的六校写实，其余明确标注未核验，不虚构门槛。
+- [x] 新增 `/wace/field` 与 `/alevel/field`，两套体系严格对位，导航各增一项「由方向规划」。
+- [x] 页面按「方向档案 → 院校名录 → 分年选课 → 背景准备 → 数据口径」组织，结论在前。
+- [x] 修复多目标规划器的补位逻辑：新增可选的方向支撑科目优先序，避免艺术方向被补上物理。
+- [x] 合并数据层重复的「试听」与「试音」（同义、英文同为 Audition，聚合后会并列显示为两项要求）。
+- [x] 修复回归脚本的可移植性：BASE_URL 与 CHROMIUM_PATH 参数化，去掉两处 /home/ubuntu 硬编码。
+- [x] 专业条目数由 636 更新为 651（index.html、入口页、i18n 自检、ideas.md）。
+- [x] 全量回归：16 套脚本中 13 套通过，另 3 套仅因本地缺 Manus 托管图片与分析端点变量而失败。

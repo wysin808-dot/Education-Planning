@@ -1,5 +1,8 @@
 import { chromium } from "playwright";
 
+/** 预览服务地址，默认本地 3000；跑在其他端口时用 BASE_URL 覆盖 */
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROMIUM_PATH ?? "/usr/bin/chromium",
@@ -8,7 +11,7 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 
 try {
   // 根路径为课程体系选择页，不应出现功能主导航
-  await page.goto("http://localhost:3000/", { waitUntil: "networkidle" });
+  await page.goto(`${BASE_URL}/`, { waitUntil: "networkidle" });
   if ((await page.locator('nav[aria-label="主导航"]').count()) !== 0) {
     throw new Error("入口选择页不应显示功能主导航");
   }
@@ -24,7 +27,7 @@ try {
   ];
 
   for (const c of cases) {
-    await page.goto(`http://localhost:3000${c.path}`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE_URL}${c.path}`, { waitUntil: "networkidle" });
     const primary = page.locator('nav[aria-label="主导航"]');
     await primary.waitFor({ state: "visible" });
 
@@ -54,7 +57,7 @@ try {
   }
 
   // 宣传册收纳在「更多」菜单
-  await page.goto("http://localhost:3000/wace", { waitUntil: "networkidle" });
+  await page.goto(`${BASE_URL}/wace`, { waitUntil: "networkidle" });
   await page.getByText("更多", { exact: true }).click();
   await page.getByRole("link", { name: "宣传册" }).waitFor({ state: "visible" });
 

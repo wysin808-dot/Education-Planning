@@ -1,16 +1,18 @@
 import { chromium } from "playwright";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
 const routes = [
   ["/", /先选择你的课程体系|WACE/],
   ["/wace", /ATAR|升学/],
   ["/wace/forward", /ATAR|分数/],
   ["/wace/reverse", /院校|University/],
+  ["/wace/field", /方向|Field/],
   ["/wace/subjects", /选课|Subject/],
   ["/wace/table", /门槛|Threshold/],
   ["/wace/shortlist", /清单|Shortlist/],
   ["/brochure", /宣传册|Brochure/],
   ["/alevel", /A-Level/],
+  ["/alevel/field", /方向|Field/],
   ["/not-a-real-route", /404|页面|Page/],
 ];
 

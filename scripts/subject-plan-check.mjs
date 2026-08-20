@@ -4,6 +4,9 @@
  */
 import { chromium } from "playwright";
 
+/** 预览服务地址，默认本地 3000；跑在其他端口时用 BASE_URL 覆盖 */
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROMIUM_PATH ?? "/usr/bin/chromium",
@@ -12,7 +15,7 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 const problems = [];
 
 try {
-  await page.goto("http://localhost:3000/wace/subjects", { waitUntil: "networkidle" });
+  await page.goto(`${BASE_URL}/wace/subjects`, { waitUntil: "networkidle" });
 
   const report = await page.evaluate(async () => {
     const mod = await import("/src/lib/matching.ts");
@@ -127,7 +130,7 @@ try {
   }
 
   // ---------- A-Level 方案 ----------
-  await page.goto("http://localhost:3000/alevel/subjects", { waitUntil: "networkidle" });
+  await page.goto(`${BASE_URL}/alevel/subjects`, { waitUntil: "networkidle" });
 
   const alevel = await page.evaluate(async () => {
     const mod = await import("/src/lib/alevelMatching.ts");

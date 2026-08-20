@@ -263,6 +263,11 @@ export interface AlevelSubjectPlan {
 export function buildAlevelPlan(
   targets: { universityId: string; programmeId: string }[],
   lang: "zh" | "en" = "zh",
+  /**
+   * 补位科目的优先序，用法同 buildSubjectPlan：
+   * 目标集中在单一方向时传入该方向的支撑科目，避免按通用学术序补出与方向无关的科目。
+   */
+  preferred: AlevelSubjectKey[] = [],
 ): AlevelSubjectPlan {
   const required = new Map<AlevelSubjectKey, { count: number; supports: string[] }>();
   const recommended = new Map<AlevelSubjectKey, { count: number; supports: string[] }>();
@@ -332,13 +337,17 @@ export function buildAlevelPlan(
     push(subject, "recommended");
   }
 
-  // 3. 仍有空位时按学术通用性补齐
-  for (const subject of ALEVEL_GENERAL_ORDER) {
+  // 3. 仍有空位时：先按方向支撑科目补位，再按学术通用性补齐
+  const fillerOrder = [
+    ...preferred.filter((s) => ALEVEL_GENERAL_ORDER.includes(s)),
+    ...ALEVEL_GENERAL_ORDER.filter((s) => !preferred.includes(s)),
+  ];
+  for (const subject of fillerOrder) {
     if (chosen.length >= ALEVEL_AS_SIZE) break;
     push(subject, "filler");
   }
   // Further Mathematics 因依赖 Mathematics 可能被跳过，此处兜底补齐
-  for (const subject of ALEVEL_GENERAL_ORDER) {
+  for (const subject of fillerOrder) {
     if (chosen.length >= ALEVEL_AS_SIZE) break;
     if (taken.has(subject)) continue;
     chosen.push(build(subject, "filler"));

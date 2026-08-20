@@ -1,6 +1,10 @@
 import { readFile } from "node:fs/promises";
 
-const root = "/home/ubuntu/brentvale-wace-planner";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+/** 项目根目录：由脚本自身位置推导，避免绑定到某台机器的绝对路径 */
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const rulesSource = await readFile(`${root}/client/src/data/alevelRules.ts`, "utf8");
 const appSource = await readFile(`${root}/client/src/App.tsx`, "utf8");
 const subjectsSource = await readFile(`${root}/client/src/data/alevel.ts`, "utf8");

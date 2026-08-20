@@ -19,7 +19,7 @@ const PAIRS = [
   ["waceNotes", 31],
   ["applicationWindow", 31],
   ["dataYear", 31],
-  ["atarNote", 636],
+  ["atarNote", 651],
 ];
 
 for (const [field, expected] of PAIRS) {

@@ -315,7 +315,6 @@ const EXTRA_EN: Record<string, string> = {
   笔试: "Written test",
   作品集: "Portfolio",
   试音: "Audition",
-  试听: "Audition",
   医疗体检: "Medical examination",
   入学考试: "Entrance examination",
 };
@@ -429,6 +428,14 @@ export function buildSubjectPlan(
   targets: PlanTarget[],
   hemisphere: "north" | "south",
   lang: "zh" | "en" = "zh",
+  /**
+   * 补位科目的优先序。
+   * 目标集中在单一学科方向时（如「由方向规划」页），传入该方向的支撑科目，
+   * 使补位不再只按 scaling 取高分科目——否则艺术方向会被补上物理，
+   * 学生拿到的是一份分数好看但与方向无关的组合。
+   * 不传则维持原有的纯 scaling 行为，多方向清单不受影响。
+   */
+  preferred: SubjectKey[] = [],
 ): SubjectPlan {
   const offeredKeys = new Set(
     SUBJECTS.filter((s) => (hemisphere === "north" ? s.north : s.south)).map((s) => s.key),
@@ -535,7 +542,15 @@ export function buildSubjectPlan(
         !chosen.has(s.key) &&
         s.key !== LOCK_ENGLISH &&
         s.key !== "english",
-    ).sort((a, b) => (SCALING_WEIGHT[b.scaling] ?? 1) - (SCALING_WEIGHT[a.scaling] ?? 1));
+    ).sort((a, b) => {
+      // 方向支撑科目优先，其次才看 scaling
+      const pa = preferred.indexOf(a.key);
+      const pb = preferred.indexOf(b.key);
+      const ra = pa === -1 ? Number.MAX_SAFE_INTEGER : pa;
+      const rb = pb === -1 ? Number.MAX_SAFE_INTEGER : pb;
+      if (ra !== rb) return ra - rb;
+      return (SCALING_WEIGHT[b.scaling] ?? 1) - (SCALING_WEIGHT[a.scaling] ?? 1);
+    });
 
     // 第一轮：优先补入尚未覆盖的学科分组，保证方案横跨数学、科学与商科
     for (const meta of pool) {

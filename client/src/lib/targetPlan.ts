@@ -20,6 +20,7 @@ import {
   type University,
 } from "@/data/universities";
 import type { AlevelSubjectKey } from "@/data/alevelRules";
+import { extraLabel } from "@/lib/matching";
 
 /** Year 11 建议修读的 ATAR 课程数 */
 export const Y11_COURSES = 5;
@@ -108,9 +109,20 @@ const FIELD_SUPPORT: Record<FieldKey, SubjectKey[]> = {
   business: ["mathMethods", "economics", "accounting"],
   science: ["mathMethods", "chemistry", "physics", "biology"],
   design: ["ait", "mathApplications", "psychology"],
+  creative: ["ait", "psychology", "business", "mathApplications"],
   arts: ["economics", "psychology", "mathApplications"],
   education: ["mathMethods", "psychology", "humanBio"],
 };
+
+/** 某方向在 WACE 阶段的支撑科目，供「由方向规划」页作为补位优先序 */
+export function fieldSupportSubjects(field: FieldKey): SubjectKey[] {
+  return FIELD_SUPPORT[field] ?? [];
+}
+
+/** 某方向在 BCI 十门 A-Level 课程中的支撑科目，用途同上 */
+export function alevelFieldSupportSubjects(field: FieldKey): AlevelSubjectKey[] {
+  return ALEVEL_FIELD_SUPPORT[field] ?? [];
+}
 
 /** 各方向可考虑的竞赛与学术活动。均为加分项，不得表述为录取条件。 */
 const FIELD_COMPETITIONS: Record<FieldKey, { zh: string; en: string }> = {
@@ -141,6 +153,10 @@ const FIELD_COMPETITIONS: Record<FieldKey, { zh: string; en: string }> = {
   design: {
     zh: "持续积累的个人作品集为首要准备，可辅以设计竞赛、展览投稿与写生速写的长期记录。",
     en: "A continuously developed portfolio is the priority, supported by design competitions, exhibition submissions and a sustained record of drawing practice.",
+  },
+  creative: {
+    zh: "作品集或试音是第一位的准备，且须长期积累而非临阵突击：视觉方向建议保持连续的创作记录与展览、比赛投稿；音乐方向须报考 ABRSM 或 Trinity 等级考试——剑桥音乐要求第八级乐理达 Merit 以上，国王学院与曼彻斯特接受第五级乐理替代 A-Level 音乐，这是 BCI 学生进入这些音乐系的必经路径。以上均为加分项或资格佐证，竞赛本身不构成录取条件。",
+    en: "A portfolio or audition is the first priority and must be built up over time rather than assembled at the last minute. Visual routes call for a continuous record of practice alongside exhibition and competition submissions. Music routes require ABRSM or Trinity graded examinations: Cambridge asks for Grade 8 Theory at Merit or above, while King's and Manchester accept Grade 5 Theory in place of A Level Music, which is the necessary route for BCI students into those music departments. These are advantages or evidence of qualification; competitions themselves are not admission conditions.",
   },
   arts: {
     zh: "写作、演讲与辩论类竞赛，人文社科研究项目，或长期的社区服务与文化活动参与。",
@@ -186,6 +202,10 @@ const FIELD_VOLUNTEERING: Record<FieldKey, { zh: string; en: string }> = {
     zh: "在新加坡本地承接公益性质的设计任务：为慈善机构义务设计宣传物料、参与社区壁画与公共空间美化项目、在博物馆与设计节担任义工。这些成果可直接纳入作品集。",
     en: "Take on pro bono design work in Singapore: publicity materials for charities, community mural and public-space projects, and volunteering at museums and design festivals. The outcomes can go straight into the portfolio.",
   },
+  creative: {
+    zh: "在新加坡本地投入创作与演出类服务：新加坡国家美术馆与各博物馆的展览导览义工、滨海艺术中心与社区剧场的演出后台协助、为公益机构与养老院组织的社区艺术工作坊或义演、艺术节的记录摄影与影像剪辑。建议固定投入同一机构、累计一年以上，服务中产出的作品与影像可直接充实作品集。",
+    en: "Commit to creative and performance service within Singapore: exhibition guiding at the National Gallery Singapore and other museums, backstage support at Esplanade and community theatre productions, community art workshops or benefit performances for charities and nursing homes, and documentary photography and video editing at arts festivals. Commit to one organisation for over a year; the work and footage produced in service can go directly into the portfolio.",
+  },
   arts: {
     zh: "投入新加坡本地的文化与社群服务：博物馆与艺术节义工、社区口述历史与文化保存项目、为年长者或新移民提供的语言陪伴服务。长期参与可为个人陈述提供具体素材。",
     en: "Contribute to Singapore cultural and community work: volunteering at museums and arts festivals, community oral-history and heritage projects, and language companionship for the elderly or new arrivals. Long-term involvement supplies concrete material for the personal statement.",
@@ -218,12 +238,6 @@ const EXTRA_DETAIL: Record<string, { zh: string; en: string; timingZh: string; t
   },
   试音: {
     zh: "需通过试音或术科考核，须提前确认曲目要求并安排长期训练。",
-    en: "An audition or practical assessment applies; confirm the repertoire requirements early and plan sustained practice.",
-    timingZh: "Year 11 起持续训练",
-    timingEn: "Sustained practice from Year 11",
-  },
-  试听: {
-    zh: "需通过试听或术科考核，须提前确认曲目要求并安排长期训练。",
     en: "An audition or practical assessment applies; confirm the repertoire requirements early and plan sustained practice.",
     timingZh: "Year 11 起持续训练",
     timingEn: "Sustained practice from Year 11",
@@ -568,6 +582,73 @@ function buildPreparation(university: University, programme: Programme): Prepara
   return preparation;
 }
 
+/**
+ * 方向级背景准备：把该方向下所有专业的官方附加要求合并计数，再附上方向的竞赛与义工建议。
+ *
+ * 与单目标版本共用同一套 kind 分类，纪律一致：
+ * 「官方要求」只能来自数据层 extras，且必须标明是本方向中多少个专业要求，
+ * 避免把个别专业的作品集或试音读成整个方向的统一门槛；
+ * 竞赛与义工一律归入「加分项」。
+ */
+export function buildFieldPreparation(
+  field: FieldKey,
+  entries: { university: University; programme: Programme }[],
+): PreparationItem[] {
+  const preparation: PreparationItem[] = [];
+  const total = entries.length;
+
+  const extraCounts = new Map<string, number>();
+  for (const { programme } of entries) {
+    for (const extra of programme.extras) {
+      extraCounts.set(extra, (extraCounts.get(extra) ?? 0) + 1);
+    }
+  }
+
+  for (const [extra, count] of Array.from(extraCounts.entries()).sort((a, b) => b[1] - a[1])) {
+    const detail = EXTRA_DETAIL[extra];
+    preparation.push({
+      kind: "official",
+      titleZh: `${extra} · 本方向 ${count} / ${total} 个专业要求`,
+      titleEn: `${extraLabel(extra, "en")} · required by ${count} of ${total} in this field`,
+      detailZh:
+        detail?.zh ?? "本方向部分专业设有此项附加选拔要求，请以院校官方公告为准。",
+      detailEn:
+        detail?.en ??
+        "Some programmes in this field apply this additional selection requirement; follow the university's official announcement.",
+      timingZh: detail?.timingZh ?? "按院校公告安排",
+      timingEn: detail?.timingEn ?? "Per the university's announcement",
+    });
+  }
+
+  const competition = FIELD_COMPETITIONS[field];
+  if (competition) {
+    preparation.push({
+      kind: "advantage",
+      titleZh: "竞赛与课外活动",
+      titleEn: "Competitions and activities",
+      detailZh: competition.zh,
+      detailEn: competition.en,
+      timingZh: "从毕业前两年起持续投入，重质不重量",
+      timingEn: "Sustained involvement from two years out; depth over quantity",
+    });
+  }
+
+  const volunteering = FIELD_VOLUNTEERING[field];
+  if (volunteering) {
+    preparation.push({
+      kind: "advantage",
+      titleZh: "新加坡本地义工服务",
+      titleEn: "Volunteering in Singapore",
+      detailZh: volunteering.zh,
+      detailEn: volunteering.en,
+      timingZh: "建议每月固定时段，累计满一年以上",
+      timingEn: "A fixed monthly commitment sustained beyond one year",
+    });
+  }
+
+  return preparation;
+}
+
 /** 方案中科目角色的标签 */
 export function targetRoleLabel(role: TargetPlanSubject["role"], lang: "zh" | "en"): string {
   const map: Record<TargetPlanSubject["role"], [string, string]> = {
@@ -635,6 +716,7 @@ const ALEVEL_FIELD_SUPPORT: Record<FieldKey, AlevelSubjectKey[]> = {
   business: ["mathematics", "economics", "accounting", "business"],
   science: ["mathematics", "chemistry", "physics", "geography"],
   design: ["mathematics", "physics", "geography"],
+  creative: ["geography", "business", "computerScience", "economics"],
   arts: ["geography", "economics", "business"],
   education: ["mathematics", "biology", "geography", "economics"],
 };

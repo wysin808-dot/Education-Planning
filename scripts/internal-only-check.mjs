@@ -4,7 +4,10 @@
  */
 import { chromium } from "playwright";
 
-const BASE = "http://localhost:3000";
+/** 预览服务地址，默认本地 3000；跑在其他端口时用 BASE_URL 覆盖 */
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
+const BASE = `${BASE_URL}`;
 const fail = [];
 
 const browser = await chromium.launch({

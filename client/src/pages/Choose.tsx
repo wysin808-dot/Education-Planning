@@ -93,8 +93,8 @@ export default function Choose() {
               </h1>
               <p className="mt-5 max-w-[58ch] font-[family-name:var(--font-serif)] text-[1.0625rem] leading-relaxed text-muted-foreground">
                 {t(
-                  "博林国际学院提供两套彼此独立的升学规划系统。两者覆盖相同的 31 所目标院校与 636 条专业条目，功能一一对应，仅成绩口径与可选课程不同——请按学生正在修读的课程进入。",
-                  "Brentvale College International runs two independent planning systems. Both cover the same 31 target universities and 636 programme entries with matching tools; only the grade basis and available subjects differ. Enter through the curriculum the student is actually taking.",
+                  "博林国际学院提供两套彼此独立的升学规划系统。两者覆盖相同的 31 所目标院校与 651 条专业条目，功能一一对应，仅成绩口径与可选课程不同——请按学生正在修读的课程进入。",
+                  "Brentvale College International runs two independent planning systems. Both cover the same 31 target universities and 651 programme entries with matching tools; only the grade basis and available subjects differ. Enter through the curriculum the student is actually taking.",
                 )}
               </p>
             </Reveal>

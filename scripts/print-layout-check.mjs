@@ -1,5 +1,8 @@
 import { chromium } from "playwright";
 
+/** 预览服务地址，默认本地 3000；跑在其他端口时用 BASE_URL 覆盖 */
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROMIUM_PATH ?? "/usr/bin/chromium",
@@ -8,7 +11,7 @@ const browser = await chromium.launch({
 try {
   const mobileContext = await browser.newContext({ viewport: { width: 375, height: 812 }, hasTouch: true });
   const mobile = await mobileContext.newPage();
-  await mobile.goto("http://localhost:3000/wace/forward", { waitUntil: "networkidle" });
+  await mobile.goto(`${BASE_URL}/wace/forward`, { waitUntil: "networkidle" });
   await mobile.getByRole("button", { name: "打印 / 存为 PDF" }).click();
   await mobile.getByText("请用浏览器菜单打印或存储为 PDF").waitFor({ state: "visible" });
   await mobileContext.close();
@@ -20,13 +23,13 @@ try {
     };
   });
   const desktop = await desktopContext.newPage();
-  await desktop.goto("http://localhost:3000/wace/reverse", { waitUntil: "networkidle" });
+  await desktop.goto(`${BASE_URL}/wace/reverse`, { waitUntil: "networkidle" });
   await desktop.getByRole("button", { name: "打印 / 存为 PDF" }).click();
   if ((await desktop.locator("html").getAttribute("data-print-called")) !== "yes") {
     throw new Error("桌面动态报告未调用系统打印");
   }
 
-  await desktop.goto("http://localhost:3000/brochure", { waitUntil: "networkidle" });
+  await desktop.goto(`${BASE_URL}/brochure`, { waitUntil: "networkidle" });
   const href = await desktop.getByRole("link", { name: "打开固定版 PDF" }).getAttribute("href");
   if (!href?.endsWith(".pdf")) throw new Error(`宣传册固定 PDF 链接无效：${href}`);
   const response = await desktop.request.get(new URL(href, desktop.url()).toString());

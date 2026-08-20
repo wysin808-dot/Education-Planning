@@ -145,6 +145,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "Architecture requires a Year 12 or higher level pass in Chemistry or Mathematics or Physics or Physical Science. Industrial Design requires a Year 12 or higher level pass in Arts or Economics or Mathematics or Physics and includes an interview. Shortlisted applicants for Architecture, Industrial Design and Landscape Architecture may have a test or interview.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Music（音乐）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Music. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -252,6 +260,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "Art, Design & Media requires Junior High School Mathematics and good Senior High School English, together with a portfolio, personal statement/writing samples, creative project, and observational drawing. No fixed Cambridge A-Level grade threshold was published.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Fine Arts（美术）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Fine Arts. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -336,6 +352,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "不适用；SMU 官方本科课程/录取页面未公布设计本科课程要求。",
         "noteEn": "No Cambridge International-specific grade requirement or portfolio requirement has been published for design.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "不适用：本数据集未收录该校艺术与创意方向的本科专业。",
+        "noteEn": "Not applicable: this dataset records no undergraduate art or creative programme at this institution.",
         "extras": []
       },
       "arts": {
@@ -434,6 +458,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "SUTD has not published a separate A-Level grade or subject prerequisite for design. Design and Artificial Intelligence is an undergraduate pathway in which related areas may be explored.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "不适用：本数据集未收录该校艺术与创意方向的本科专业。",
+        "noteEn": "Not applicable: this dataset records no undergraduate art or creative programme at this institution.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -527,6 +559,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
           "DigiPen Digital Art and Animation 另需提交 10–15 件作品 portfolio。"
         ]
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Digital Art and Animation（数字艺术与动画）、User Experience and Game Design（用户体验与游戏设计）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Digital Art and Animation, User Experience and Game Design. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -614,6 +654,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No design-specific Cambridge A-Level grade or subject requirement has been published in the official international-student full-time undergraduate programme list.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "不适用：本数据集未收录该校艺术与创意方向的本科专业。",
+        "noteEn": "Not applicable: this dataset records no undergraduate art or creative programme at this institution.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -696,6 +744,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "不适用：已核验研究未列出可对应的Design课程等级门槛或Cambridge A-Level科目规则。",
         "noteEn": "No verified, programme-specific Cambridge International A-Level threshold, subject combination, or general portfolio requirement has been published in the research.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Arts in Global Creative Industries（文学）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Arts in Global Creative Industries. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -789,6 +845,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "已核验官方研究未识别或公布可归入Design类别的课程级A-Level等级或BCI 可选课程规则，不适用。",
         "noteEn": "For the relevant arts, humanities and social science programmes, no programme-level minimum grades or prerequisite subjects for International A-Level have been published. The CUHK general requirement applies; individual programmes may have language or programme-specific requirements.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Fine Arts（艺术）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Fine Arts. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -890,6 +954,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No official design-specific Cambridge International A-Level requirement was published in the reviewed material.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "不适用：本数据集未收录该校艺术与创意方向的本科专业。",
+        "noteEn": "Not applicable: this dataset records no undergraduate art or creative programme at this institution.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -978,6 +1050,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "已核验官方页面未公布设计类统一 Cambridge/International A-Level 等级或先修科目；School of Creative Media 强烈建议或要求通过在线系统提交作品集。",
         "noteEn": "No programme-specific Cambridge/International A-Level grades or prerequisite subjects were published for design programmes reviewed.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Creative Media（创意媒体）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Creative Media. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -1076,6 +1156,19 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No unified portfolio requirement for A-Level applicants was identified for the representative programmes reviewed; no official requirement is published.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": "3 门 A-Level 达 B 或以上",
+        "requiredSubjects": [],
+        "recommendedSubjects": [
+          "computerScience"
+        ],
+        "noteZh": "设计学院 BA(Hons) 组合课程官方要求国际 A-Level 三门达 B 或以上，不指定科目。作品集为必交项，未附作品集的申请不予处理；入围者另需于三月下旬至四月携实体或数字作品集参加个人面试。",
+        "noteEn": "The School of Design Bachelor of Arts (Honours) Scheme officially requires Grade B or above in three international A-Level subjects, with no specified subjects. A portfolio is mandatory and applications without one are not processed; shortlisted applicants attend an individual interview with a physical or digital portfolio in late March to April.",
+        "extras": [
+          "作品集",
+          "面试"
+        ]
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -1158,6 +1251,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "不适用：已核验研究未见可对应的 Design 本科课程或 Cambridge A-Level 专属要求；官方未公布。",
         "noteEn": "No Cambridge A-Level-specific minimum grades, subject combination, or designated prerequisite subjects for design programmes were published in the verified materials.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Game Design and Animation（游戏设计与动画）、Music（音乐学）、Film and Television（电影与电视）、Visual Arts（视觉艺术）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Game Design and Animation, Music, Film and Television, Visual Arts. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -1244,6 +1345,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "Officially not published; no Cambridge A-Level programme grade or design subject prerequisite was verified.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Creative and Digital Arts (Music)（创意艺术与数码艺术（音乐））、Creative and Digital Arts (Visual Arts)（创意艺术与数码艺术（视觉艺术））、Heritage Education and Arts Management（文化遗产教育与艺术管理）、Creative and Digital Arts & Education (Music)（创意艺术与数码艺术及音乐教育）、Creative and Digital Arts & Education (Visual Arts)（创意艺术与数码艺术及视觉艺术教育）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Creative and Digital Arts (Music), Creative and Digital Arts (Visual Arts), Heritage Education and Arts Management, Creative and Digital Arts & Education (Music), Creative and Digital Arts & Education (Visual Arts). No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -1326,6 +1435,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "官方未公布针对 GCE AL/IAL 的设计类专业最低成绩或先修科目。",
         "noteEn": "Not officially published; no design-specific minimum grade or prerequisite subject for GCE AL/IAL was identified.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Animation and Digital Arts（动画及数码艺术）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Animation and Digital Arts. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -1436,6 +1553,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "Bachelor of Design: BBB (12), with an approved A/AS Level English subject.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Graphic Design（平面设计）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Graphic Design. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": "Bachelor of Arts：BBC (11)",
         "requiredSubjects": [],
@@ -1527,6 +1652,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No uniform design benchmark or Cambridge A-Level subject prerequisite is published in the research. Any portfolio, audition or interview requirement should be checked on the specific course page.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Music（音乐）、Visual Arts（视觉艺术）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Music, Visual Arts. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -1609,6 +1742,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "设计方向在已核验官方研究中未确认 Cambridge A-Level 等级门槛、统一先修科目或可映射的科目规则；按课程具体要求审核。",
         "noteEn": "No separate Cambridge A-Level grade threshold or uniform prerequisite subjects have been published for this field.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Visual Arts（视觉艺术）、Music（音乐）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Visual Arts, Music. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -1696,6 +1837,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "已核验研究仅显示 Bachelor of Architectural Studies 的 GCE AL 12；该数值不是等级组合，故不填 published_grade_profile。具体设计课程可能有作品集或课程特定要求，但未确认统一 Cambridge A-Level 作品集规则。",
         "noteEn": "Bachelor of Architectural Studies: GCE AL 12 in the 2027 table. Specific design courses may have additional requirements, but no uniform Cambridge A-Level portfolio rule was confirmed in the verified material.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Fine Arts（纯艺术）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Fine Arts. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -1797,6 +1946,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "本次已核验研究未覆盖可用于该方向的 UQ 课程 benchmark；不适用，且未公布 Cambridge A-Level 等级或七科科目规则。",
         "noteEn": "No specific Cambridge International A-Level grade or subject combination, additional test, portfolio, or interview requirement was published in the reviewed material.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Music（音乐）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Music. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -1903,6 +2060,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No Cambridge-specific A-Level minimum grade, prerequisite subject, or other published requirement was identified for Design. Course-specific requirements must be checked.\n\n",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Fine Art（纯艺术）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Fine Art. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -1995,6 +2160,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No Cambridge A-level grade threshold, subject prerequisite, portfolio requirement or interview requirement was published for Design in the official materials reviewed. Do not infer an additional requirement.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Music（音乐）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Music. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -2077,6 +2250,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "不适用：已核验研究未提供可直接引用的设计类课程 A-Level 等级组合或七项 BCI 科目要求。",
         "noteEn": "No confirmed Cambridge International A-Level grade or subject requirement was verified for a representative design course; the official source does not publish one.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Music（音乐）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Music. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
@@ -2187,6 +2368,18 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "Fine Art: AAA, or AAB for post-A-level applicants who have completed an Art Foundation; digital portfolio.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": "Fine Art: AAA（完成艺术预科的 post-A-level 申请者为 AAB）；Music: AAA",
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "Fine Art 官方要求 AAA，已完成艺术预科的 post-A-level 申请者为 AAB，须提交数字作品集；Music 官方要求 AAA，须参加试音与面试。两者均不指定 A-Level 科目。BCI 十门课程不含艺术与音乐科目，作品集与试音须在课外准备。",
+        "noteEn": "Fine Art requires AAA, or AAB for post-A-level applicants who have completed an Art Foundation, with a digital portfolio. Music requires AAA with an audition and interview. Neither specifies A-Level subjects. BCI's ten courses include neither art nor music, so the portfolio and audition must be prepared outside the classroom.",
+        "extras": [
+          "作品集",
+          "试音",
+          "面试"
+        ]
+      },
       "arts": {
         "publishedGradeProfile": "AAA",
         "requiredSubjects": [],
@@ -2296,6 +2489,18 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No separate official A-Level benchmark or subject requirement for Design is published in the research.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": "A*AA",
+        "requiredSubjects": [],
+        "recommendedSubjects": [
+          "geography"
+        ],
+        "noteZh": "Music 官方要求 A*AA，且须具备 A-Level 或 IB 高级程度的音乐科目；ABRSM 第八级乐理达 Merit 以上可作替代。History of Art 官方要求 A*AA，其中 A* 须为论文写作型科目，官方明确不接受以 Art and Design 充当。BCI 未开设音乐 A-Level，音乐方向须走 ABRSM 第八级乐理替代路径；论文写作型科目在十门中仅 Geography 对口。",
+        "noteEn": "Music requires A*AA and includes a Music qualification at A Level or IB Higher Level, with ABRSM Grade 8 Theory at Merit or above accepted instead. History of Art requires A*AA with the A* in an essay-based subject, and Art and Design is explicitly not accepted for that purpose. BCI does not offer Music at A Level, so the ABRSM Grade 8 Theory route is required, and Geography is the only essay-based fit among the ten courses.",
+        "extras": [
+          "面试"
+        ]
+      },
       "arts": {
         "publishedGradeProfile": null,
         "requiredSubjects": [],
@@ -2390,6 +2595,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "已核验官方本科课程范围未公布独立 Design 学位或统一 Design A-level benchmark；不适用。",
         "noteEn": "No unified official Design A-level requirement or standalone Design category benchmark was published in the research. Check the relevant Imperial course page if applicable; no general portfolio requirement was identified.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "不适用：本数据集未收录该校艺术与创意方向的本科专业。",
+        "noteEn": "Not applicable: this dataset records no undergraduate art or creative programme at this institution.",
         "extras": []
       },
       "arts": {
@@ -2494,6 +2707,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No specific Cambridge International A-Level benchmark or subject requirement for Design is published in the research.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：Fine Art（纯艺术）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: Fine Art. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": "A*AA",
         "requiredSubjects": [],
@@ -2594,6 +2815,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "不适用：本次核验的LSE官方本科课程与项目基准未发现设计类课程，未公布设计方向等级或科目要求。",
         "noteEn": "No design undergraduate course requirement was published on the official LSE pages reviewed.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "不适用：本数据集未收录该校艺术与创意方向的本科专业。",
+        "noteEn": "Not applicable: this dataset records no undergraduate art or creative programme at this institution.",
         "extras": []
       },
       "arts": {
@@ -2701,6 +2930,18 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteEn": "No specific Cambridge International A-level threshold or subject requirement for a design course was published in the reviewed official material. No additional portfolio requirement was identified in the research.",
         "extras": []
       },
+      "creative": {
+        "publishedGradeProfile": "AAB",
+        "requiredSubjects": [],
+        "recommendedSubjects": [
+          "geography",
+          "business",
+          "economics"
+        ],
+        "noteZh": "Music 官方要求 AAB，且须包含 A-Level 音乐，或另持第五级乐理合格（如 ABRSM）；官方明确不接受第五级器乐或声乐成绩替代乐理。Film Studies 官方要求 AAB，申请人须修读一门论文写作型科目，且 General Studies、Critical Thinking、Thinking Skills 与 Global Perspectives 不被接受为三门 A-Level 之一。BCI 未开设音乐 A-Level，须以第五级乐理替代；论文写作型科目在十门中以 Geography 最为对口。",
+        "noteEn": "Music requires AAB and must include A Level Music, or be accompanied by a Grade 5 Pass in Music Theory such as ABRSM; Grade 5 in an instrument or singing is explicitly not accepted instead. Film Studies requires AAB and applicants must be studying an essay-based subject, with General Studies, Critical Thinking, Thinking Skills and Global Perspectives not accepted as one of the three A Levels. BCI does not offer Music at A Level, so the Grade 5 Theory route is required, and Geography is the closest essay-based fit among the ten courses.",
+        "extras": []
+      },
       "arts": {
         "publishedGradeProfile": "AAA",
         "requiredSubjects": [],
@@ -2791,6 +3032,16 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "noteZh": "本次已核验研究未确认 Design 类别的具体 Cambridge A-Level 等级或科目规则；不得据此虚构门槛。",
         "noteEn": "No programme-specific Cambridge International A-Level grade, subject, portfolio, or interview requirement was confirmed in this review.",
         "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": "Fine Art: ABB；Music: AAB 至 ABB",
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "Fine Art 官方 A-Level 标准门槛与最低门槛同为 ABB，不指定科目，须另行提交数字作品集，并需 GCSE 英语达 C 或 4。Music（里德音乐学院）官方为 AAB 至 ABB，不指定科目，不要求 A-Level 音乐或 ABRSM 资格，且不设面试或试音，是本数据集中唯一无需音乐资格即可申请的音乐路径。未持 A-Level 音乐 A 等者入学后须修读乐理基础课程。",
+        "noteEn": "Fine Art has both a standard and a minimum A Level requirement of ABB with no specified subjects, requires a separately submitted digital portfolio, and also requires GCSE English at C or 4. Music at the Reid School of Music runs from AAB to ABB with no specified subjects, requires neither A Level Music nor an ABRSM qualification, and holds no interview or audition, making it the only music route in this dataset open without a music qualification. Students without an A in A Level Music take the Fundamentals of Music Theory course after entry.",
+        "extras": [
+          "作品集"
+        ]
       },
       "arts": {
         "publishedGradeProfile": null,
@@ -2888,6 +3139,18 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "不适用：已核验研究未提供设计类课程的可引用等级或七科先修规则。",
         "noteEn": "No unified design A-level grade or subject benchmark was published in the official sources reviewed. Requirements should be checked on the relevant individual course profile.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": "AAB",
+        "requiredSubjects": [],
+        "recommendedSubjects": [
+          "geography",
+          "business",
+          "economics"
+        ],
+        "noteZh": "Music 官方标准要求 AAB，通常须包含音乐科目达 A 等，可用 ABRSM 第五级乐理替代 A-Level 音乐；修读独奏表演单元者通常需达 ABRSM 第八级，以优异为佳。Drama 官方要求 AAB，须包含一门论文写作型科目。曼彻斯特仅按三门 A-Level 发放录取条件，修读超过三门不计入。BCI 未开设音乐 A-Level，须以第五级乐理替代。",
+        "noteEn": "Music has a standard offer of AAB normally including grade A in Music, with ABRSM Grade 5 Theory accepted in lieu of A Level Music; solo performance units normally require ABRSM Grade 8, preferably at Distinction. Drama requires AAB including one essay-based subject. Manchester makes offers on three A Levels only. BCI does not offer Music at A Level, so the Grade 5 Theory route is required.",
         "extras": []
       },
       "arts": {
@@ -2988,6 +3251,14 @@ export const ALEVEL_UNIVERSITY_RULES: Record<string, AlevelUniversityRule> = {
         "recommendedSubjects": [],
         "noteZh": "不适用：已核验研究未识别可据以发布 A-Level 等级或七科科目规则的 Design 课程；官方未公布。",
         "noteEn": "Portfolio requirement: not published by the official materials reviewed.",
+        "extras": []
+      },
+      "creative": {
+        "publishedGradeProfile": null,
+        "requiredSubjects": [],
+        "recommendedSubjects": [],
+        "noteZh": "本数据集收录该校艺术与创意方向专业：History of Art（艺术史）。本次核验未确认该方向单列的 Cambridge A-Level 等级或科目规则，等级条件参照上方全校口径，不得据此虚构门槛。此类专业普遍以作品集或试音为主要录取依据；BCI 十门可选课程不含任何艺术科目，作品集与试音须在课外准备。",
+        "noteEn": "This dataset records the following art and creative programmes at this institution: History of Art. No field-specific Cambridge International A-Level grade or subject rule was confirmed in this review, so the institution-wide profile above applies and no threshold may be inferred beyond it. Entry to such programmes rests chiefly on a portfolio or audition, and since none of BCI's ten courses is an art subject, the portfolio or audition must be prepared outside the classroom.",
         "extras": []
       },
       "arts": {
