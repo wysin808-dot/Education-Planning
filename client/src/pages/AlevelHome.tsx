@@ -30,13 +30,13 @@ export default function AlevelHome() {
             </p>
             <div className="mt-9 grid border-y border-border sm:grid-cols-2">
               <Link href="/alevel/forward" className="group border-b border-border p-5 transition-colors hover:bg-paper-deep sm:border-b-0 sm:border-r">
-                <span className="almanac-index text-brass">01 · {t("由等级出发", "From grades")}</span>
+                <span className="almanac-index text-brass">01 · {t("有成绩规划", "Plan from grades")}</span>
                 <span className="mt-4 flex items-center gap-2 text-[1.1rem] text-green"><Scale className="h-4 w-4" />{t("预测成绩 → 院校专业", "Predicted grades → options")}</span>
                 <span className="mt-2 block text-[0.8125rem] leading-relaxed text-muted-foreground">{t("输入 3–4 门预测成绩，查看公开条件、先修匹配和顾问复核条目。", "Enter three to four predicted grades to review published conditions, subject fit and adviser-review entries.")}</span>
                 <span className="mt-4 inline-flex items-center gap-1 border-b border-brass pb-0.5 text-[0.75rem] text-green">{t("开始正向查询", "Open forward lookup")} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
               </Link>
               <Link href="/alevel/reverse" className="group p-5 transition-colors hover:bg-paper-deep">
-                <span className="almanac-index text-brass">02 · {t("由目标出发", "From targets")}</span>
+                <span className="almanac-index text-brass">02 · {t("由目标规划", "Plan from a target")}</span>
                 <span className="mt-4 flex items-center gap-2 text-[1.1rem] text-green"><GraduationCap className="h-4 w-4" />{t("院校专业 → 条件", "Programme → requirements")}</span>
                 <span className="mt-2 block text-[0.8125rem] leading-relaxed text-muted-foreground">{t("先锁定专业，再反查 A-Level 条件、BCI 7 门课映射、英语和附加选拔。", "Start with a programme, then work back to A-Level conditions, BCI's seven-subject mapping, English and additional selection.")}</span>
                 <span className="mt-4 inline-flex items-center gap-1 border-b border-brass pb-0.5 text-[0.75rem] text-green">{t("开始反向查询", "Open reverse lookup")} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>

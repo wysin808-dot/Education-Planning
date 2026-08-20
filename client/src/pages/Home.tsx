@@ -1,13 +1,14 @@
 /**
  * 设计风格：Admissions Almanac
- * 首屏为左右不对称双入口（我有目标院校 / 我有预计 ATAR），中间以竖向规则线分隔。
+ * 首屏采用与 A-Level 首页严格对位的双入口结构：01 有成绩规划 / 02 由目标规划，
+ * 以横向规则线分隔并统一编号，使两个课程体系的进入方式读起来完全一致。
  * 禁止居中英雄区与卡片网格堆叠；以规则线与编号建立年鉴目录感。
  * 全站中英双语：所有面向用户的文案通过 t(中文, 英文) 输出；本页以 WACE 为主，
  * 以独立、低干扰的入口引导 Cambridge A-Level 学生进入对应体系。
  */
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, BookOpenText, Clock3, GraduationCap, Ruler, Search } from "lucide-react";
+import { ArrowRight, BookOpenText, Clock3, GraduationCap, Ruler, Scale, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierLegend } from "@/components/TierBadge";
@@ -53,23 +54,50 @@ export default function Home() {
               )}
             </p>
 
-            <div className="mt-10 flex flex-wrap items-center gap-3">
+            {/* 与 A-Level 首页对位的双入口 */}
+            <div className="mt-9 grid border-y border-border sm:grid-cols-2">
               <Link
                 href="/wace/forward"
-                className="inline-flex items-center gap-2 border border-green bg-green px-6 py-3 text-[0.9375rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft">
-                {t("我有预计 ATAR", "I have a projected ATAR")}
-                <ArrowRight className="h-4 w-4" />
+                className="group border-b border-border p-5 transition-colors hover:bg-paper-deep sm:border-b-0 sm:border-r">
+                <span className="almanac-index text-brass">01 · {t("有成绩规划", "Plan from a score")}</span>
+                <span className="mt-4 flex items-center gap-2 text-[1.1rem] text-green">
+                  <Scale className="h-4 w-4" />
+                  {t("预计 ATAR → 院校专业", "Projected ATAR → options")}
+                </span>
+                <span className="mt-2 block text-[0.8125rem] leading-relaxed text-muted-foreground">
+                  {t(
+                    "输入预计 ATAR 与已选科目，按稳妥、匹配、冲刺三档查看可申请的院校与专业。",
+                    "Enter a projected ATAR and current subjects to see reachable programmes across safety, match and reach bands.",
+                  )}
+                </span>
+                <span className="mt-4 inline-flex items-center gap-1 border-b border-brass pb-0.5 text-[0.75rem] text-green">
+                  {t("开始正向查询", "Open forward lookup")}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </span>
               </Link>
               <Link
                 href="/wace/reverse"
-                className="inline-flex items-center gap-2 border border-green px-6 py-3 text-[0.9375rem] text-green transition-colors duration-150 hover:bg-green/6">
-                {t("我有目标院校", "I have a target university")}
-                <ArrowRight className="h-4 w-4" />
+                className="group p-5 transition-colors hover:bg-paper-deep">
+                <span className="almanac-index text-brass">02 · {t("由目标规划", "Plan from a target")}</span>
+                <span className="mt-4 flex items-center gap-2 text-[1.1rem] text-green">
+                  <GraduationCap className="h-4 w-4" />
+                  {t("院校专业 → 条件", "Programme → requirements")}
+                </span>
+                <span className="mt-2 block text-[0.8125rem] leading-relaxed text-muted-foreground">
+                  {t(
+                    "先锁定目标专业，再反查所需 ATAR、必修 WACE 科目、英语要求与附加测试。",
+                    "Start with a target programme, then work back to the required ATAR, compulsory WACE subjects, English and additional tests.",
+                  )}
+                </span>
+                <span className="mt-4 inline-flex items-center gap-1 border-b border-brass pb-0.5 text-[0.75rem] text-green">
+                  {t("开始反向查询", "Open reverse lookup")}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </span>
               </Link>
             </div>
             <Link
               href="/alevel"
-              className="mt-4 inline-flex items-center gap-2 border-b border-brass pb-1 text-[0.8125rem] text-green transition-colors hover:text-brass">
+              className="mt-6 inline-flex items-center gap-2 border-b border-brass pb-1 text-[0.8125rem] text-green transition-colors hover:text-brass">
               <GraduationCap className="h-4 w-4" />
               {t("修读 Cambridge A-Level？进入 7 门课程的独立规划器", "Taking Cambridge A-Level? Enter the dedicated seven-subject planner")}
               <ArrowRight className="h-3.5 w-3.5" />
@@ -184,7 +212,7 @@ export default function Home() {
                   "输入预计 ATAR 与已选科目，按稳妥、匹配、冲刺三档列出可申请的院校与专业，并标注先修科目是否满足。",
                   "Enter a projected ATAR and current subjects to see every reachable programme sorted into safety, match and reach bands, with prerequisite gaps flagged.",
                 ),
-                href: "/forward",
+                href: "/wace/forward",
                 cta: t("开始正向查询", "Run a forward search"),
               },
               {
@@ -195,7 +223,7 @@ export default function Home() {
                   "先选定目标院校与专业，反推所需 ATAR、必修 WACE 科目、英语要求、附加测试与申请截止日期。",
                   "Select a target university and programme to reveal the required ATAR, compulsory WACE subjects, English requirement, additional tests and application deadline.",
                 ),
-                href: "/reverse",
+                href: "/wace/reverse",
                 cta: t("开始反向查询", "Run a reverse search"),
               },
               {
@@ -206,7 +234,7 @@ export default function Home() {
                   "把多个目标专业加入清单，系统统计各 WACE 科目的必要程度，给出 Year 11 与 Year 12 的选课组合建议。",
                   "Add several target programmes to a shortlist and the planner counts how essential each WACE subject is, then proposes a Year 11 and Year 12 combination.",
                 ),
-                href: "/subjects",
+                href: "/wace/subjects",
                 cta: t("规划选课组合", "Plan a subject set"),
               },
               {
@@ -217,7 +245,7 @@ export default function Home() {
                   "一页对照 31 所院校的最低 ATAR、英语要求、申请窗口与数据来源，可直接打印用于家长面谈。",
                   "A single sheet comparing the minimum ATAR, English requirement, application window and source for all 31 universities, ready to print for parent meetings.",
                 ),
-                href: "/table",
+                href: "/wace/table",
                 cta: t("查看总表", "Open the table"),
               },
             ].map((row) => (
