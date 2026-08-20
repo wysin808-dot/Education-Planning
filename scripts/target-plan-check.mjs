@@ -82,6 +82,60 @@ try {
     };
   });
 
+  // 九个学科方向都必须给出新加坡本地义工建议，且归入加分项
+  const fieldReport = await page.evaluate(async () => {
+    const mod = await import("/src/lib/targetPlan.ts");
+    const data = await import("/src/data/universities.ts");
+    const seen = new Map();
+    for (const u of data.UNIVERSITIES) {
+      for (const p of u.programmes) {
+        if (seen.has(p.field)) continue;
+        const plan = mod.buildTargetPlan(u.id, p.id, "south");
+        if (!plan) continue;
+        const vol = plan.preparation.find((item) => item.titleZh.includes("义工"));
+        seen.set(p.field, {
+          field: p.field,
+          hasVolunteering: Boolean(vol),
+          kind: vol?.kind ?? null,
+          mentionsSingaporeZh: Boolean(vol && vol.detailZh.includes("新加坡")),
+          mentionsSingaporeEn: Boolean(vol && /Singapore/.test(vol.detailEn)),
+          distinct: vol?.detailZh ?? "",
+        });
+      }
+    }
+    return Array.from(seen.values());
+  });
+
+  const allFields = [
+    "medicine",
+    "law",
+    "computing",
+    "engineering",
+    "business",
+    "science",
+    "design",
+    "arts",
+    "education",
+  ];
+  for (const field of allFields) {
+    const entry = fieldReport.find((f) => f.field === field);
+    if (!entry) {
+      problems.push(`方向 ${field} 未被覆盖到`);
+      continue;
+    }
+    if (!entry.hasVolunteering) problems.push(`方向 ${field} 缺少新加坡义工建议`);
+    if (entry.kind !== "advantage") {
+      problems.push(`方向 ${field} 的义工建议被标为 ${entry.kind}，应为加分项`);
+    }
+    if (!entry.mentionsSingaporeZh) problems.push(`方向 ${field} 的中文义工建议未提及新加坡`);
+    if (!entry.mentionsSingaporeEn) problems.push(`方向 ${field} 的英文义工建议未提及 Singapore`);
+  }
+  // 各方向义工建议不得雷同
+  const texts = fieldReport.map((f) => f.distinct).filter(Boolean);
+  if (new Set(texts).size !== texts.length) {
+    problems.push("不同学科方向的义工建议出现重复文案");
+  }
+
   for (const c of report.cases) {
     if (c.y11.length !== report.y11Size) {
       problems.push(`${c.prog}: Year 11 应为 ${report.y11Size} 门，实际 ${c.y11.length}`);
@@ -165,6 +219,7 @@ try {
     ["Year 12", "Year 12"],
     ["背景准备", "除了成绩，还要准备什么"],
     ["加分项标注", "加分项"],
+    ["新加坡义工", "新加坡本地义工服务"],
   ]) {
     if (!body.includes(needle)) {
       problems.push(`WACE 反查页缺少「${name}」一节`);
@@ -180,12 +235,31 @@ try {
   // A-Level 反查页
   await page.goto("http://localhost:3000/alevel/reverse", { waitUntil: "networkidle" });
   await page.waitForTimeout(500);
+
+  // 地区选择必须与 WACE 对位：三个下拉，切换地区后院校随之更换
+  const alSelects = page.locator("aside select");
+  const selectCount = await alSelects.count();
+  if (selectCount !== 3) {
+    problems.push(`A-Level 反查页应有地区/院校/专业三个下拉，实际 ${selectCount} 个`);
+  } else {
+    await alSelects.nth(0).selectOption("uk");
+    await page.waitForTimeout(400);
+    const uniValue = await alSelects.nth(1).inputValue();
+    const ukIds = ["oxford", "cambridge", "imperial", "lse", "ucl", "kcl", "manchester", "edinburgh", "warwick"];
+    if (!ukIds.includes(uniValue)) {
+      problems.push(`切换到英国后院校未同步更新，当前为 ${uniValue}`);
+    }
+    await alSelects.nth(0).selectOption("sg");
+    await page.waitForTimeout(400);
+  }
+
   const alBody = await page.locator("article").innerText();
   for (const [name, needle] of [
     ["分年选课", "为这个目标怎么选课"],
     ["AS", "AS"],
     ["A2", "A2"],
     ["背景准备", "除了等级，还要准备什么"],
+    ["新加坡义工", "新加坡本地义工服务"],
   ]) {
     if (!alBody.includes(needle)) {
       problems.push(`A-Level 反查页缺少「${name}」一节`);
@@ -197,7 +271,7 @@ try {
   }
 
   console.log(
-    `单目标升学方案验证通过：${report.cases.length} 个 WACE 目标与 ${report.alevelCases.length} 个 A-Level 目标的分年组合、先修满足、加分项标注与页面三节结构均正常。`,
+    `单目标升学方案验证通过：${report.cases.length} 个 WACE 目标与 ${report.alevelCases.length} 个 A-Level 目标的分年组合、先修满足与页面结构正常；${fieldReport.length} 个学科方向均含差异化的新加坡本地义工建议且归为加分项；A-Level 反查页地区筛选与 WACE 对位。`,
   );
 } finally {
   await browser.close();

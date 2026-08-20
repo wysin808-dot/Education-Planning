@@ -116,6 +116,50 @@ const FIELD_COMPETITIONS: Record<FieldKey, { zh: string; en: string }> = {
   },
 };
 
+/**
+ * 各方向对应的新加坡本地义工服务建议。
+ * BCI 学生在新加坡就读，本地义工既便于长期投入，也更容易取得可查证的服务证明。
+ * 与竞赛同属加分项，不得表述为录取硬性条件。
+ */
+const FIELD_VOLUNTEERING: Record<FieldKey, { zh: string; en: string }> = {
+  medicine: {
+    zh: "在新加坡本地医疗与照护机构累积长期服务：公立医院志愿者计划、疗养院与康复中心陪护、红十字会或圣约翰救伤队的急救训练与值勤。医学与牙医面试普遍会追问服务时长、具体职责与从中获得的认识。",
+    en: "Build a sustained record with Singapore healthcare and care organisations: public hospital volunteer schemes, nursing home and rehabilitation centre support, and first-aid training and duty with the Singapore Red Cross or St John. Medicine and dentistry interviews routinely probe the duration, actual duties and reflections drawn from such service.",
+  },
+  law: {
+    zh: "参与新加坡本地的公共服务与社群支援：社区法律咨询活动的行政协助、公民咨询委员会与民众俱乐部的社区服务、面向新移民或年长者的语言与文书协助。此类经历有助于在个人陈述中说明对公共事务的持续关注。",
+    en: "Take part in Singapore community and public-service work: administrative support at community legal clinics, service through Citizens' Consultative Committees and community clubs, and language or paperwork assistance for new arrivals and the elderly. Such experience substantiates a sustained interest in public affairs in the personal statement.",
+  },
+  computing: {
+    zh: "在新加坡本地投入数字包容类服务：为年长者开设的数字技能课程担任助教、社区中心的编程启蒙课带教、为公益机构义务开发网站或小工具。这类服务能同时证明技术能力与社会关怀。",
+    en: "Contribute to digital-inclusion work in Singapore: assisting at digital skills classes for seniors, leading introductory coding sessions at community centres, and building websites or small tools pro bono for charities. This evidences technical ability and social awareness at once.",
+  },
+  engineering: {
+    zh: "参与新加坡本地的实作型服务：社区维修与再利用活动、公益机构的无障碍设施改造协助、科学馆与青少年科技活动的义务导览或助教。长期记录比一次性活动更有说服力。",
+    en: "Join hands-on service in Singapore: community repair and reuse initiatives, accessibility retrofitting for charities, and volunteer guiding or assisting at Science Centre and youth technology programmes. A sustained record counts for more than one-off events.",
+  },
+  business: {
+    zh: "在新加坡本地社会企业或慈善机构承担实际职责：义卖与筹款活动的账务与推广、公益组织的社群媒体运营、小型社会企业的运营协助。有具体成果与数据的服务经历最具说明力。",
+    en: "Take real responsibility with Singapore social enterprises or charities: bookkeeping and promotion for fundraising drives, running social media for non-profits, and supporting the operations of small social enterprises. Service with concrete outcomes and figures carries the most weight.",
+  },
+  science: {
+    zh: "参与新加坡本地的科普与环境服务：科学馆义务导览、海岸清理与生物多样性调查（如 NParks 与自然学会的公民科学项目）、社区科普工作坊助教。这类服务能佐证持续的科学兴趣。",
+    en: "Engage in Singapore science-outreach and environmental service: volunteer guiding at the Science Centre, coastal clean-ups and biodiversity surveys such as NParks and Nature Society citizen-science projects, and assisting at community science workshops. Such service evidences a sustained scientific interest.",
+  },
+  design: {
+    zh: "在新加坡本地承接公益性质的设计任务：为慈善机构义务设计宣传物料、参与社区壁画与公共空间美化项目、在博物馆与设计节担任义工。这些成果可直接纳入作品集。",
+    en: "Take on pro bono design work in Singapore: publicity materials for charities, community mural and public-space projects, and volunteering at museums and design festivals. The outcomes can go straight into the portfolio.",
+  },
+  arts: {
+    zh: "投入新加坡本地的文化与社群服务：博物馆与艺术节义工、社区口述历史与文化保存项目、为年长者或新移民提供的语言陪伴服务。长期参与可为个人陈述提供具体素材。",
+    en: "Contribute to Singapore cultural and community work: volunteering at museums and arts festivals, community oral-history and heritage projects, and language companionship for the elderly or new arrivals. Long-term involvement supplies concrete material for the personal statement.",
+  },
+  education: {
+    zh: "在新加坡本地累积教学服务：社区中心与自愿福利组织的课后补习、面向弱势家庭学生的一对一辅导、青年团体的营队带队与体育音乐助教。建议固定时段、长期投入同一机构，以便取得服务证明与推荐。",
+    en: "Build teaching service within Singapore: after-school tutoring at community centres and voluntary welfare organisations, one-to-one support for students from disadvantaged families, and camp leadership or sports and music coaching with youth groups. Commit to regular sessions at one organisation so that a service record and a referee are available.",
+  },
+};
+
 /** extras 字段到准备事项的映射 */
 const EXTRA_DETAIL: Record<string, { zh: string; en: string; timingZh: string; timingEn: string }> = {
   面试: {
@@ -341,6 +385,19 @@ function buildPreparation(university: University, programme: Programme): Prepara
       detailEn: competition.en,
       timingZh: "从毕业前两年起持续投入，重质不重量",
       timingEn: "Sustained involvement from two years out; depth over quantity",
+    });
+  }
+
+  const volunteering = FIELD_VOLUNTEERING[programme.field];
+  if (volunteering) {
+    preparation.push({
+      kind: "advantage",
+      titleZh: "新加坡本地义工服务",
+      titleEn: "Volunteering in Singapore",
+      detailZh: volunteering.zh,
+      detailEn: volunteering.en,
+      timingZh: "建议每月固定时段，累计满一年以上",
+      timingEn: "A fixed monthly commitment sustained beyond one year",
     });
   }
 
