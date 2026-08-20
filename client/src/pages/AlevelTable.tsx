@@ -5,7 +5,6 @@
 import { useMemo, useState } from "react";
 import { ExternalLink, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
-import { AlevelNav } from "@/components/CurriculumSwitch";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { useLang } from "@/contexts/LangContext";
@@ -41,8 +40,8 @@ export default function AlevelTable() {
       <main>
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
-            <AlevelNav active="/alevel/table" />
-            <p className="eyebrow mt-7 text-brass">CAMBRIDGE A-LEVEL · REFERENCE TABLE</p>
+            
+            <p className="eyebrow text-brass">CAMBRIDGE A-LEVEL · REFERENCE TABLE</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("31 校 A-Level 口径速查", "31-university A-Level reference")}</h1>
             <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("显示每校公开的 Cambridge/International A-Level 通用资格与口径类型。专业级条件请进入反向查询复核。", "Shows each university's published Cambridge/International A-Level general qualification and requirement type. Use reverse lookup for programme-level review.")}</p>
           </div>

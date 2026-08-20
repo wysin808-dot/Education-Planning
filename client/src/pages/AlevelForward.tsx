@@ -5,7 +5,6 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, Check, ChevronDown, Printer, SlidersHorizontal } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
-import { AlevelNav } from "@/components/CurriculumSwitch";
 import { OfferGradeRule } from "@/components/OfferGradeRule";
 import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
@@ -41,8 +40,8 @@ export default function AlevelForward() {
       <main>
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
-            <AlevelNav active="/alevel/forward" />
-            <p className="eyebrow mt-7 text-brass">CAMBRIDGE A-LEVEL · FORWARD MATCH</p>
+            
+            <p className="eyebrow text-brass">CAMBRIDGE A-LEVEL · FORWARD MATCH</p>
             <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
               <div>
                 <h1 className="font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("预测成绩查院校", "Predicted grades → universities")}</h1>

@@ -5,7 +5,6 @@
 import { ArrowRight, BookOpenCheck, Heart, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
-import { AlevelNav } from "@/components/CurriculumSwitch";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { useLang } from "@/contexts/LangContext";
 import { useShortlist } from "@/contexts/ShortlistContext";
@@ -21,8 +20,8 @@ export default function AlevelShortlist() {
       <main>
         <section className="border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
-            <AlevelNav active="/alevel/shortlist" />
-            <p className="eyebrow mt-7 text-brass">CAMBRIDGE A-LEVEL · SHORTLIST</p>
+            
+            <p className="eyebrow text-brass">CAMBRIDGE A-LEVEL · SHORTLIST</p>
             <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
               <div>
                 <h1 className="font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">{t("A-Level 目标清单", "A-Level shortlist")}</h1>

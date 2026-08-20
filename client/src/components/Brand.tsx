@@ -1,10 +1,10 @@
 /**
  * 设计风格：Admissions Almanac
  * 页头以 BCI 官方砖红圆形徽章与砖红字标作为第一品牌信号（承载于纸感底），
- * 深墨绿只用于导航当前状态、版面结构与页脚反白场景，不替代官方品牌色；
- * 桌面端以横向目录呈现，手机端使用可点击的纵向「目录」菜单，避免横向滑动导航造成的访问障碍。
- * 注意：BCI 官方主色为砖红 #B02A2A，与年鉴的墨绿铜金构成双色体系——
- * 红色仅用于品牌标识与强调，版面主色仍为墨绿。
+ * 深墨绿只用于导航当前状态、版面结构与页脚反白场景，不替代官方品牌色。
+ * 导航为两层年鉴结构：上层是「册」——WACE 与 A-Level 两个课程体系；
+ * 下层是「章」——当前体系内的功能页，随所处体系整体更换，不与体系入口混排。
+ * 手机端使用可点击的纵向「目录」菜单并按体系分组，避免横向滑动导航造成的访问障碍。
  */
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
@@ -79,30 +79,61 @@ export function Wordmark({
   );
 }
 
-const NAV = [
-  { href: "/wace", zh: "WACE", en: "WACE" },
-  { href: "/alevel", zh: "A-Level", en: "A-Level" },
-  { href: "/wace/forward", zh: "分数查院校", en: "Score → Universities" },
-  { href: "/wace/reverse", zh: "院校查门槛", en: "University → ATAR" },
-  { href: "/wace/subjects", zh: "选课规划", en: "Subject Planner" },
-  { href: "/wace/table", zh: "门槛总表", en: "Threshold Table" },
-  { href: "/wace/shortlist", zh: "目标清单", en: "Shortlist" },
-  { href: "/brochure", zh: "宣传册", en: "Brochure" },
+type NavItem = { href: string; zh: string; en: string; noteZh: string; noteEn: string };
+
+/** 「册」层：两个彼此独立的课程体系 */
+export const CURRICULA = [
+  {
+    id: "wace",
+    home: "/wace",
+    zh: "WACE",
+    en: "WACE",
+    tagZh: "ATAR 体系",
+    tagEn: "ATAR basis",
+  },
+  {
+    id: "alevel",
+    home: "/alevel",
+    zh: "A-Level",
+    en: "A-Level",
+    tagZh: "剑桥等级",
+    tagEn: "Cambridge grades",
+  },
+] as const;
+
+/** 「章」层：各体系内部的功能页，两套结构对位 */
+const WACE_NAV: NavItem[] = [
+  { href: "/wace", zh: "总览", en: "Overview", noteZh: "WACE 升学规划入口与两种查询路径", noteEn: "WACE pathways entry and two lookup routes" },
+  { href: "/wace/forward", zh: "分数查院校", en: "Score → Universities", noteZh: "输入 ATAR，查看可申请的院校与专业", noteEn: "Enter ATAR to find reachable universities and programmes" },
+  { href: "/wace/reverse", zh: "院校查门槛", en: "University → ATAR", noteZh: "锁定院校专业，反查 ATAR 与先修要求", noteEn: "Start with a programme and work back to its requirements" },
+  { href: "/wace/subjects", zh: "选课规划", en: "Subject Planner", noteZh: "按收藏目标规划 WACE 选课组合", noteEn: "Plan WACE subjects from your shortlisted goals" },
+  { href: "/wace/table", zh: "门槛总表", en: "Threshold Table", noteZh: "31 所院校门槛的打印速查表", noteEn: "A printable quick-reference threshold table" },
+  { href: "/wace/shortlist", zh: "目标清单", en: "Shortlist", noteZh: "汇总收藏专业，形成个人目标清单", noteEn: "Review saved programmes as a personal shortlist" },
 ];
 
-const NAV_DETAILS: Record<string, { zh: string; en: string }> = {
-  "/wace": { zh: "WACE 升学规划入口与两种查询路径", en: "WACE pathways entry and two lookup routes" },
-  "/wace/forward": { zh: "输入 ATAR，查看可申请的院校与专业", en: "Enter ATAR to find reachable universities and programmes" },
-  "/wace/reverse": { zh: "锁定院校专业，反查 ATAR 与先修要求", en: "Start with a programme and work back to its requirements" },
-  "/wace/subjects": { zh: "按收藏目标规划 WACE 选课组合", en: "Plan WACE subjects from your shortlisted goals" },
-  "/wace/table": { zh: "31 所院校门槛的打印速查表", en: "A printable quick-reference threshold table" },
-  "/wace/shortlist": { zh: "汇总收藏专业，形成个人目标清单", en: "Review saved programmes as a personal shortlist" },
-  "/brochure": { zh: "可打印的 WACE 升学规划说明", en: "A printable WACE pathways overview" },
-  "/alevel": { zh: "以 Cambridge A-Level 预测等级规划院校与专业", en: "Plan university and programme options through Cambridge A-Level predictions" },
+const ALEVEL_NAV: NavItem[] = [
+  { href: "/alevel", zh: "总览", en: "Overview", noteZh: "以 Cambridge A-Level 预测等级规划院校与专业", noteEn: "Plan university options through Cambridge A-Level predictions" },
+  { href: "/alevel/forward", zh: "预测成绩查院校", en: "Grades → Universities", noteZh: "输入 3–4 门预测等级，查看可行院校", noteEn: "Enter three to four predicted grades to see reachable universities" },
+  { href: "/alevel/reverse", zh: "院校专业查条件", en: "Programme → Requirements", noteZh: "锁定专业，反查等级条件与指定科目", noteEn: "Start with a programme and work back to grades and required subjects" },
+  { href: "/alevel/subjects", zh: "选课规划", en: "Subject Planner", noteZh: "按收藏目标规划 7 门 Cambridge 课程", noteEn: "Plan the seven Cambridge subjects from your shortlist" },
+  { href: "/alevel/table", zh: "31 校速查", en: "31-University Table", noteZh: "按地区分章的 A-Level 条件速查", noteEn: "A-Level requirements by region" },
+  { href: "/alevel/shortlist", zh: "目标清单", en: "Shortlist", noteZh: "与 WACE 共用的个人目标清单", noteEn: "The shared personal shortlist" },
+];
+
+const BROCHURE: NavItem = {
+  href: "/brochure",
+  zh: "宣传册",
+  en: "Brochure",
+  noteZh: "可打印的升学规划说明",
+  noteEn: "A printable pathways overview",
 };
 
-const PRIMARY_NAV = NAV.filter((item) => item.href !== "/brochure");
-const MORE_NAV = NAV.filter((item) => item.href === "/brochure");
+/** 由当前路径判断所处体系；选择页返回 null */
+export function curriculumOf(path: string): "wace" | "alevel" | null {
+  if (path.startsWith("/alevel")) return "alevel";
+  if (path.startsWith("/wace")) return "wace";
+  return null;
+}
 
 function LangToggle({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const { lang, setLang } = useLang();
@@ -150,105 +181,184 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
   useEffect(() => {
     saveRecentTool(path);
   }, [path]);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [path]);
+
+  const current = curriculumOf(path);
+  const sectionNav = current === "alevel" ? ALEVEL_NAV : WACE_NAV;
+  const shortlistHref = current === "alevel" ? "/alevel/shortlist" : "/wace/shortlist";
+
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border bg-paper/92 backdrop-blur-md">
-      <div className="container flex h-[4.5rem] items-center justify-between gap-4">
+      {/* 第一层：品牌 + 课程体系（册） */}
+      <div className="container flex h-[3.75rem] items-center justify-between gap-4">
         <Link
           href="/"
           aria-label={t("返回课程体系选择页", "Return to the curriculum chooser")}
-          className="shrink-0 border border-brand-red/25 bg-paper px-2.5 py-2 transition-colors duration-150 hover:border-brand-red/55 sm:px-3">
+          className="shrink-0 border border-brand-red/25 bg-paper px-2.5 py-1.5 transition-colors duration-150 hover:border-brand-red/55 sm:px-3">
           <Wordmark compact />
         </Link>
-        {!chooser && (
-        <nav className="hidden min-w-0 items-center justify-center gap-0.5 lg:flex" aria-label={t("主导航", "Primary navigation")}>
-          {PRIMARY_NAV.map((item) => {
-            const isCurriculumLink = item.href === "/wace" || item.href === "/alevel";
-            const active = item.href === "/wace" ? !path.startsWith("/alevel") : item.href === "/alevel" ? path.startsWith("/alevel") : path === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "relative whitespace-nowrap px-2 py-2 text-[0.75rem] transition-colors duration-150 xl:px-2.5 xl:text-[0.8125rem]",
-                  isCurriculumLink && "border border-border px-2.5 xl:px-3",
-                  active ? "bg-green text-primary-foreground" : "text-muted-foreground hover:text-green",
-                )}>
-                {lang === "zh" ? item.zh : item.en}
-                {item.href === "/wace/shortlist" && count > 0 && (
-                  <span className="score ml-1 border border-brass/60 bg-brass/12 px-1 text-[0.625rem] text-[oklch(0.42_0.07_74)]">
-                    {count}
-                  </span>
-                )}
-                {active && !isCurriculumLink && <span className="absolute inset-x-2 -bottom-px h-[2px] bg-brass" />}
-              </Link>
-            );
-          })}
-          <details className="group relative">
-            <summary className="flex list-none cursor-pointer items-center gap-1 whitespace-nowrap px-2 py-2 text-[0.75rem] text-muted-foreground transition-colors hover:text-green xl:px-2.5 xl:text-[0.8125rem]">
-              {t("更多", "More")}
-              <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="absolute right-0 top-full z-50 mt-2 min-w-36 border border-border bg-paper p-1.5 shadow-[0_12px_24px_oklch(0.2_0.02_90_/_0.14)]">
-              {MORE_NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block whitespace-nowrap px-3 py-2 text-[0.8125rem] text-muted-foreground transition-colors hover:bg-paper-deep hover:text-green">
-                  {lang === "zh" ? item.zh : item.en}
-                </Link>
-              ))}
-            </div>
-          </details>
-        </nav>
-        )}
-        <div className="flex shrink-0 items-center gap-3">
+
+        <div className="flex min-w-0 shrink-0 items-center gap-3">
+          {!chooser && (
+            <span className="border border-green bg-green px-2 py-1 text-[0.6875rem] tracking-[0.08em] text-primary-foreground sm:hidden">
+              {current === "alevel" ? "A-Level" : "WACE"}
+            </span>
+          )}
+          {!chooser && (
+            <nav
+              aria-label={t("课程体系", "Curriculum")}
+              className="hidden items-stretch border border-border sm:flex">
+              {CURRICULA.map((c) => {
+                const active = current === c.id;
+                return (
+                  <Link
+                    key={c.id}
+                    href={c.home}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex flex-col justify-center whitespace-nowrap px-3 py-1.5 text-left transition-colors duration-150",
+                      active
+                        ? "bg-green text-primary-foreground"
+                        : "text-muted-foreground hover:bg-paper-deep hover:text-green",
+                    )}>
+                    <span className="text-[0.8125rem] leading-tight">{lang === "zh" ? c.zh : c.en}</span>
+                    <span
+                      className={cn(
+                        "text-[0.5625rem] tracking-[0.12em]",
+                        active ? "text-paper/70" : "text-muted-foreground/75",
+                      )}>
+                      {lang === "zh" ? c.tagZh : c.tagEn}
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
           <LangToggle />
           {!chooser && (
-          <button
-            type="button"
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-label={menuOpen ? t("关闭目录", "Close menu") : t("打开目录", "Open menu")}
-            aria-expanded={menuOpen}
-            className="inline-flex h-8 w-8 items-center justify-center border border-border text-green transition-colors hover:border-brass lg:hidden">
-            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </button>
+            <button
+              type="button"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-label={menuOpen ? t("关闭目录", "Close menu") : t("打开目录", "Open menu")}
+              aria-expanded={menuOpen}
+              className="inline-flex h-8 w-8 items-center justify-center border border-border text-green transition-colors hover:border-brass lg:hidden">
+              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           )}
         </div>
       </div>
-      {!chooser && menuOpen && (
-        <div className="absolute inset-x-0 top-full border-b border-border bg-paper shadow-[0_14px_28px_oklch(0.2_0.02_90_/_0.12)] lg:hidden">
-          <nav className="container py-3" aria-label={t("主导航", "Primary navigation")}>
-            <p className="eyebrow border-b border-border pb-2 text-brass">{t("目录", "Contents")}</p>
-            <div className="mt-2 flex flex-col">
-              {NAV.map((item, index) => {
+
+      {/* 第二层：当前体系内的功能页（章） */}
+      {!chooser && (
+        <div className="hidden border-t border-border bg-paper-deep/45 lg:block">
+          <div className="container flex h-11 items-center justify-between gap-4">
+            <nav
+              className="flex min-w-0 items-center gap-1"
+              aria-label={t("主导航", "Primary navigation")}>
+              <span className="almanac-index mr-2 shrink-0 text-brass">
+                {current === "alevel" ? "02" : "01"}
+              </span>
+              {sectionNav.map((item) => {
                 const active = path === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setMenuOpen(false)}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex items-center justify-between border-b border-border px-1 py-3 text-[0.9375rem]",
+                      "relative whitespace-nowrap px-2.5 py-2.5 text-[0.8125rem] transition-colors duration-150",
                       active ? "text-green" : "text-muted-foreground hover:text-green",
                     )}>
-                      <span className="flex items-center gap-3">
-                        <span className="almanac-index text-brass">{String(index + 1).padStart(2, "0")}</span>
-                        <span>
-                          <span className="block">{lang === "zh" ? item.zh : item.en}</span>
-                          <span className="mt-0.5 block text-[0.6875rem] leading-relaxed text-muted-foreground">
-                            {lang === "zh" ? NAV_DETAILS[item.href].zh : NAV_DETAILS[item.href].en}
-                          </span>
-                        </span>
-                      </span>
-                    {item.href === "/wace/shortlist" && count > 0 && (
-                      <span className="score border border-brass/60 bg-brass/12 px-1.5 text-[0.6875rem] text-[oklch(0.42_0.07_74)]">
+                    {lang === "zh" ? item.zh : item.en}
+                    {item.href === shortlistHref && count > 0 && (
+                      <span className="score ml-1 border border-brass/60 bg-brass/12 px-1 text-[0.625rem] text-[oklch(0.42_0.07_74)]">
                         {count}
                       </span>
                     )}
+                    {active && <span className="absolute inset-x-2.5 bottom-0 h-[2px] bg-brass" />}
                   </Link>
                 );
               })}
-            </div>
+            </nav>
+            <details className="group relative shrink-0">
+              <summary className="flex list-none cursor-pointer items-center gap-1 whitespace-nowrap py-2 text-[0.8125rem] text-muted-foreground transition-colors hover:text-green">
+                {t("更多", "More")}
+                <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
+              </summary>
+              <div className="absolute right-0 top-full z-50 mt-1 min-w-36 border border-border bg-paper p-1.5 shadow-[0_12px_24px_oklch(0.2_0.02_90_/_0.14)]">
+                <Link
+                  href={BROCHURE.href}
+                  className="block whitespace-nowrap px-3 py-2 text-[0.8125rem] text-muted-foreground transition-colors hover:bg-paper-deep hover:text-green">
+                  {lang === "zh" ? BROCHURE.zh : BROCHURE.en}
+                </Link>
+              </div>
+            </details>
+          </div>
+        </div>
+      )}
+
+      {/* 手机目录：按体系分组，当前体系展开在前 */}
+      {!chooser && menuOpen && (
+        <div className="absolute inset-x-0 top-full max-h-[calc(100dvh-3.75rem)] overflow-y-auto border-b border-border bg-paper shadow-[0_14px_28px_oklch(0.2_0.02_90_/_0.12)] lg:hidden">
+          <nav className="container py-3" aria-label={t("主导航", "Primary navigation")}>
+            {(
+              [
+                { id: "wace", no: "01", label: "WACE", items: WACE_NAV },
+                { id: "alevel", no: "02", label: "A-Level", items: ALEVEL_NAV },
+              ] as const
+            )
+              .slice()
+              .sort((a) => (a.id === current ? -1 : 1))
+              .map((group) => (
+                <section key={group.id} className="mb-2">
+                  <p className="flex items-baseline gap-2 border-b border-brass/40 pb-2 pt-2">
+                    <span className="almanac-index text-brass">{group.no}</span>
+                    <span className="text-[0.8125rem] tracking-[0.08em] text-green">{group.label}</span>
+                    {group.id === current && (
+                      <span className="ml-auto text-[0.625rem] tracking-[0.12em] text-brass">
+                        {t("当前", "Current")}
+                      </span>
+                    )}
+                  </p>
+                  <div className="flex flex-col">
+                    {group.items.map((item) => {
+                      const active = path === item.href;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setMenuOpen(false)}
+                          className={cn(
+                            "flex items-center justify-between gap-3 border-b border-border py-2.5 pl-7 pr-1 text-[0.9375rem]",
+                            active ? "text-green" : "text-muted-foreground hover:text-green",
+                          )}>
+                          <span className="min-w-0">
+                            <span className="block">{lang === "zh" ? item.zh : item.en}</span>
+                            <span className="mt-0.5 block text-[0.6875rem] leading-relaxed text-muted-foreground">
+                              {lang === "zh" ? item.noteZh : item.noteEn}
+                            </span>
+                          </span>
+                          {item.href === shortlistHref && count > 0 && (
+                            <span className="score shrink-0 border border-brass/60 bg-brass/12 px-1.5 text-[0.6875rem] text-[oklch(0.42_0.07_74)]">
+                              {count}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
+            <Link
+              href={BROCHURE.href}
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 border-t border-border py-3 text-[0.875rem] text-muted-foreground hover:text-green">
+              <span className="almanac-index text-brass">03</span>
+              {lang === "zh" ? BROCHURE.zh : BROCHURE.en}
+            </Link>
           </nav>
         </div>
       )}
@@ -273,20 +383,42 @@ export function SiteFooter() {
         </div>
         <nav aria-label={t("常用工具", "Quick tools")}>
           <h3 className="eyebrow text-brass-soft">{t("常用工具", "Quick tools")}</h3>
-          <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-2.5 text-[0.875rem] text-paper/80">
-            {NAV.filter((item) => ["/wace", "/alevel", "/wace/forward", "/wace/shortlist"].includes(item.href)).map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className="inline-flex items-center gap-1.5 hover:text-brass-soft">
-                  {lang === "zh" ? item.zh : item.en}
-                  {item.href === "/wace/shortlist" && count > 0 && (
-                    <span className="score border border-brass-soft/50 bg-brass-soft/10 px-1 text-[0.625rem] text-brass-soft">
-                      {count}
-                    </span>
-                  )}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-4 text-[0.875rem] text-paper/80">
+            <div>
+              <p className="text-[0.6875rem] tracking-[0.14em] text-brass-soft">WACE</p>
+              <ul className="mt-2 space-y-2">
+                {WACE_NAV.filter((i) => ["/wace", "/wace/forward", "/wace/shortlist"].includes(i.href)).map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="inline-flex items-center gap-1.5 hover:text-brass-soft">
+                      {lang === "zh" ? item.zh : item.en}
+                      {item.href === "/wace/shortlist" && count > 0 && (
+                        <span className="score border border-brass-soft/50 bg-brass-soft/10 px-1 text-[0.625rem] text-brass-soft">
+                          {count}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-[0.6875rem] tracking-[0.14em] text-brass-soft">A-Level</p>
+              <ul className="mt-2 space-y-2">
+                {ALEVEL_NAV.filter((i) => ["/alevel", "/alevel/forward", "/alevel/shortlist"].includes(i.href)).map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="inline-flex items-center gap-1.5 hover:text-brass-soft">
+                      {lang === "zh" ? item.zh : item.en}
+                      {item.href === "/alevel/shortlist" && count > 0 && (
+                        <span className="score border border-brass-soft/50 bg-brass-soft/10 px-1 text-[0.625rem] text-brass-soft">
+                          {count}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </nav>
         <div>
           <h3 className="eyebrow text-brass-soft">{t("数据说明", "About the Data")}</h3>

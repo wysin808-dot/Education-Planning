@@ -13,25 +13,36 @@ try {
     throw new Error("入口选择页不应显示目录按钮");
   }
 
-  await page.goto("http://localhost:3000/wace", { waitUntil: "networkidle" });
-  const trigger = page.getByRole("button", { name: "打开目录" });
-  await trigger.click();
+  for (const [start, firstGroup] of [
+    ["/wace", "WACE"],
+    ["/alevel", "A-Level"],
+  ]) {
+    await page.goto(`http://localhost:3000${start}`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "打开目录" }).click();
 
-  const menu = page.locator('nav[aria-label="主导航"]').last();
-  await menu.waitFor({ state: "visible" });
-  const entryCount = await menu.locator("a").count();
-  // 两个课程体系入口 + 五个 WACE 功能页 + 宣传册
-  if (entryCount !== 8) {
-    throw new Error(`目录入口数量异常：预期 8，实际 ${entryCount}`);
+    const menu = page.locator('nav[aria-label="主导航"]').last();
+    await menu.waitFor({ state: "visible" });
+
+    // 目录须按体系分组，且当前体系排在最前并标注「当前」
+    const groups = await menu.locator("section").count();
+    if (groups !== 2) throw new Error(`${start} 目录分组数量异常：预期 2，实际 ${groups}`);
+
+    const firstHeading = await menu.locator("section").first().textContent();
+    if (!firstHeading?.includes(firstGroup) || !firstHeading.includes("当前")) {
+      throw new Error(`${start} 目录首个分组应为标注「当前」的 ${firstGroup}`);
+    }
+
+    // 每个体系六项功能页，另加宣传册
+    const entryCount = await menu.locator("a").count();
+    if (entryCount !== 13) {
+      throw new Error(`${start} 目录入口数量异常：预期 13，实际 ${entryCount}`);
+    }
+
+    await page.getByRole("button", { name: "关闭目录" }).click();
+    await menu.waitFor({ state: "hidden" });
   }
 
-  if (process.env.CAPTURE === "1") {
-    await page.screenshot({ path: "/home/ubuntu/mobile-menu-open.png", fullPage: false });
-  }
-
-  await page.getByRole("button", { name: "关闭目录" }).click();
-  await menu.waitFor({ state: "hidden" });
-  console.log("手机目录交互验证通过：选择页无目录按钮，体系内目录可展开、含 8 个入口、可关闭。");
+  console.log("手机目录交互验证通过：选择页无目录按钮，体系内目录按 WACE / A-Level 分组、当前体系置顶、可展开可关闭。");
 } finally {
   await browser.close();
 }

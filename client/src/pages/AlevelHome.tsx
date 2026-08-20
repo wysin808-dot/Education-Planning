@@ -5,7 +5,6 @@
 import { ArrowRight, BookOpenCheck, GraduationCap, Scale } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
-import { AlevelNav } from "@/components/CurriculumSwitch";
 import { OfferGradeRule } from "@/components/OfferGradeRule";
 import { useLang } from "@/contexts/LangContext";
 import { ALEVEL_SUBJECTS } from "@/data/alevel";
@@ -18,8 +17,8 @@ export default function AlevelHome() {
       <main>
         <section className="container grid gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr] lg:py-20">
           <div>
-            <AlevelNav active="/alevel" />
-            <p className="eyebrow mt-8 text-brass">CAMBRIDGE INTERNATIONAL · AS & A LEVEL</p>
+            
+            <p className="eyebrow text-brass">CAMBRIDGE INTERNATIONAL · AS & A LEVEL</p>
             <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-serif)] text-[2.6rem] leading-[0.98] text-green sm:text-[4rem]">
               {t("以 3–4 门 A-Level，校准你的大学目标。", "Calibrate university goals through 3–4 A-Level subjects.")}
             </h1>
