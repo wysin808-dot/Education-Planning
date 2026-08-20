@@ -372,8 +372,18 @@ export function groupLabel(group: string, lang: "zh" | "en"): string {
 
 /** Year 11 建议修读的科目数上限 */
 export const YEAR11_SIZE = 5;
-/** Year 12 计入 ATAR 的主力科目数 */
-export const YEAR12_SIZE = 4;
+/**
+ * Year 12 修读的科目数。
+ * 依招生办确认：修五门、取最好的四门计入 ATAR，
+ * 以便在锁定 EALD 与中文之后仍能容纳多目标的先修要求。
+ */
+export const YEAR12_SIZE = 5;
+/** 实际计入 ATAR 的科目数 */
+export const YEAR12_COUNTED = 4;
+
+/** BCI 中国学生的锁定科目：EALD 与中文（第一语言） */
+const LOCK_ENGLISH: SubjectKey = "eald";
+const LOCK_CHINESE: SubjectKey = "chineseFL";
 
 const SCALING_WEIGHT: Record<string, number> = { 高: 3, 中: 2, 一般: 1 };
 
@@ -382,7 +392,7 @@ export interface PlanSubject {
   /** 该科目被多少个目标要求（同一目标内的二选一只计一次） */
   requiredBy: number;
   /** 入选原因分类 */
-  role: "english" | "required" | "choice" | "filler";
+  role: "english" | "chinese" | "required" | "choice" | "filler";
   /** 组内二选一时的备选科目 */
   alternatives: SubjectKey[];
   /** 要求该科目的目标名称，便于家长核对 */
@@ -478,16 +488,21 @@ export function buildSubjectPlan(
     };
   };
 
-  // 1. 英语线：毕业必需，EALD 与英语二选一
-  const englishKey: SubjectKey = offeredKeys.has("english") ? "english" : "eald";
+  // 1. 英语线：中国学生固定修读 EALD
   const englishSlot: PlanSubject = {
-    ...toPlanSubject(englishKey, "english"),
-    alternatives: offeredKeys.has("eald") && englishKey !== "eald" ? ["eald"] : [],
+    ...toPlanSubject(LOCK_ENGLISH, "english"),
+    alternatives: offeredKeys.has("english") ? ["english"] : [],
   };
 
-  // 2. 目标要求的科目，按被要求次数与 scaling 排序
+  // 2. 中文线：中文（第一语言）为锁定科目，BCI 仅在南半球序列开设
+  const chineseSlot: PlanSubject | null = offeredKeys.has(LOCK_CHINESE)
+    ? toPlanSubject(LOCK_CHINESE, "chinese")
+    : null;
+  const lockedSlots = chineseSlot ? [englishSlot, chineseSlot] : [englishSlot];
+
+  // 3. 目标要求的科目，按被要求次数与 scaling 排序
   const requiredSorted = Array.from(counts.entries())
-    .filter(([key]) => key !== englishKey && key !== "eald")
+    .filter(([key]) => key !== LOCK_ENGLISH && key !== "english" && key !== LOCK_CHINESE)
     .sort((a, b) => {
       if (b[1].count !== a[1].count) return b[1].count - a[1].count;
       const sa = SCALING_WEIGHT[SUBJECTS.find((s) => s.key === a[0])?.scaling ?? "一般"] ?? 1;
@@ -496,12 +511,15 @@ export function buildSubjectPlan(
     })
     .map(([key]) => toPlanSubject(key, "required"));
 
-  const capacity = YEAR11_SIZE - 1; // 英语占一个位置
+  const capacity = YEAR11_SIZE - lockedSlots.length; // 锁定科目先占位
   const takenRequired = requiredSorted.slice(0, capacity);
   const overflow = requiredSorted.slice(capacity);
 
-  // 3. 名额未满时，用 scaling 较高且方向相容的科目补位
-  const chosen = new Set<SubjectKey>([englishSlot.subject, ...takenRequired.map((s) => s.subject)]);
+  // 4. 名额未满时，用 scaling 较高且方向相容的科目补位
+  const chosen = new Set<SubjectKey>([
+    ...lockedSlots.map((s) => s.subject),
+    ...takenRequired.map((s) => s.subject),
+  ]);
   const fillers: PlanSubject[] = [];
   if (takenRequired.length < capacity) {
     // 已占用的学科分组：同一分组内不重复补位，
@@ -512,7 +530,11 @@ export function buildSubjectPlan(
       if (g) usedGroups.add(g);
     });
     const pool = SUBJECTS.filter(
-      (s) => offeredKeys.has(s.key) && !chosen.has(s.key) && s.key !== "eald",
+      (s) =>
+        offeredKeys.has(s.key) &&
+        !chosen.has(s.key) &&
+        s.key !== LOCK_ENGLISH &&
+        s.key !== "english",
     ).sort((a, b) => (SCALING_WEIGHT[b.scaling] ?? 1) - (SCALING_WEIGHT[a.scaling] ?? 1));
 
     // 第一轮：优先补入尚未覆盖的学科分组，保证方案横跨数学、科学与商科
@@ -532,10 +554,10 @@ export function buildSubjectPlan(
     }
   }
 
-  const year11 = [englishSlot, ...takenRequired, ...fillers];
+  const year11 = [...lockedSlots, ...takenRequired, ...fillers];
 
-  // 4. Year 12 保留四门：英语线 + 被要求最多的科目；补位科目最先让出
-  const year12Pool = [englishSlot, ...takenRequired, ...fillers];
+  // 5. Year 12 同样修五门：锁定科目与被要求最多的科目优先，补位科目最先让出
+  const year12Pool = [...lockedSlots, ...takenRequired, ...fillers];
   const year12 = year12Pool.slice(0, YEAR12_SIZE);
   const dropped = year12Pool.slice(YEAR12_SIZE);
 
@@ -555,7 +577,8 @@ export function buildSubjectPlan(
 /** 方案中每门科目的入选说明 */
 export function planRoleLabel(role: PlanSubject["role"], lang: "zh" | "en"): string {
   const map: Record<PlanSubject["role"], [string, string]> = {
-    english: ["毕业必需", "Graduation requirement"],
+    english: ["英语线 · 锁定", "English line · locked"],
+    chinese: ["中文线 · 锁定", "Chinese line · locked"],
     required: ["目标先修", "Target prerequisite"],
     choice: ["组内择优", "Chosen within group"],
     filler: ["提分补位", "Scaling filler"],

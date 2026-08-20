@@ -36,6 +36,7 @@ import {
   subjectLabelBy,
 } from "@/lib/matching";
 import {
+  ATAR_COUNTED,
   Y11_COURSES,
   Y12_COURSES,
   buildTargetPlan,
@@ -48,6 +49,8 @@ import { useLang } from "@/contexts/LangContext";
 
 const ROLE_STYLE: Record<TargetPlanSubject["role"], string> = {
   english: "border-green/40 bg-green/8 text-green",
+  chinese: "border-green/40 bg-green/8 text-green",
+  math: "border-green/40 bg-green/8 text-green",
   required: "border-tier-reach/45 bg-tier-reach/8 text-tier-reach",
   support: "border-brass/50 bg-brass/8 text-[oklch(0.42_0.07_74)]",
   filler: "border-tier-unknown/45 bg-tier-unknown/8 text-tier-unknown",
@@ -101,10 +104,12 @@ export default function Reverse() {
   const tier = result && myAtar !== null ? classifyTier(myAtar, result.requiredAtar) : null;
 
   /** 单目标升学方案：分年选课 + 背景准备 */
+  /** 数学是否为学生强项：为真时在允许的情况下给出双数学 */
+  const [strongMath, setStrongMath] = useState(false);
   const plan = useMemo(() => {
     if (!result) return null;
-    return buildTargetPlan(result.university.id, result.programme.id, hemisphere);
-  }, [result?.university.id, result?.programme.id, hemisphere]);
+    return buildTargetPlan(result.university.id, result.programme.id, hemisphere, strongMath);
+  }, [result?.university.id, result?.programme.id, hemisphere, strongMath]);
 
   const selectClass =
     "mt-2 w-full border border-border bg-paper px-3 py-2.5 text-[0.875rem] text-green outline-none transition-colors focus:border-brass";
@@ -474,6 +479,18 @@ export default function Reverse() {
                       </h3>
                     </div>
                     <div className="no-print flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setStrongMath((v) => !v)}
+                        aria-pressed={strongMath}
+                        className={cn(
+                          "border px-2.5 py-1 text-[0.75rem] transition-colors duration-150",
+                          strongMath
+                            ? "border-green bg-green text-primary-foreground"
+                            : "border-input text-muted-foreground hover:border-brass hover:text-green",
+                        )}>
+                        {t("数学是强项", "Strong in maths")}
+                      </button>
                       <span className="text-[0.6875rem] tracking-[0.12em] text-muted-foreground">
                         {t("课程序列", "Sequence")}
                       </span>
@@ -496,10 +513,52 @@ export default function Reverse() {
 
                   <p className="mt-3 max-w-[68ch] text-[0.8125rem] leading-relaxed text-muted-foreground">
                     {t(
-                      `以下组合仅针对「${result.university.abbr} · ${result.programme.nameZh}」这一个目标推导：Year 11 修读 ${Y11_COURSES} 门以保留余量，Year 12 收拢为计入 ATAR 的 ${Y12_COURSES} 门。`,
-                      `The following is derived for this single target — ${result.university.abbr} · ${result.programme.name}: ${Y11_COURSES} courses in Year 11 to keep options open, narrowing to the ${Y12_COURSES} that count towards the ATAR in Year 12.`,
+                      `以下组合仅针对「${result.university.abbr} · ${result.programme.nameZh}」这一个目标推导：两年各修 ${Y11_COURSES} 门，Year 12 由这 ${Y12_COURSES} 门中取最好的 ${ATAR_COUNTED} 门计入 ATAR。BCI 中国学生以 EALD、中文（第一语言）与数学三门为锁定基础，其余名额按目标专业的先修与方向支撑填补。`,
+                      `The following is derived for this single target — ${result.university.abbr} · ${result.programme.name}: ${Y11_COURSES} courses in each year, with the best ${ATAR_COUNTED} of the ${Y12_COURSES} Year 12 courses counting towards the ATAR. For BCI's Chinese students the locked base is EALD, Chinese: First Language and mathematics; the remaining slots go to the programme's prerequisites and field support.`,
                     )}
                   </p>
+
+                  {plan.doubleMath && (
+                    <div className="mt-4 flex items-start gap-2.5 border border-green/40 bg-green/6 px-4 py-3 text-[0.8125rem] leading-relaxed text-green">
+                      <GraduationCap className="mt-0.5 h-4 w-4 shrink-0" />
+                      <p>
+                        {t(
+                          "已按数学强项给出双数学方案：数学方法与专业数学同修。两门均为高 scaling 科目，也是剑桥、LSE、帝国理工数学与经济类专业的常见要求。",
+                          "A double-mathematics plan is applied: Mathematics Methods together with Mathematics Specialist. Both scale highly and are commonly required by mathematics and economics programmes at Cambridge, LSE and Imperial.",
+                        )}
+                      </p>
+                    </div>
+                  )}
+
+                  {plan.doubleMathBlockedBy.length > 0 && (
+                    <div className="mt-4 flex items-start gap-2.5 border border-brass/50 bg-brass/8 px-4 py-3 text-[0.8125rem] leading-relaxed text-[oklch(0.42_0.07_74)]">
+                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                      <p>
+                        {t("本目标另有官方先修 ", "This target has the further official prerequisite ")}
+                        <strong>
+                          {plan.doubleMathBlockedBy
+                            .map((k) => subjectLabelBy(k, lang))
+                            .join(lang === "zh" ? "、" : ", ")}
+                        </strong>
+                        {t(
+                          `，Year 12 的 ${Y12_COURSES} 个名额须优先留给它，因此未采用双数学。先修缺失会直接失去申请资格，提分则可通过其他方式弥补。`,
+                          `. The ${Y12_COURSES} Year 12 slots must go to it first, so double mathematics is not applied. A missing prerequisite removes eligibility outright, whereas scaling can be addressed by other means.`,
+                        )}
+                      </p>
+                    </div>
+                  )}
+
+                  {!plan.chineseAvailable && (
+                    <div className="mt-4 flex items-start gap-2.5 border border-brass/50 bg-brass/8 px-4 py-3 text-[0.8125rem] leading-relaxed text-[oklch(0.42_0.07_74)]">
+                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                      <p>
+                        {t(
+                          "BCI 的中文（第一语言）仅在南半球序列开设。当前为北半球序列，中文无法计入本方案，锁定基础仅为 EALD 与数学两门。",
+                          "BCI offers Chinese: First Language only in the Southern Hemisphere sequence. In the current Northern Hemisphere sequence Chinese cannot be included, so the locked base is EALD and mathematics only.",
+                        )}
+                      </p>
+                    </div>
+                  )}
 
                   {plan.unavailable.length > 0 && (
                     <div className="mt-4 flex items-start gap-2.5 border border-brass/50 bg-brass/8 px-4 py-3 text-[0.8125rem] leading-relaxed text-[oklch(0.42_0.07_74)]">
@@ -553,8 +612,8 @@ export default function Reverse() {
                       </div>
                       <p className="mt-2.5 text-[0.75rem] leading-relaxed text-muted-foreground">
                         {t(
-                          "收拢到计入 ATAR 的四门，集中投入以保证成绩质量。",
-                          "Narrow to the four that count towards the ATAR and concentrate effort on them.",
+                          `同样修读 ${Y12_COURSES} 门，由其中最好的 ${ATAR_COUNTED} 门计入 ATAR，多出的一门为备份，可抵御单科失手。`,
+                          `Also ${Y12_COURSES} courses, of which the best ${ATAR_COUNTED} count towards the ATAR. The extra course acts as a buffer against one weak result.`,
                         )}
                       </p>
                       <ul className="mt-3 border border-border">
@@ -562,6 +621,31 @@ export default function Reverse() {
                           <PlanRow key={item.subject} item={item} index={i} />
                         ))}
                       </ul>
+                      {plan.backup.length > 0 && (
+                        <div className="mt-3 border border-border bg-paper-deep/30 px-4 py-3">
+                          <p className="eyebrow text-brass">
+                            {t("计分建议", "Which four to count")}
+                          </p>
+                          <p className="mt-2 text-[0.75rem] leading-relaxed text-muted-foreground">
+                            {t("按当前推导，计入 ATAR 的四门为 ", "On the current derivation the four counted are ")}
+                            <strong className="text-green">
+                              {plan.counted
+                                .map((s) => subjectLabelBy(s.subject, lang))
+                                .join(lang === "zh" ? "、" : ", ")}
+                            </strong>
+                            {t("；", "; ")}
+                            <strong className="text-green">
+                              {plan.backup
+                                .map((s) => subjectLabelBy(s.subject, lang))
+                                .join(lang === "zh" ? "、" : ", ")}
+                            </strong>
+                            {t(
+                              " 作为备份。实际计分以最终成绩为准，若备份科目考得更好即由它顶替。",
+                              " serves as the buffer. The actual four are decided by the final results: if the buffer scores higher it takes the place of a weaker subject.",
+                            )}
+                          </p>
+                        </div>
+                      )}
                       {plan.dropped.length > 0 && (
                         <p className="mt-3 border border-dashed border-border bg-paper-deep/30 px-4 py-3 text-[0.75rem] leading-relaxed text-muted-foreground">
                           {t("Year 12 可放弃：", "May be dropped in Year 12: ")}

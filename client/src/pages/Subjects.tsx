@@ -28,6 +28,7 @@ import { useShortlist } from "@/contexts/ShortlistContext";
 
 const ROLE_STYLE: Record<PlanSubject["role"], string> = {
   english: "border-green/40 bg-green/8 text-green",
+  chinese: "border-green/40 bg-green/8 text-green",
   required: "border-tier-reach/45 bg-tier-reach/8 text-tier-reach",
   choice: "border-brass/50 bg-brass/8 text-[oklch(0.42_0.07_74)]",
   filler: "border-tier-unknown/45 bg-tier-unknown/8 text-tier-unknown",
@@ -87,8 +88,17 @@ export default function Subjects() {
           {item.role === "english" && (
             <p className="mt-1.5 text-[0.75rem] leading-relaxed text-muted-foreground">
               {t(
-                "英语或 EALD 为 WACE 毕业与院校语言要求的共同基础，两年均须修读，二者按学生语言背景择一。",
-                "English or EALD underpins both WACE graduation and university language requirements. It runs across both years; choose one according to the student's language background.",
+                "英语非第一语言的学生按 EALD 修读，既满足 WACE 毕业的英语要求，评分对照组也更贴近自身情况，两年均须修读。",
+                "Students whose first language is not English take EALD: it satisfies the WACE English graduation requirement and is assessed against a more comparable cohort. Taken across both years.",
+              )}
+            </p>
+          )}
+
+          {item.role === "chinese" && (
+            <p className="mt-1.5 text-[0.75rem] leading-relaxed text-muted-foreground">
+              {t(
+                "中文母语程度的学生修读第一语言中文，是最稳定的得分来源，同时可作为香港院校中文语言要求的佐证。BCI 仅在南半球序列开设。",
+                "Native-level Chinese speakers take Chinese: First Language as their most reliable source of marks; it also evidences the Chinese language requirement at Hong Kong universities. BCI offers it only in the Southern Hemisphere sequence.",
               )}
             </p>
           )}
@@ -141,8 +151,8 @@ export default function Subjects() {
           </h1>
           <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">
             {t(
-              `本页依据目标清单中各专业的官方先修要求，直接给出 Year 11 的 ${YEAR11_SIZE} 门与 Year 12 保留的 ${YEAR12_SIZE} 门具体组合，并指出无法同时满足的目标。`,
-              `Working from the official prerequisites of the shortlisted programmes, this page produces a concrete set of ${YEAR11_SIZE} courses for Year 11 and the ${YEAR12_SIZE} carried into Year 12, and flags targets that cannot be satisfied together.`,
+              `本页依据目标清单中各专业的官方先修要求，直接给出两年各 ${YEAR11_SIZE} 门的具体组合，并指出无法同时满足的目标。BCI 中国学生以 EALD 与中文（第一语言）为锁定科目，Year 12 由五门中取最好的四门计入 ATAR。`,
+              `Working from the official prerequisites of the shortlisted programmes, this page produces a concrete set of ${YEAR11_SIZE} courses for each year and flags targets that cannot be satisfied together. For BCI's Chinese students EALD and Chinese: First Language are locked, and the best four of the five Year 12 courses count towards the ATAR.`,
             )}
           </p>
 
@@ -278,8 +288,8 @@ export default function Subjects() {
             </div>
             <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted-foreground">
               {t(
-                "Year 11 建议修读五门，为 Year 12 保留一门可放弃的余量，避免过早关闭方向。",
-                "Five courses in Year 11 leave one to drop in Year 12, so no pathway closes prematurely.",
+                "Year 11 修读五门。锁定 EALD 与中文（第一语言）之后，其余名额按目标清单的官方先修填补，避免过早关闭方向。",
+                "Five courses in Year 11. With EALD and Chinese: First Language locked, the remaining slots follow the official prerequisites of the shortlist so that no pathway closes prematurely.",
               )}
             </p>
             <ul className="mt-4 border border-border">
@@ -303,8 +313,8 @@ export default function Subjects() {
             </div>
             <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted-foreground">
               {t(
-                "ATAR 通常取四门最佳成绩，Year 12 集中在这四门以保证成绩质量。",
-                "An ATAR normally counts the best four results, so Year 12 concentrates on these four.",
+                "Year 12 同样修读五门，由其中最好的四门计入 ATAR，多出的一门为备份，可抵御单科失手。",
+                "Five courses again in Year 12, with the best four counting towards the ATAR. The extra course acts as a buffer against one weak result.",
               )}
             </p>
             <ul className="mt-4 border border-border">

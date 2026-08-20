@@ -58,8 +58,10 @@ try {
       emptyY11: empty.year11.map((s) => s.subject),
       northY11: northPlan.year11.map((s) => s.subject),
       northOffered,
+      northRoles: northPlan.year11.map((s) => s.role),
       y11Size: mod.YEAR11_SIZE,
       y12Size: mod.YEAR12_SIZE,
+      countedSize: mod.YEAR12_COUNTED,
       roles: multi.year11.map((s) => s.role),
     };
   });
@@ -87,12 +89,30 @@ try {
     problems.push(`单目标场景出现重复计数：${JSON.stringify(report.singleCounts)}`);
   }
 
-  // 5. 英语线始终占据一个位置
-  if (!report.multiY11.includes("english") && !report.multiY11.includes("eald")) {
-    problems.push("方案缺少毕业必需的英语线科目");
+  /*
+   * 5. 中国学生的锁定科目：
+   *    EALD 两年均在列且排在首位；中文（第一语言）在南半球序列锁定，
+   *    北半球序列不开设，故不应出现。
+   */
+  for (const [name, list] of [
+    ["Year 11", report.multiY11],
+    ["Year 12", report.multiY12],
+  ]) {
+    if (!list.includes("eald")) problems.push(`${name} 组合缺少锁定的 EALD`);
+    if (list.includes("english")) problems.push(`${name} 组合出现普通英语，应统一为 EALD`);
+    if (!list.includes("chineseFL")) problems.push(`${name} 组合缺少锁定的中文（第一语言）`);
   }
   if (report.roles[0] !== "english") {
-    problems.push("英语线未排在方案首位");
+    problems.push("EALD 未排在方案首位");
+  }
+  if (report.roles[1] !== "chinese") {
+    problems.push("中文线未紧随 EALD 之后");
+  }
+  if (report.northY11.includes("chineseFL")) {
+    problems.push("北半球序列不开设中文，方案中不应出现");
+  }
+  if (report.countedSize !== 4) {
+    problems.push(`计入 ATAR 的科目数应为 4，实际 ${report.countedSize}`);
   }
 
   // 6. 空清单也应给出一套完整的默认组合
@@ -165,7 +185,7 @@ try {
   }
 
   console.log(
-    `选课方案引擎验证通过：WACE Year 11 ${report.multiY11.length} 门 / Year 12 ${report.multiY12.length} 门，A-Level AS ${alevel.multiAs.length} 门 / A2 ${alevel.multiA2.length} 门；二选一不重复计数、英语线固定、序列限制与进阶数学依赖均生效。`,
+    `选课方案引擎验证通过：WACE 两年各 ${report.multiY11.length} 门、取最好 ${report.countedSize} 门计入 ATAR，A-Level AS ${alevel.multiAs.length} 门 / A2 ${alevel.multiA2.length} 门；EALD 与中文两年锁定、北半球不含中文、二选一不重复计数、序列限制与进阶数学依赖均生效。`,
   );
 } finally {
   await browser.close();

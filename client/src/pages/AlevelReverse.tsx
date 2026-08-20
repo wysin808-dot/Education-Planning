@@ -186,6 +186,24 @@ export default function AlevelReverse() {
                   )}
                 </p>
 
+                {/* 英语门槛：七门 Cambridge 课程中不含英语，雅思单列且不占选课名额 */}
+                <div className="mt-4 border-l-2 border-tier-reach bg-tier-reach/6 px-4 py-3.5">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="eyebrow text-tier-reach">
+                      {t("英语门槛 · 雅思", "English gate · IELTS")}
+                    </p>
+                    <span className="text-[0.6875rem] text-muted-foreground">
+                      {t("不占 AS / A2 选课名额", "Does not occupy an AS / A2 slot")}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-[0.875rem] leading-relaxed text-green">
+                    {lang === "zh" ? plan.englishGate.detailZh : plan.englishGate.detailEn}
+                  </p>
+                  <p className="mt-2 text-[0.8125rem] leading-relaxed text-muted-foreground">
+                    {lang === "zh" ? plan.englishGate.noteZh : plan.englishGate.noteEn}
+                  </p>
+                </div>
+
                 <div className="mt-5 grid gap-6 lg:grid-cols-2">
                   <div>
                     <div className="flex items-baseline justify-between gap-3 border-b-2 border-green pb-2.5">

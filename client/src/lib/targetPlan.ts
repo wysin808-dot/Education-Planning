@@ -23,15 +23,28 @@ import type { AlevelSubjectKey } from "@/data/alevelRules";
 
 /** Year 11 建议修读的 ATAR 课程数 */
 export const Y11_COURSES = 5;
-/** Year 12 计入 ATAR 的主力课程数 */
-export const Y12_COURSES = 4;
+/**
+ * Year 12 修读的课程数。
+ * 依招生办确认：Year 12 修五门、取最好的四门计入 ATAR，
+ * 以便在锁定 EALD / 中文 / 数学三门之后仍能容纳医学、工程等专业的多组先修。
+ */
+export const Y12_COURSES = 5;
+/** 实际计入 ATAR 的科目数 */
+export const ATAR_COUNTED = 4;
 
 const SCALING_WEIGHT: Record<string, number> = { 高: 3, 中: 2, 一般: 1 };
 
 export interface TargetPlanSubject {
   subject: SubjectKey;
-  /** english：毕业必需；required：该专业先修；support：方向支撑；filler：提分补位 */
-  role: "english" | "required" | "support" | "filler";
+  /**
+   * english：EALD，WACE 毕业与语言要求的基础
+   * chinese：中文第一语言，中国学生的稳定高分科目
+   * math：锁定的数学线
+   * required：该专业先修
+   * support：方向支撑
+   * filler：提分补位
+   */
+  role: "english" | "chinese" | "math" | "required" | "support" | "filler";
   /** 组内二选一时的其他选项 */
   alternatives: SubjectKey[];
   /** 为什么选它 */
@@ -61,7 +74,30 @@ export interface TargetPlan {
   /** 该专业先修科目在本序列未开设时的预警 */
   unavailable: SubjectKey[];
   preparation: PreparationItem[];
+  /** 本方案是否采用双数学（数学方法 + 专业数学） */
+  doubleMath: boolean;
+  /**
+   * 学生数学为强项、但因目标专业另有非数学先修而未采用双数学。
+   * Year 12 修五门，仍放不下时先修优先，因先修属资格门槛。
+   */
+  doubleMathBlockedBy: SubjectKey[];
+  /** 中文（第一语言）在本序列是否开设；北半球序列不开设 */
+  chineseAvailable: boolean;
+  /** Year 12 中计入 ATAR 的四门（其余一门为备份，取最好四门计分） */
+  counted: TargetPlanSubject[];
+  /** Year 12 中不计入最优四门的备份科目 */
+  backup: TargetPlanSubject[];
 }
+
+/**
+ * BCI 中国学生的锁定科目线。
+ * 依招生办确认：EALD、中文（第一语言）、数学三门为固定基础，
+ * 其中中文（第一语言）BCI 仅在南半球序列开设。
+ */
+export const LOCKED_ENGLISH: SubjectKey = "eald";
+export const LOCKED_CHINESE: SubjectKey = "chineseFL";
+/** 数学线的层级优先顺序：由高到低 */
+const MATH_LADDER: SubjectKey[] = ["mathSpecialist", "mathMethods", "mathApplications"];
 
 /** 各学科方向在 WACE 阶段的支撑科目（未被列为先修，但显著提升竞争力） */
 const FIELD_SUPPORT: Record<FieldKey, SubjectKey[]> = {
@@ -214,6 +250,8 @@ export function buildTargetPlan(
   universityId: string,
   programmeId: string,
   hemisphere: "north" | "south",
+  /** 学生数学是否为强项：为真时给出双数学方案 */
+  strongMath = false,
 ): TargetPlan | null {
   const university = UNIVERSITIES.find((u) => u.id === universityId);
   const programme = university?.programmes.find((p) => p.id === programmeId);
@@ -231,23 +269,103 @@ export function buildTargetPlan(
   const taken = new Set<SubjectKey>();
   const unavailable: SubjectKey[] = [];
 
-  // 1. 英语线：毕业必需
-  const englishKey: SubjectKey = offered.has("english") ? "english" : "eald";
+  // 1. EALD：中国学生的英语线，兼顾 WACE 毕业要求
   picked.push({
-    subject: englishKey,
+    subject: LOCKED_ENGLISH,
     role: "english",
-    alternatives: offered.has("eald") && englishKey !== "eald" ? ["eald"] : [],
-    reasonZh: "WACE 毕业与院校语言要求的共同基础，两年均须修读。",
-    reasonEn: "The shared basis of WACE graduation and university language requirements; taken across both years.",
+    alternatives: offered.has("english") ? ["english"] : [],
+    reasonZh:
+      "英语非第一语言的学生按 EALD 修读，既满足 WACE 毕业的英语要求，评分对照组也更贴近自身情况。两年均须修读。",
+    reasonEn:
+      "Students whose first language is not English take EALD: it satisfies the WACE English graduation requirement and is assessed against a more comparable cohort. Taken across both years.",
   });
-  taken.add(englishKey);
+  taken.add(LOCKED_ENGLISH);
 
-  // 2. 该专业的先修科目（二选一在组内择优，按 scaling）
+  // 2. 中文（第一语言）：中国学生的稳定得分科目，仅南半球序列开设
+  const chineseAvailable = offered.has(LOCKED_CHINESE);
+  if (chineseAvailable) {
+    picked.push({
+      subject: LOCKED_CHINESE,
+      role: "chinese",
+      alternatives: [],
+      reasonZh:
+        "中文母语程度的学生修读第一语言中文，是最稳定的得分来源，同时可作为香港院校中文语言要求的佐证。",
+      reasonEn:
+        "Native-level Chinese speakers take Chinese: First Language as their most reliable source of marks; it also evidences the Chinese language requirement at Hong Kong universities.",
+    });
+    taken.add(LOCKED_CHINESE);
+  } else {
+    unavailable.push(LOCKED_CHINESE);
+  }
+
+  // 3. 数学线：锁定至少一门；先按目标专业的先修层级取，再按强项决定是否加修第二门
+  const prereqMaths = programme.prerequisites
+    .flat()
+    .filter((k) => MATH_LADDER.includes(k) && offered.has(k));
+  /**
+   * 目标专业的非数学先修。Year 12 仅四门计入 ATAR，
+   * 三门锁定之后只剩一个名额，必须留给这些资格门槛科目。
+   */
+  const nonMathPrereqs = programme.prerequisites
+    .filter((group) => group.length > 0 && !group.some((k) => MATH_LADDER.includes(k)))
+    .map((group) => group.find((k) => offered.has(k)) ?? group[0]);
+  const primaryMath =
+    MATH_LADDER.find((k) => prereqMaths.includes(k)) ??
+    MATH_LADDER.find((k) => offered.has(k) && k !== "mathApplications") ??
+    MATH_LADDER.find((k) => offered.has(k));
+  let doubleMath = false;
+  const doubleMathBlockedBy: SubjectKey[] = [];
+  if (primaryMath) {
+    picked.push({
+      subject: primaryMath,
+      role: "math",
+      alternatives: MATH_LADDER.filter((k) => k !== primaryMath && offered.has(k)),
+      reasonZh: prereqMaths.includes(primaryMath)
+        ? "既是目标专业的官方先修，也是数学线的锁定科目，两年均须修读。"
+        : "数学为锁定科目，两年均须修读；本层级依目标专业与后续衔接选定。",
+      reasonEn: prereqMaths.includes(primaryMath)
+        ? "Both an official prerequisite for the target programme and the locked mathematics line; taken across both years."
+        : "Mathematics is locked across both years; this level is chosen for the target programme and later progression.",
+    });
+    taken.add(primaryMath);
+
+    /*
+     * 数学强项者加修第二门数学。
+     * Year 12 修五门后，锁定三门（EALD / 中文 / 数学）之外尚余两个名额，
+     * 因此仅当非数学先修占满余下名额时，双数学才需让位。
+     */
+    const lockedCount = 1 + (chineseAvailable ? 1 : 0) + 1; // EALD + 中文 + 数学
+    const roomAfterPrereqs = Y12_COURSES - lockedCount - nonMathPrereqs.length;
+    if (strongMath && roomAfterPrereqs < 1) {
+      doubleMathBlockedBy.push(...nonMathPrereqs);
+    } else if (strongMath) {
+      const second = MATH_LADDER.filter(
+        (k) => k !== primaryMath && k !== "mathApplications" && offered.has(k) && !taken.has(k),
+      )[0];
+      if (second) {
+        doubleMath = true;
+        picked.push({
+          subject: second,
+          role: "math",
+          alternatives: [],
+          reasonZh:
+            "数学为强项时建议修读两门数学。两门均属高 scaling 科目，是剑桥、LSE、帝国理工数学与经济类专业的常见要求，也能显著抬升 ATAR。",
+          reasonEn:
+            "Students strong in mathematics are advised to take two mathematics courses. Both scale highly, are commonly required by mathematics and economics programmes at Cambridge, LSE and Imperial, and lift the ATAR appreciably.",
+        });
+        taken.add(second);
+      }
+    }
+  }
+
+  // 4. 该专业的其余先修科目（二选一在组内择优，按 scaling）
   for (const group of programme.prerequisites) {
     if (group.length === 0) continue;
+    // 已由数学线覆盖的先修组不再重复计入
+    if (group.some((k) => taken.has(k))) continue;
     const open = group.filter((k) => offered.has(k));
     if (open.length === 0) {
-      unavailable.push(group[0]);
+      if (!unavailable.includes(group[0])) unavailable.push(group[0]);
       continue;
     }
     const best = open
@@ -268,10 +386,12 @@ export function buildTargetPlan(
     taken.add(best);
   }
 
-  // 3. 方向支撑科目
+  // 5. 方向支撑科目
   for (const key of FIELD_SUPPORT[programme.field] ?? []) {
     if (picked.length >= Y11_COURSES) break;
     if (taken.has(key) || !offered.has(key)) continue;
+    // 数学线已锁定，方向支撑不再追加数学科目
+    if (MATH_LADDER.includes(key)) continue;
     picked.push({
       subject: key,
       role: "support",
@@ -282,7 +402,7 @@ export function buildTargetPlan(
     taken.add(key);
   }
 
-  // 4. 仍有空位时，按 scaling 补位并避免同一学科分组重复
+  // 6. 仍有空位时，按 scaling 补位并避免同一学科分组重复
   if (picked.length < Y11_COURSES) {
     const usedGroups = new Set<string>();
     taken.forEach((k) => {
@@ -290,7 +410,12 @@ export function buildTargetPlan(
       if (g) usedGroups.add(g);
     });
     const pool = SUBJECTS.filter(
-      (s) => offered.has(s.key) && !taken.has(s.key) && s.key !== "eald",
+      (s) =>
+        offered.has(s.key) &&
+        !taken.has(s.key) &&
+        s.key !== "eald" &&
+        s.key !== "english" &&
+        !MATH_LADDER.includes(s.key),
     ).sort((a, b) => (SCALING_WEIGHT[b.scaling] ?? 1) - (SCALING_WEIGHT[a.scaling] ?? 1));
     for (const meta of pool) {
       if (picked.length >= Y11_COURSES) break;
@@ -320,16 +445,50 @@ export function buildTargetPlan(
   }
 
   const year11 = picked.slice(0, Y11_COURSES);
-  // Year 12 保留：英语线与先修优先，其次支撑，最后补位
   const priority: Record<TargetPlanSubject["role"], number> = {
     english: 0,
-    required: 1,
-    support: 2,
-    filler: 3,
+    chinese: 1,
+    math: 2,
+    required: 3,
+    support: 4,
+    filler: 5,
   };
-  const ordered = year11.slice().sort((a, b) => priority[a.role] - priority[b.role]);
-  const year12 = ordered.slice(0, Y12_COURSES);
-  const dropped = ordered.slice(Y12_COURSES);
+  /*
+   * Year 12 的组合：
+   * Year 11 修五门，Year 12 同样修五门，因此在名额允许时整体延续；
+   * 若 Year 11 因先修过多而未能容纳全部必需科目，则按优先级取前五门。
+   */
+  const orderedAll = picked.slice().sort((a, b) => priority[a.role] - priority[b.role]);
+  const year12 = orderedAll.slice(0, Y12_COURSES);
+  const dropped = orderedAll.slice(Y12_COURSES);
+
+  /*
+   * 计入 ATAR 的四门：资格门槛（EALD / 数学 / 官方先修）优先占位，
+   * 其余按 scaling 由高到低取，末位一门作为备份不计分。
+   */
+  /*
+   * 计入 ATAR 的四门。
+   * 资格类科目（EALD、数学线、官方先修）必须计入，否则不满足申请条件；
+   * 其余名额在中文、方向支撑与补位之间按 scaling 竞争。
+   * 中文对中文母语学生是稳定得分来源，因此与支撑科目同级参与排序，
+   * 而非固定沦为备份。
+   */
+  const mustCount = (role: TargetPlanSubject["role"]) =>
+    role === "english" || role === "required" || role === "math";
+  const forCounting = year12.slice().sort((a, b) => {
+    const qa = mustCount(a.role) ? 0 : 1;
+    const qb = mustCount(b.role) ? 0 : 1;
+    if (qa !== qb) return qa - qb;
+    const sa = SCALING_WEIGHT[SUBJECTS.find((s) => s.key === a.subject)?.scaling ?? "一般"] ?? 1;
+    const sb = SCALING_WEIGHT[SUBJECTS.find((s) => s.key === b.subject)?.scaling ?? "一般"] ?? 1;
+    if (sb !== sa) return sb - sa;
+    // scaling 相同时中文优先于补位科目
+    const ra = a.role === "chinese" ? 0 : a.role === "support" ? 1 : 2;
+    const rb = b.role === "chinese" ? 0 : b.role === "support" ? 1 : 2;
+    return ra - rb;
+  });
+  const counted = forCounting.slice(0, ATAR_COUNTED);
+  const backup = forCounting.slice(ATAR_COUNTED);
 
   return {
     university,
@@ -340,6 +499,11 @@ export function buildTargetPlan(
     dropped,
     unavailable,
     preparation: buildPreparation(university, programme),
+    doubleMath,
+    doubleMathBlockedBy,
+    chineseAvailable,
+    counted,
+    backup,
   };
 }
 
@@ -407,7 +571,9 @@ function buildPreparation(university: University, programme: Programme): Prepara
 /** 方案中科目角色的标签 */
 export function targetRoleLabel(role: TargetPlanSubject["role"], lang: "zh" | "en"): string {
   const map: Record<TargetPlanSubject["role"], [string, string]> = {
-    english: ["毕业必需", "Graduation requirement"],
+    english: ["英语线 · 锁定", "English line · locked"],
+    chinese: ["中文线 · 锁定", "Chinese line · locked"],
+    math: ["数学线 · 锁定", "Mathematics line · locked"],
     required: ["官方先修", "Official prerequisite"],
     support: ["方向支撑", "Field support"],
     filler: ["提分补位", "Scaling filler"],
@@ -448,6 +614,16 @@ export interface AlevelTargetPlan {
   a2: AlevelTargetPlanSubject[];
   dropped: AlevelTargetPlanSubject[];
   preparation: PreparationItem[];
+  /**
+   * 英语门槛。BCI 已确认的七门 Cambridge 课程中不含英语，
+   * 中国学生的英语能力一律以雅思等标准化考试呈现，不占 AS / A2 的选课名额。
+   */
+  englishGate: {
+    detailZh: string;
+    detailEn: string;
+    noteZh: string;
+    noteEn: string;
+  };
 }
 
 /** 各方向在 BCI 七门 A-Level 中的支撑科目 */
@@ -568,6 +744,14 @@ export function buildAlevelTargetPlan(
     a2,
     dropped,
     preparation: buildPreparation(university, programme),
+    englishGate: {
+      detailZh: university.english,
+      detailEn: university.englishEn,
+      noteZh:
+        "BCI 已确认的七门 Cambridge 课程中不含英语科目，因此英语能力以雅思等标准化考试单独呈交，不占用 AS / A2 的选课名额。该项属录取硬性条件，等级达标而雅思未达标同样无法换取录取。",
+      noteEn:
+        "None of BCI's seven confirmed Cambridge subjects is an English course, so English proficiency is evidenced separately through IELTS or an equivalent test and does not occupy an AS or A2 subject slot. It is a hard admission condition: meeting the grade profile without meeting the English requirement still fails to convert an offer.",
+    },
   };
 }
 
