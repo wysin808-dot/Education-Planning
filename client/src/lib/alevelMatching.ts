@@ -203,3 +203,155 @@ export function adviseAlevelSubjects(targets: { universityId: string; programmeI
     })
     .sort((a, b) => b.requiredBy - a.requiredBy || b.recommendedBy - a.recommendedBy);
 }
+
+/* ------------------------------------------------------------------ *
+ * A-Level 选课方案生成器
+ *
+ * 规则来自 Cambridge International 的常规修读结构与 BCI 已确认的七门课程：
+ *  1. AS（Year 12）通常开局四门，为 A2 保留一门可放弃的余量。
+ *  2. A2（Year 13）保留三门作为 offer 计分主体（A*AA、AAA 等口径均按三门给出）。
+ *  3. 必修科目优先入选，其次为被建议的科目，最后按学术通用性补位。
+ *  4. Further Mathematics 不替代 Mathematics，只在 Mathematics 已入选后追加。
+ * ------------------------------------------------------------------ */
+
+/** AS（Year 12）建议开局的科目数 */
+export const ALEVEL_AS_SIZE = 4;
+/** A2（Year 13）保留并计入 offer 的科目数 */
+export const ALEVEL_A2_SIZE = 3;
+
+/** 无目标时的通用优先序：学术通用性由高到低 */
+const ALEVEL_GENERAL_ORDER: AlevelSubjectKey[] = [
+  "mathematics",
+  "physics",
+  "chemistry",
+  "economics",
+  "biology",
+  "furtherMathematics",
+  "business",
+];
+
+export interface AlevelPlanSubject {
+  subject: AlevelSubjectKey;
+  requiredBy: number;
+  recommendedBy: number;
+  role: "required" | "recommended" | "filler";
+  supports: string[];
+}
+
+export interface AlevelSubjectPlan {
+  /** AS 年（Year 12）建议开局组合 */
+  as: AlevelPlanSubject[];
+  /** A2 年（Year 13）建议保留组合 */
+  a2: AlevelPlanSubject[];
+  /** A2 相对 AS 建议放弃的科目 */
+  dropped: AlevelPlanSubject[];
+  /** 必修科目超出名额时的冲突 */
+  overflow: AlevelPlanSubject[];
+  targetCount: number;
+}
+
+/**
+ * 生成 AS / A2 两年的 A-Level 选课方案。
+ * lang 仅用于目标名称的展示语言。
+ */
+export function buildAlevelPlan(
+  targets: { universityId: string; programmeId: string }[],
+  lang: "zh" | "en" = "zh",
+): AlevelSubjectPlan {
+  const required = new Map<AlevelSubjectKey, { count: number; supports: string[] }>();
+  const recommended = new Map<AlevelSubjectKey, { count: number; supports: string[] }>();
+  let targetCount = 0;
+
+  for (const target of targets) {
+    const result = alevelReverseLookup(target.universityId, target.programmeId);
+    if (!result) continue;
+    targetCount += 1;
+    const label = `${result.university.abbr} · ${
+      lang === "zh" ? result.programme.nameZh : result.programme.name
+    }`;
+    result.requiredSubjects.forEach((subject) => {
+      const entry = required.get(subject) ?? { count: 0, supports: [] };
+      entry.count += 1;
+      entry.supports.push(label);
+      required.set(subject, entry);
+    });
+    result.recommendedSubjects.forEach((subject) => {
+      const entry = recommended.get(subject) ?? { count: 0, supports: [] };
+      entry.count += 1;
+      entry.supports.push(label);
+      recommended.set(subject, entry);
+    });
+  }
+
+  const build = (
+    subject: AlevelSubjectKey,
+    role: AlevelPlanSubject["role"],
+  ): AlevelPlanSubject => ({
+    subject,
+    requiredBy: required.get(subject)?.count ?? 0,
+    recommendedBy: recommended.get(subject)?.count ?? 0,
+    role,
+    supports:
+      role === "required"
+        ? (required.get(subject)?.supports ?? [])
+        : (recommended.get(subject)?.supports ?? []),
+  });
+
+  const chosen: AlevelPlanSubject[] = [];
+  const taken = new Set<AlevelSubjectKey>();
+
+  const push = (subject: AlevelSubjectKey, role: AlevelPlanSubject["role"]) => {
+    if (taken.has(subject)) return;
+    // Further Mathematics 只在 Mathematics 已入选时才有意义
+    if (subject === "furtherMathematics" && !taken.has("mathematics")) return;
+    chosen.push(build(subject, role));
+    taken.add(subject);
+  };
+
+  // 1. 必修科目按被要求次数排序
+  const requiredSorted = Array.from(required.entries()).sort((a, b) => b[1].count - a[1].count);
+  const overflow: AlevelPlanSubject[] = [];
+  for (const [subject] of requiredSorted) {
+    if (chosen.length >= ALEVEL_AS_SIZE) {
+      overflow.push(build(subject, "required"));
+      continue;
+    }
+    push(subject, "required");
+  }
+
+  // 2. 建议科目补位
+  const recommendedSorted = Array.from(recommended.entries()).sort((a, b) => b[1].count - a[1].count);
+  for (const [subject] of recommendedSorted) {
+    if (chosen.length >= ALEVEL_AS_SIZE) break;
+    push(subject, "recommended");
+  }
+
+  // 3. 仍有空位时按学术通用性补齐
+  for (const subject of ALEVEL_GENERAL_ORDER) {
+    if (chosen.length >= ALEVEL_AS_SIZE) break;
+    push(subject, "filler");
+  }
+  // Further Mathematics 因依赖 Mathematics 可能被跳过，此处兜底补齐
+  for (const subject of ALEVEL_GENERAL_ORDER) {
+    if (chosen.length >= ALEVEL_AS_SIZE) break;
+    if (taken.has(subject)) continue;
+    chosen.push(build(subject, "filler"));
+    taken.add(subject);
+  }
+
+  const as = chosen.slice(0, ALEVEL_AS_SIZE);
+  const a2 = as.slice(0, ALEVEL_A2_SIZE);
+  const dropped = as.slice(ALEVEL_A2_SIZE);
+
+  return { as, a2, dropped, overflow, targetCount };
+}
+
+/** A-Level 方案中科目的入选说明 */
+export function alevelPlanRoleLabel(role: AlevelPlanSubject["role"], lang: "zh" | "en") {
+  const map: Record<AlevelPlanSubject["role"], [string, string]> = {
+    required: ["目标先修", "Target prerequisite"],
+    recommended: ["院校建议", "University recommended"],
+    filler: ["学术通用", "Broadly accepted"],
+  };
+  return lang === "zh" ? map[role][0] : map[role][1];
+}

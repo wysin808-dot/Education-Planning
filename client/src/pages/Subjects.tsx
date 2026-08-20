@@ -1,33 +1,36 @@
 /**
  * 设计风格：Admissions Almanac
- * 选课规划页：读取「我的目标清单」（唯一目标来源）并给出科目必要度统计，底部为 WACE 科目年鉴条目。
- * 目标的增删只在查询页与清单页进行，本页不再维护第二份清单，避免同一件事出现两个入口。
- * 统计结果必须基于目标专业的官方先修要求，不得凭经验虚构。
+ * 选课规划页：直接输出可执行的 Year 11 / Year 12 选课方案。
+ * 页面顺序为「结论 → 依据 → 附录」：先给具体组合与冲突诊断，
+ * 再列出科目必要度统计，最后才是与目标无关的通用参考资料。
+ * 所有推荐均由目标专业的官方先修要求推导，不得凭经验虚构。
  */
 import { useMemo, useState } from "react";
-import { AlertTriangle, ArrowRight, Info, ListChecks } from "lucide-react";
+import { AlertTriangle, ArrowRight, ChevronDown, ListChecks } from "lucide-react";
 import { Link } from "wouter";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
-import { ScoreRule } from "@/components/ScoreRule";
-import { FIELDS, HEMISPHERES, SUBJECTS, UNIVERSITIES, type Hemisphere } from "@/data/universities";
+import { PrintHeader } from "@/components/PrintHeader";
+import { PrintReportButton } from "@/components/PrintReportButton";
+import { FIELDS, HEMISPHERES, SUBJECTS, type Hemisphere } from "@/data/universities";
 import {
-  LEVEL_EN,
-  adviseSubjectsBy,
+  YEAR11_SIZE,
+  YEAR12_SIZE,
+  buildSubjectPlan,
   groupLabel,
+  planRoleLabel,
   scalingLabel,
   subjectLabelBy,
-  type SubjectAdvice,
+  type PlanSubject,
 } from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 import { useShortlist } from "@/contexts/ShortlistContext";
 
-const SUBJECTS_IMG = "/manus-storage/bv-subjects_9e541983.png";
-
-const LEVEL_STYLE: Record<string, string> = {
-  必需: "border-tier-reach text-tier-reach bg-tier-reach/8",
-  强烈建议: "border-tier-target text-[oklch(0.48_0.07_74)] bg-tier-target/10",
-  可选: "border-tier-unknown text-tier-unknown bg-tier-unknown/8",
+const ROLE_STYLE: Record<PlanSubject["role"], string> = {
+  english: "border-green/40 bg-green/8 text-green",
+  required: "border-tier-reach/45 bg-tier-reach/8 text-tier-reach",
+  choice: "border-brass/50 bg-brass/8 text-[oklch(0.42_0.07_74)]",
+  filler: "border-tier-unknown/45 bg-tier-unknown/8 text-tier-unknown",
 };
 
 export default function Subjects() {
@@ -36,8 +39,8 @@ export default function Subjects() {
   const { resolved: shortlist } = useShortlist();
   /** BCI 提供北半球与南半球两个课程序列，开设科目不同 */
   const [hemisphere, setHemisphere] = useState<Hemisphere>("south");
+  const [showCourses, setShowCourses] = useState(false);
 
-  /** 转换为科目统计所需的目标格式 */
   const targets = useMemo(
     () =>
       shortlist.map((item) => ({
@@ -46,66 +49,108 @@ export default function Subjects() {
       })),
     [shortlist],
   );
-  const advice = useMemo(() => adviseSubjectsBy(targets, lang), [targets, lang]);
 
-  /** 当前课程序列开设的科目 */
-  const availableSubjects = useMemo(
-    () => SUBJECTS.filter((s) => (hemisphere === "north" ? s.north : s.south)),
-    [hemisphere],
-  );
-  const availableKeys = useMemo(
-    () => new Set(availableSubjects.map((s) => s.key)),
-    [availableSubjects],
-  );
-  /** 目标要求但当前序列未开设的科目，需要提前预警 */
-  const unavailableRequired = useMemo(
-    () => advice.filter((a) => a.level === "必需" && !availableKeys.has(a.subject)),
-    [advice, availableKeys],
+  const plan = useMemo(
+    () => buildSubjectPlan(targets, hemisphere, lang),
+    [targets, hemisphere, lang],
   );
 
-  /** 必需科目数量用于提示是否超出四门主力科目 */
-  const mustCount = advice.filter((a) => a.level === "必需").length;
+  const hemisphereMeta = HEMISPHERES.find((h) => h.id === hemisphere);
+  const requiredCount = plan.year11.filter((s) => s.role === "required").length;
+  const hasTargets = targets.length > 0;
 
-  /** 目标清单对应的门槛，用于在标尺上呈现分数跨度 */
-  const targetMarkers = useMemo(
-    () =>
-      shortlist
-        .map(({ university: u, programme: p }) => {
-          const th = p.atar ?? u.minAtar;
-          if (th === null) return null;
-          return { label: `${u.abbr} ${th}`, value: th, tone: "brass" as const };
-        })
-        .filter((m): m is { label: string; value: number; tone: "brass" } => m !== null)
-        .sort((a, b) => a.value - b.value),
-    [shortlist],
-  );
+  /** 方案中的一行科目 */
+  function SubjectRow({ item, index }: { item: PlanSubject; index: number }) {
+    const meta = SUBJECTS.find((s) => s.key === item.subject);
+    return (
+      <li className="flex items-start gap-4 border-b border-border bg-card px-5 py-4 last:border-b-0">
+        <span className="almanac-index mt-1 shrink-0">{String(index + 1).padStart(2, "0")}</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <h4 className="text-[0.9375rem] leading-snug text-green">
+              {subjectLabelBy(item.subject, lang)}
+            </h4>
+            <span
+              className={cn(
+                "border px-1.5 py-0.5 text-[0.625rem] tracking-[0.08em]",
+                ROLE_STYLE[item.role],
+              )}>
+              {planRoleLabel(item.role, lang)}
+            </span>
+            {meta && (
+              <span className="text-[0.6875rem] text-muted-foreground">
+                {groupLabel(meta.group, lang)} · scaling {scalingLabel(meta.scaling, lang)}
+              </span>
+            )}
+          </div>
+
+          {item.role === "english" && (
+            <p className="mt-1.5 text-[0.75rem] leading-relaxed text-muted-foreground">
+              {t(
+                "英语或 EALD 为 WACE 毕业与院校语言要求的共同基础，两年均须修读，二者按学生语言背景择一。",
+                "English or EALD underpins both WACE graduation and university language requirements. It runs across both years; choose one according to the student's language background.",
+              )}
+            </p>
+          )}
+
+          {item.role === "required" && item.supports.length > 0 && (
+            <p className="mt-1.5 text-[0.75rem] leading-relaxed text-muted-foreground">
+              {t("支撑目标：", "Required by: ")}
+              {item.supports.slice(0, 4).join(lang === "zh" ? "、" : "; ")}
+              {item.supports.length > 4 &&
+                t(` 等 ${item.supports.length} 个`, ` and ${item.supports.length - 4} more`)}
+            </p>
+          )}
+
+          {item.role === "filler" && (
+            <p className="mt-1.5 text-[0.75rem] leading-relaxed text-muted-foreground">
+              {t(
+                "目标清单未占满名额，此科目按 scaling 表现补位，可依学生强项替换。",
+                "The shortlist does not fill every slot; this course is added for its scaling and can be swapped for a personal strength.",
+              )}
+            </p>
+          )}
+
+          {item.alternatives.length > 0 && (
+            <p className="mt-1.5 text-[0.75rem] text-muted-foreground">
+              {t("组内可替换：", "Interchangeable with: ")}
+              {item.alternatives.map((k) => subjectLabelBy(k, lang)).join(lang === "zh" ? "、" : ", ")}
+              {t("（任选其一即可满足）", " (any one satisfies the requirement)")}
+            </p>
+          )}
+        </div>
+        {item.requiredBy > 0 && (
+          <span className="score shrink-0 pt-0.5 text-[0.75rem] text-muted-foreground">
+            {item.requiredBy}/{plan.targetCount}
+          </span>
+        )}
+      </li>
+    );
+  }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-paper">
       <SiteHeader />
 
-      <div className="border-b border-border bg-paper-deep/45">
-        <div className="container py-10">
-          <span className="eyebrow text-brass">{t("选课规划 · Subject Planner", "Subject Planner")}</span>
-          <h1 className="mt-3 text-[2.25rem] leading-tight text-green">
-            {t(
-              "从目标专业倒推 WACE 选课组合",
-              "Derive a WACE subject set from your target programmes",
-            )}
+      {/* 标题区 */}
+      <section className="border-b border-border bg-paper-deep/35">
+        <div className="container py-9 lg:py-12">
+          <p className="eyebrow text-brass">WACE · SUBJECT PLANNER</p>
+          <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">
+            {t("Year 11 与 Year 12 选课方案", "Year 11 and Year 12 subject plan")}
           </h1>
-          <p className="mt-4 max-w-[64ch] font-[family-name:var(--font-serif)] text-[1rem] leading-relaxed text-muted-foreground">
+          <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">
             {t(
-              "本页读取你在查询页收藏的目标清单，统计各科目在这些目标中的出现频率，区分「必需」「强烈建议」与「可选」，帮助学生在 Year 11 选课时避免走错方向。",
-              "This page reads the shortlist you saved while searching, then counts how often each subject appears as a prerequisite, sorting them into required, strongly recommended and optional so Year 11 choices do not close doors.",
+              `本页依据目标清单中各专业的官方先修要求，直接给出 Year 11 的 ${YEAR11_SIZE} 门与 Year 12 保留的 ${YEAR12_SIZE} 门具体组合，并指出无法同时满足的目标。`,
+              `Working from the official prerequisites of the shortlisted programmes, this page produces a concrete set of ${YEAR11_SIZE} courses for Year 11 and the ${YEAR12_SIZE} carried into Year 12, and flags targets that cannot be satisfied together.`,
             )}
           </p>
 
-          {/* 课程序列切换：BCI 批准课程分北半球与南半球两套 */}
           <div className="mt-7 flex flex-wrap items-center gap-3 border-t border-border pt-6">
             <span className="text-[0.75rem] tracking-[0.14em] text-muted-foreground">
               {t("BCI 课程序列", "BCI course sequence")}
             </span>
-            <div className="flex">
+            <div className="no-print flex">
               {HEMISPHERES.map((h) => (
                 <button
                   key={h.id}
@@ -122,230 +167,279 @@ export default function Subjects() {
               ))}
             </div>
             <span className="text-[0.75rem] text-muted-foreground">
-              {lang === "zh"
-                ? HEMISPHERES.find((h) => h.id === hemisphere)?.note
-                : HEMISPHERES.find((h) => h.id === hemisphere)?.noteEn}
+              {lang === "zh" ? hemisphereMeta?.note : hemisphereMeta?.noteEn}
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* 目标门槛跨度标尺 */}
-      {targetMarkers.length > 0 && (
-        <div className="border-b border-border bg-card">
-          <div className="container py-9">
-            <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-1.5">
-              <div>
-                <span className="almanac-index">{t("标尺 / SCORE RULE", "SCORE RULE")}</span>
-                <h2 className="mt-0.5 text-[1.125rem] text-green">
-                  {t("目标清单的门槛跨度", "Threshold spread across the shortlist")}
-                </h2>
-              </div>
-              <p className="max-w-[48ch] text-right font-[family-name:var(--font-serif)] text-[0.75rem] leading-relaxed text-muted-foreground">
-                {t(
-                  "虚线为清单内各目标的官方最低门槛。跨度越大，越需要在保底与冲刺之间设置备选。",
-                  "Dashed lines mark the official minimum for each shortlisted target. A wider spread calls for more intermediate options between safety and reach.",
-                )}
-              </p>
-            </div>
-            <div className="threshold-hairline mt-2" />
-            <div className="mt-7">
-              <ScoreRule markers={targetMarkers} showPointer={false} />
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="container py-9">
+        <PrintHeader title={t("WACE 选课方案", "WACE subject plan")} />
 
-      <div className="container grid gap-12 py-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
-        {/* 目标清单（只读，来源为收藏清单） */}
-        <section>
-          <div className="flex items-baseline justify-between gap-4 border-b-2 border-green pb-3">
-            <h2 className="text-[1.25rem] text-green">{t("目标清单", "Shortlist")}</h2>
-            <span className="score text-[0.8125rem] text-muted-foreground">
-              {shortlist.length} {t("个目标", "targets")}
-            </span>
-          </div>
-
-          {shortlist.length === 0 ? (
-            <div className="border-x border-b border-border px-6 py-12 text-center">
-              <p className="mx-auto max-w-[36ch] font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
-                {t(
-                  "选课建议以目标清单为依据。请先在「分数查院校」或「院校查门槛」页收藏候选专业，本页会自动统计这些目标共同要求的科目。",
-                  "Subject advice is derived from your shortlist. Save candidate programmes on the Score or University pages first, and this page will tally the prerequisites they share.",
-                )}
-              </p>
-              <div className="no-print mt-7 flex flex-wrap justify-center gap-3">
-                <Link
-                  href="/wace/forward"
-                  className="inline-flex items-center gap-2 border border-green bg-green px-4 py-2 text-[0.875rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft">
-                  {t("按分数查院校", "Search by score")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  href="/wace/reverse"
-                  className="inline-flex items-center gap-2 border border-green px-4 py-2 text-[0.875rem] text-green transition-colors duration-150 hover:bg-green/5">
-                  {t("按院校查门槛", "Look up a university")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <ul className="divide-y divide-border border-x border-b border-border">
-              {shortlist.map(({ university: u, programme: p }, i) => {
-                const threshold = p.atar ?? u.minAtar;
-                return (
-                  <li
-                    key={`${u.id}-${p.id}`}
-                    className="flex items-start gap-4 bg-card px-5 py-4">
-                    <span className="almanac-index mt-1">{String(i + 1).padStart(2, "0")}</span>
-                    <div className="flex-1">
-                      <h3 className="text-[0.9375rem] leading-snug text-green">
-                        {lang === "zh" ? u.nameZh : u.name}
-                        <span className="mx-1.5 text-brass">·</span>
-                        {lang === "zh" ? p.nameZh : p.name}
-                      </h3>
-                      <p className="mt-1 text-[0.75rem] text-muted-foreground">
-                        {t("所需 ATAR ", "Required ATAR ")}
-                        <span className="score">
-                          {threshold === null ? t("官方未公布", "not published") : threshold.toFixed(2)}
-                        </span>
-                        {(() => {
-                          const n = lang === "zh" ? p.atarNote : (p.atarNoteEn ?? p.atarNote);
-                          return n ? ` · ${n}` : "";
-                        })()}
-                      </p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-
-          {/* 目标增删统一在清单页进行，此处只提供入口 */}
-          {shortlist.length > 0 && (
+        {/* 依据说明 */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
+          <p className="text-[0.8125rem] text-muted-foreground">
+            {hasTargets ? (
+              <>
+                {t("方案依据：目标清单中的 ", "Based on ")}
+                <span className="score text-green">{plan.targetCount}</span>
+                {t(" 个目标专业", " shortlisted programmes")}
+              </>
+            ) : (
+              t(
+                "目标清单为空，以下为 BCI 通用的稳妥组合，收藏目标后会按官方先修要求重新计算。",
+                "The shortlist is empty, so a general BCI-safe combination is shown. Save targets and the plan recalculates from official prerequisites.",
+              )
+            )}
+          </p>
+          <div className="no-print flex gap-2">
             <Link
               href="/wace/shortlist"
-              className="no-print mt-6 flex items-center justify-between gap-4 border border-border bg-card px-5 py-4 transition-colors duration-150 hover:border-brass">
-              <span className="flex items-center gap-2.5 text-[0.875rem] text-green">
-                <ListChecks className="h-4 w-4 text-brass" />
-                {t("增删目标请前往目标清单", "Add or remove targets in the shortlist")}
-              </span>
-              <ArrowRight className="h-4 w-4 shrink-0 text-brass" />
+              className="inline-flex items-center gap-2 border border-input px-3 py-1.5 text-[0.8125rem] text-green transition-colors hover:border-brass">
+              <ListChecks className="h-3.5 w-3.5 text-brass" />
+              {t("管理目标清单", "Manage shortlist")}
             </Link>
-          )}
-        </section>
-
-        {/* 科目必要度 */}
-        <section>
-          <div className="flex items-baseline justify-between gap-4 border-b-2 border-green pb-3">
-            <h2 className="text-[1.25rem] text-green">
-              {t("科目必要度统计", "How essential each subject is")}
-            </h2>
-            <span className="score text-[0.8125rem] text-muted-foreground">
-              {advice.length} {t("门相关", "subjects")}
-            </span>
+            <PrintReportButton compact />
           </div>
+        </div>
 
-          {advice.length === 0 ? (
-            <p className="border-x border-b border-border px-6 py-12 text-center font-[family-name:var(--font-serif)] text-[0.9375rem] text-muted-foreground">
-              {t(
-                "所选目标均无硬性科目先修要求，或清单为空。此时建议以 scaling 较高的科目与个人强项组合选课。",
-                "None of the shortlisted targets sets a hard subject prerequisite, or the shortlist is empty. Build the subject set around strong-scaling courses and personal strengths.",
-              )}
-            </p>
-          ) : (
-            <>
-              {unavailableRequired.length > 0 && (
-                <div className="mt-4 flex items-start gap-2 border border-tier-reach/50 bg-tier-reach/8 px-4 py-3 text-[0.8125rem] leading-relaxed text-tier-reach">
-                  <Info className="mt-0.5 h-4 w-4 shrink-0" />
-                  <span>
+        {/* 冲突诊断 */}
+        {(plan.overflow.length > 0 || plan.unavailable.length > 0) && (
+          <div className="mt-6 space-y-3">
+            {plan.overflow.length > 0 && (
+              <div className="flex items-start gap-2.5 border border-tier-reach/50 bg-tier-reach/8 px-4 py-3.5 text-[0.8125rem] leading-relaxed text-tier-reach">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">
+                    {t("目标之间存在选课冲突", "These targets conflict on subjects")}
+                  </p>
+                  <p className="mt-1">
                     {t(
-                      `以下必需科目未在当前「${HEMISPHERES.find((h) => h.id === hemisphere)?.label}」序列开设：`,
-                      `The following required subjects are not offered in the current ${HEMISPHERES.find((h) => h.id === hemisphere)?.labelEn} sequence: `,
+                      `清单要求的先修科目超出 Year 11 可修读的名额，以下科目未能纳入：`,
+                      "The shortlist demands more prerequisites than Year 11 can hold. These were left out: ",
                     )}
                     <strong>
-                      {unavailableRequired
-                        .map((a) => subjectLabelBy(a.subject, lang))
+                      {plan.overflow
+                        .map((s) => subjectLabelBy(s.subject, lang))
                         .join(lang === "zh" ? "、" : ", ")}
                     </strong>
+                  </p>
+                  <p className="mt-1.5">
+                    {t("受影响的目标：", "Affected targets: ")}
+                    {Array.from(new Set(plan.overflow.flatMap((s) => s.supports))).join(
+                      lang === "zh" ? "、" : "; ",
+                    )}
                     {t(
-                      "。请与升学指导办公室确认替代方案或调整入学序列。",
+                      "。若要保留这些目标，需放弃方向差异最大的其他目标。",
+                      ". Keeping them means dropping the targets furthest from this direction.",
+                    )}
+                  </p>
+                </div>
+              </div>
+            )}
+            {plan.unavailable.length > 0 && (
+              <div className="flex items-start gap-2.5 border border-brass/50 bg-brass/8 px-4 py-3.5 text-[0.8125rem] leading-relaxed text-[oklch(0.42_0.07_74)]">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-medium">
+                    {t("本序列未开设所需科目", "Required course not offered in this sequence")}
+                  </p>
+                  <p className="mt-1">
+                    {plan.unavailable
+                      .map(
+                        (u) =>
+                          `${subjectLabelBy(u.subject, lang)}（${u.supports.join(lang === "zh" ? "、" : "; ")}）`,
+                      )
+                      .join(lang === "zh" ? "；" : " / ")}
+                    {t(
+                      `。当前为「${lang === "zh" ? hemisphereMeta?.label : hemisphereMeta?.labelEn}」，请与升学指导办公室确认替代方案或调整入学序列。`,
                       ". Confirm an alternative or a different intake sequence with the Admissions Office.",
                     )}
-                  </span>
+                  </p>
                 </div>
-              )}
-              <ul className="divide-y divide-border border-x border-b border-border">
-                {advice.map((a) => {
-                  const offered = availableKeys.has(a.subject);
-                  return (
-                    <li key={a.subject} className="bg-card px-5 py-4">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h3 className="flex flex-wrap items-center gap-2 text-[0.9375rem] text-green">
-                          {subjectLabelBy(a.subject, lang)}
-                          {!offered && (
-                            <span className="border border-tier-unknown px-1.5 py-0.5 text-[0.625rem] tracking-[0.08em] text-tier-unknown">
-                              {t("本序列未开设", "Not in this sequence")}
-                            </span>
-                          )}
-                        </h3>
-                        <div className="flex items-center gap-3">
-                          <span className="score text-[0.8125rem] text-muted-foreground">
-                            {a.requiredBy} / {targets.length} {t("个目标要求", "targets require")}
-                          </span>
-                          <span
-                            className={cn(
-                              "border px-2 py-0.5 text-[0.6875rem] tracking-[0.08em]",
-                              LEVEL_STYLE[a.level],
-                            )}>
-                            {lang === "zh" ? a.level : LEVEL_EN[a.level]}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="mt-2 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
-                        {a.reason}
-                      </p>
-                    </li>
-                  );
-                })}
-              </ul>
+              </div>
+            )}
+          </div>
+        )}
 
-              {mustCount > 4 && (
-                <p className="mt-4 flex items-start gap-2 border border-brass/50 bg-brass/8 px-4 py-3 text-[0.8125rem] leading-relaxed text-[oklch(0.42_0.07_74)]">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+        {/* Year 11 / Year 12 方案 */}
+        <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-10">
+          <section>
+            <div className="flex items-baseline justify-between gap-4 border-b-2 border-green pb-3">
+              <div>
+                <span className="almanac-index">{t("方案一", "Stage one")}</span>
+                <h2 className="mt-0.5 font-[family-name:var(--font-serif)] text-[1.375rem] text-green">
+                  Year 11
+                </h2>
+              </div>
+              <span className="score text-[0.8125rem] text-muted-foreground">
+                {plan.year11.length} {t("门", "courses")}
+              </span>
+            </div>
+            <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted-foreground">
+              {t(
+                "Year 11 建议修读五门，为 Year 12 保留一门可放弃的余量，避免过早关闭方向。",
+                "Five courses in Year 11 leave one to drop in Year 12, so no pathway closes prematurely.",
+              )}
+            </p>
+            <ul className="mt-4 border border-border">
+              {plan.year11.map((item, i) => (
+                <SubjectRow key={item.subject} item={item} index={i} />
+              ))}
+            </ul>
+          </section>
+
+          <section>
+            <div className="flex items-baseline justify-between gap-4 border-b-2 border-green pb-3">
+              <div>
+                <span className="almanac-index">{t("方案二", "Stage two")}</span>
+                <h2 className="mt-0.5 font-[family-name:var(--font-serif)] text-[1.375rem] text-green">
+                  Year 12
+                </h2>
+              </div>
+              <span className="score text-[0.8125rem] text-muted-foreground">
+                {plan.year12.length} {t("门", "courses")}
+              </span>
+            </div>
+            <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted-foreground">
+              {t(
+                "ATAR 通常取四门最佳成绩，Year 12 集中在这四门以保证成绩质量。",
+                "An ATAR normally counts the best four results, so Year 12 concentrates on these four.",
+              )}
+            </p>
+            <ul className="mt-4 border border-border">
+              {plan.year12.map((item, i) => (
+                <SubjectRow key={item.subject} item={item} index={i} />
+              ))}
+            </ul>
+
+            {plan.dropped.length > 0 && (
+              <div className="mt-4 border border-dashed border-border bg-paper-deep/30 px-5 py-4">
+                <p className="eyebrow text-muted-foreground">
+                  {t("Year 12 建议放弃", "Recommended to drop")}
+                </p>
+                <p className="mt-2 text-[0.875rem] text-green">
+                  {plan.dropped
+                    .map((s) => subjectLabelBy(s.subject, lang))
+                    .join(lang === "zh" ? "、" : ", ")}
+                </p>
+                <p className="mt-1.5 text-[0.75rem] leading-relaxed text-muted-foreground">
                   {t(
-                    `当前清单产生了 ${mustCount} 门必需科目，超出 ATAR 通常计入的四门主力科目。建议收窄目标方向，或与顾问确认哪些目标可以取舍。`,
-                    `This shortlist generates ${mustCount} required subjects, more than the four that normally count towards an ATAR. Narrow the direction, or agree with a counsellor which targets can be dropped.`,
+                    "该科目未被目标专业列为先修，或被要求的次数最少，放弃后不影响清单内目标的申请资格。",
+                    "This course is not a prerequisite for the shortlist, or is required least often; dropping it does not affect eligibility for the saved targets.",
                   )}
                 </p>
-              )}
+              </div>
+            )}
+          </section>
+        </div>
 
-              <p className="mt-4 text-[0.75rem] leading-relaxed text-muted-foreground">
-                {t(
-                  "统计口径：某科目被列为目标专业先修要求即计一次。若某组要求为「A 或 B」，组内两科均各计一次，因此实际只需满足其中之一。",
-                  "Counting rule: a subject scores one point each time it appears as a prerequisite. Where a requirement reads \u201cA or B\u201d, both subjects are counted, so satisfying either one is sufficient.",
-                )}
-              </p>
-            </>
-          )}
-        </section>
+        {/* 推导依据 */}
+        {hasTargets && (
+          <section className="mt-12">
+            <div className="flex items-baseline justify-between gap-4 border-b-2 border-green pb-3">
+              <h2 className="font-[family-name:var(--font-serif)] text-[1.25rem] text-green">
+                {t("推导依据", "How this was derived")}
+              </h2>
+              <span className="score text-[0.8125rem] text-muted-foreground">
+                {requiredCount} {t("门由目标决定", "target-driven")}
+              </span>
+            </div>
+            <div className="mt-5 grid gap-x-10 gap-y-4 md:grid-cols-2">
+              <ol className="space-y-2.5 text-[0.8125rem] leading-relaxed text-muted-foreground">
+                <li className="flex gap-2.5">
+                  <span className="almanac-index shrink-0">01</span>
+                  {t(
+                    "英语线固定占一门：英语或 EALD 为毕业与院校语言要求所必需。",
+                    "The English line takes one slot: English or EALD is required for graduation and university language conditions.",
+                  )}
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="almanac-index shrink-0">02</span>
+                  {t(
+                    "逐个读取清单内专业的官方先修要求，按被要求的目标数排序。",
+                    "Each shortlisted programme's official prerequisites are read and ranked by how many targets require them.",
+                  )}
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="almanac-index shrink-0">03</span>
+                  {t(
+                    "遇到「甲 或 乙」的要求时，组内只选一门（优先已被其他目标要求、scaling 更高者），不重复占位。",
+                    "Where a requirement reads “A or B”, only one course is taken — preferring the one already required elsewhere, then the stronger scaling — so no slot is wasted.",
+                  )}
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="almanac-index shrink-0">04</span>
+                  {t(
+                    "名额未满时，按 scaling 表现补位；名额不足时，报出冲突而非静默丢弃目标。",
+                    "Remaining slots are filled by scaling strength; if slots run out, the conflict is reported rather than silently dropping a target.",
+                  )}
+                </li>
+              </ol>
+              <div className="border-l-2 border-brass bg-paper-deep/35 px-5 py-4">
+                <p className="eyebrow text-brass">{t("口径声明", "Basis")}</p>
+                <p className="mt-2 text-[0.8125rem] leading-relaxed text-muted-foreground">
+                  {t(
+                    "先修要求均引自各校官方招生页，未公布要求的专业不参与推导。scaling 为相对强弱参考，不代表官方换算公式。最终选课须经升学指导办公室确认。",
+                    "Prerequisites are taken from each university's official admissions pages; programmes without published requirements do not affect the plan. Scaling is a relative indication, not an official conversion. Final choices must be confirmed with the Admissions Office.",
+                  )}
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 空清单引导 */}
+        {!hasTargets && (
+          <section className="no-print mt-10 border border-border bg-card px-6 py-7">
+            <h2 className="font-[family-name:var(--font-serif)] text-[1.25rem] text-green">
+              {t("让方案贴合你的目标", "Make this plan yours")}
+            </h2>
+            <p className="mt-2 max-w-[60ch] text-[0.875rem] leading-relaxed text-muted-foreground">
+              {t(
+                "上面是通用组合。在查询页收藏目标专业后，本页会按这些专业的官方先修要求重新计算两年的科目，并指出彼此冲突的目标。",
+                "The plan above is generic. Save target programmes on the search pages and it will be recalculated from their official prerequisites, including any conflicts between them.",
+              )}
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link
+                href="/wace/forward"
+                className="inline-flex items-center gap-2 border border-green bg-green px-4 py-2 text-[0.875rem] text-primary-foreground transition-colors duration-150 hover:bg-green-soft">
+                {t("有成绩规划", "Plan with a score")}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/wace/reverse"
+                className="inline-flex items-center gap-2 border border-green px-4 py-2 text-[0.875rem] text-green transition-colors duration-150 hover:bg-green/5">
+                {t("由目标规划", "Plan from a target")}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </section>
+        )}
       </div>
 
-      {/* 按方向的通用建议 */}
+      {/* 附录：方向建议与课程目录 */}
       <section className="border-t border-border bg-paper-deep/45">
-        <div className="container py-14">
+        <div className="container py-12">
           <span className="almanac-index">{t("附录 A", "Appendix A")}</span>
-          <h2 className="mt-1 text-[1.75rem] text-green">
-            {t("按专业方向的选课建议", "Subject guidance by field")}
+          <h2 className="mt-1 font-[family-name:var(--font-serif)] text-[1.5rem] text-green">
+            {t("按专业方向的通用取向", "General direction by field")}
           </h2>
-          <div className="mt-8 grid gap-x-14 gap-y-7 lg:grid-cols-2">
+          <p className="mt-2 max-w-[64ch] text-[0.8125rem] leading-relaxed text-muted-foreground">
+            {t(
+              "以下为不依赖具体清单的方向性参考，用于初步判断；正式选课以上方按目标推导的方案为准。",
+              "A directional reference that does not depend on a shortlist, useful for orientation. The plan above, derived from actual targets, governs the final choice.",
+            )}
+          </p>
+          <div className="mt-7 grid gap-x-12 gap-y-5 lg:grid-cols-3">
             {FIELDS.map((f, i) => (
-              <div key={f.key} className="border-t border-green/25 pt-4">
-                <h3 className="text-[1rem] text-green">
+              <div key={f.key} className="border-t border-green/25 pt-3.5">
+                <h3 className="text-[0.9375rem] text-green">
                   <span className="almanac-index mr-2">{String(i + 1).padStart(2, "0")}</span>
                   {lang === "zh" ? f.zh : f.en}
                 </h3>
-                <p className="mt-2 font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
+                <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-muted-foreground">
                   {lang === "zh" ? f.advice : f.adviceEn}
                 </p>
               </div>
@@ -354,139 +448,156 @@ export default function Subjects() {
         </div>
       </section>
 
-      {/* WACE 科目年鉴 */}
       <section className="border-t border-border">
-        <div className="container grid gap-12 py-14 lg:grid-cols-[1.4fr_1fr] lg:items-start">
-          <div>
-            <span className="almanac-index">{t("附录 B", "Appendix B")}</span>
-            <h2 className="mt-1 text-[1.75rem] text-green">
-              {t("BCI 批准的 WACE ATAR 课程", "BCI approved WACE ATAR courses")}
-            </h2>
-            <p className="mt-3 max-w-[60ch] font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-muted-foreground">
-              {t(
-                "以下为 Brentvale College International 批准开设的 ATAR 课程。北半球序列 11 门、南半球序列 16 门。scaling 一栏为该科目对 ATAR 贡献的相对强弱参考，用于组合选课时权衡，不代表任何官方换算公式。",
-                "The ATAR courses approved for delivery at Brentvale College International: 11 in the Northern Hemisphere sequence and 16 in the Southern. The scaling column is a relative indication of a course's contribution to an ATAR, offered to help weigh combinations; it is not an official conversion.",
-              )}
-            </p>
-            <div className="mt-8 space-y-3 md:hidden">
-              {SUBJECTS.map((s) => (
-                <article key={s.key} className="border border-border bg-card p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="text-[0.9375rem] leading-snug text-green">{lang === "zh" ? s.zh : s.en}</h3>
-                      <p className="mt-1 text-[0.6875rem] text-muted-foreground">{lang === "zh" ? s.en : s.zh}</p>
-                    </div>
-                    <span
-                      className={cn(
-                        "shrink-0 border px-1.5 py-0.5 text-[0.6875rem]",
-                        s.scaling === "高"
-                          ? "border-tier-safe bg-tier-safe/8 text-tier-safe"
-                          : s.scaling === "中"
-                            ? "border-tier-target bg-tier-target/10 text-[oklch(0.48_0.07_74)]"
-                            : "border-tier-unknown bg-tier-unknown/8 text-tier-unknown",
-                      )}>
-                      {scalingLabel(s.scaling, lang)}
-                    </span>
-                  </div>
-                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-3 text-[0.75rem] text-muted-foreground">
-                    <span>{t("分类：", "Group: ")}{groupLabel(s.group, lang)}</span>
-                    <span className={s.north ? "text-tier-safe" : "text-muted-foreground/55"}>{t("北：", "North: ")}{s.north ? "●" : "—"}</span>
-                    <span className={s.south ? "text-tier-safe" : "text-muted-foreground/55"}>{t("南：", "South: ")}{s.south ? "●" : "—"}</span>
-                  </div>
-                  <p className="mt-3 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
-                    {lang === "zh" ? s.note : s.noteEn}
-                  </p>
-                </article>
-              ))}
+        <div className="container py-12">
+          <button
+            type="button"
+            onClick={() => setShowCourses((v) => !v)}
+            className="no-print flex w-full items-center justify-between gap-4 border-b border-border pb-3 text-left">
+            <div>
+              <span className="almanac-index">{t("附录 B", "Appendix B")}</span>
+              <h2 className="mt-1 font-[family-name:var(--font-serif)] text-[1.5rem] text-green">
+                {t(
+                  `BCI 批准的 WACE ATAR 课程（${SUBJECTS.length} 门）`,
+                  `BCI approved WACE ATAR courses (${SUBJECTS.length})`,
+                )}
+              </h2>
             </div>
-            <div className="mt-8 hidden overflow-x-auto md:block">
-              <table className="w-full min-w-[40rem] border-collapse">
-                <thead>
-                  <tr className="border-b-2 border-green">
-                    <th className="eyebrow py-3 pr-4 text-left text-muted-foreground">
-                      {t("科目", "Course")}
-                    </th>
-                    <th className="eyebrow py-3 pr-4 text-left text-muted-foreground">
-                      {t("分类", "Group")}
-                    </th>
-                    <th className="eyebrow py-3 pr-3 text-center text-muted-foreground">
-                      {t("北", "North")}
-                    </th>
-                    <th className="eyebrow py-3 pr-4 text-center text-muted-foreground">
-                      {t("南", "South")}
-                    </th>
-                    <th className="eyebrow py-3 pr-4 text-left text-muted-foreground">Scaling</th>
-                    <th className="eyebrow py-3 text-left text-muted-foreground">
-                      {t("说明", "Notes")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {SUBJECTS.map((s) => (
-                    <tr key={s.key} className="border-b border-border align-top">
-                      <td className="py-3.5 pr-4">
-                        <span className="text-[0.875rem] text-green">
-                          {lang === "zh" ? s.zh : s.en}
-                        </span>
-                        <span className="mt-0.5 block text-[0.6875rem] text-muted-foreground">
-                          {lang === "zh" ? s.en : s.zh}
-                        </span>
-                      </td>
-                      <td className="py-3.5 pr-4 text-[0.8125rem] text-muted-foreground">
-                        {groupLabel(s.group, lang)}
-                      </td>
-                      <td
-                        className={cn(
-                          "py-3.5 pr-3 text-center text-[0.875rem]",
-                          s.north ? "text-tier-safe" : "text-muted-foreground/40",
-                        )}>
-                        {s.north ? "●" : "—"}
-                      </td>
-                      <td
-                        className={cn(
-                          "py-3.5 pr-4 text-center text-[0.875rem]",
-                          s.south ? "text-tier-safe" : "text-muted-foreground/40",
-                        )}>
-                        {s.south ? "●" : "—"}
-                      </td>
-                      <td className="py-3.5 pr-4">
-                        <span
-                          className={cn(
-                            "border px-1.5 py-0.5 text-[0.6875rem]",
-                            s.scaling === "高"
-                              ? "border-tier-safe text-tier-safe bg-tier-safe/8"
-                              : s.scaling === "中"
-                                ? "border-tier-target text-[oklch(0.48_0.07_74)] bg-tier-target/10"
-                                : "border-tier-unknown text-tier-unknown bg-tier-unknown/8",
-                          )}>
-                          {scalingLabel(s.scaling, lang)}
-                        </span>
-                      </td>
-                      <td className="py-3.5 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
-                        {lang === "zh" ? s.note : s.noteEn}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="lg:sticky lg:top-28">
-            <img
-              src={SUBJECTS_IMG}
-              alt={t(
-                "WACE 选课规划的索引卡与书籍俯拍",
-                "Index cards and reference books laid out for WACE subject planning",
+            <ChevronDown
+              className={cn(
+                "h-5 w-5 shrink-0 text-brass transition-transform duration-200",
+                showCourses && "rotate-180",
               )}
-              className="w-full object-cover"
             />
-            <p className="mt-3 text-[0.75rem] leading-relaxed text-muted-foreground">
-              {t(
-                "Year 11 选课通常需确定四至五门 ATAR 科目，其中英语或 EALD 为毕业必需。建议在确定目标专业先修要求后再定选课。",
-                "Year 11 normally requires four to five ATAR courses, with English or EALD compulsory for graduation. Settle the prerequisites of the target programmes before committing to a combination.",
-              )}
-            </p>
-          </div>
+          </button>
+
+          {showCourses && (
+            <div className="mt-6">
+              <p className="max-w-[64ch] text-[0.8125rem] leading-relaxed text-muted-foreground">
+                {t(
+                  "北半球序列 11 门、南半球序列 16 门。scaling 为该科目对 ATAR 贡献的相对强弱参考，用于组合选课时权衡，不代表任何官方换算公式。",
+                  "Eleven courses in the Northern Hemisphere sequence and sixteen in the Southern. Scaling indicates a course's relative contribution to an ATAR for weighing combinations; it is not an official conversion.",
+                )}
+              </p>
+
+              <div className="mt-6 space-y-3 md:hidden">
+                {SUBJECTS.map((s) => (
+                  <article key={s.key} className="border border-border bg-card p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="text-[0.9375rem] leading-snug text-green">
+                          {lang === "zh" ? s.zh : s.en}
+                        </h3>
+                        <p className="mt-1 text-[0.6875rem] text-muted-foreground">
+                          {lang === "zh" ? s.en : s.zh}
+                        </p>
+                      </div>
+                      <span
+                        className={cn(
+                          "shrink-0 border px-1.5 py-0.5 text-[0.6875rem]",
+                          s.scaling === "高"
+                            ? "border-tier-safe bg-tier-safe/8 text-tier-safe"
+                            : s.scaling === "中"
+                              ? "border-tier-target bg-tier-target/10 text-[oklch(0.48_0.07_74)]"
+                              : "border-tier-unknown bg-tier-unknown/8 text-tier-unknown",
+                        )}>
+                        {scalingLabel(s.scaling, lang)}
+                      </span>
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border pt-3 text-[0.75rem] text-muted-foreground">
+                      <span>
+                        {t("分类：", "Group: ")}
+                        {groupLabel(s.group, lang)}
+                      </span>
+                      <span className={s.north ? "text-tier-safe" : "text-muted-foreground/55"}>
+                        {t("北：", "North: ")}
+                        {s.north ? "●" : "—"}
+                      </span>
+                      <span className={s.south ? "text-tier-safe" : "text-muted-foreground/55"}>
+                        {t("南：", "South: ")}
+                        {s.south ? "●" : "—"}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted-foreground">
+                      {lang === "zh" ? s.note : s.noteEn}
+                    </p>
+                  </article>
+                ))}
+              </div>
+
+              <div className="mt-6 hidden overflow-x-auto md:block">
+                <table className="w-full min-w-[40rem] border-collapse">
+                  <thead>
+                    <tr className="border-b-2 border-green">
+                      <th className="eyebrow py-3 pr-4 text-left text-muted-foreground">
+                        {t("科目", "Course")}
+                      </th>
+                      <th className="eyebrow py-3 pr-4 text-left text-muted-foreground">
+                        {t("分类", "Group")}
+                      </th>
+                      <th className="eyebrow py-3 pr-3 text-center text-muted-foreground">
+                        {t("北", "North")}
+                      </th>
+                      <th className="eyebrow py-3 pr-4 text-center text-muted-foreground">
+                        {t("南", "South")}
+                      </th>
+                      <th className="eyebrow py-3 pr-4 text-left text-muted-foreground">Scaling</th>
+                      <th className="eyebrow py-3 text-left text-muted-foreground">
+                        {t("说明", "Notes")}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SUBJECTS.map((s) => (
+                      <tr key={s.key} className="border-b border-border align-top">
+                        <td className="py-3.5 pr-4">
+                          <span className="text-[0.875rem] text-green">
+                            {lang === "zh" ? s.zh : s.en}
+                          </span>
+                          <span className="mt-0.5 block text-[0.6875rem] text-muted-foreground">
+                            {lang === "zh" ? s.en : s.zh}
+                          </span>
+                        </td>
+                        <td className="py-3.5 pr-4 text-[0.8125rem] text-muted-foreground">
+                          {groupLabel(s.group, lang)}
+                        </td>
+                        <td
+                          className={cn(
+                            "py-3.5 pr-3 text-center text-[0.875rem]",
+                            s.north ? "text-tier-safe" : "text-muted-foreground/40",
+                          )}>
+                          {s.north ? "●" : "—"}
+                        </td>
+                        <td
+                          className={cn(
+                            "py-3.5 pr-4 text-center text-[0.875rem]",
+                            s.south ? "text-tier-safe" : "text-muted-foreground/40",
+                          )}>
+                          {s.south ? "●" : "—"}
+                        </td>
+                        <td className="py-3.5 pr-4">
+                          <span
+                            className={cn(
+                              "border px-1.5 py-0.5 text-[0.6875rem]",
+                              s.scaling === "高"
+                                ? "border-tier-safe text-tier-safe bg-tier-safe/8"
+                                : s.scaling === "中"
+                                  ? "border-tier-target text-[oklch(0.48_0.07_74)] bg-tier-target/10"
+                                  : "border-tier-unknown text-tier-unknown bg-tier-unknown/8",
+                            )}>
+                            {scalingLabel(s.scaling, lang)}
+                          </span>
+                        </td>
+                        <td className="py-3.5 text-[0.8125rem] leading-relaxed text-muted-foreground">
+                          {lang === "zh" ? s.note : s.noteEn}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

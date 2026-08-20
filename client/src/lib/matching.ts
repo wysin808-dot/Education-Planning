@@ -356,3 +356,209 @@ export function groupLabel(group: string, lang: "zh" | "en"): string {
   if (lang === "zh") return group;
   return GROUP_EN[group] ?? group;
 }
+
+/* ------------------------------------------------------------------ *
+ * 选课方案生成器
+ *
+ * 目的：把「哪门科目被几个目标要求」的统计，推进为一份可执行的选课方案。
+ * 规则来自 WACE 制度与 BCI 课程序列，不引入任何虚构要求：
+ *  1. 英语线：英语或 EALD 为毕业必需，二者择一，永远占一个位置。
+ *  2. 二选一先修（如「数学方法 或 专业数学」）在组内只选一门，
+ *     不再对组内每门各计一次，避免必需科目数虚高。
+ *  3. Year 11 通常修读 4–5 门 ATAR 课程；Year 12 通常保留 4 门计入 ATAR。
+ *  4. 只推荐当前课程序列（北/南半球）实际开设的科目；
+ *     若某必需科目本序列未开设，作为冲突显式报出，不静默替换。
+ * ------------------------------------------------------------------ */
+
+/** Year 11 建议修读的科目数上限 */
+export const YEAR11_SIZE = 5;
+/** Year 12 计入 ATAR 的主力科目数 */
+export const YEAR12_SIZE = 4;
+
+const SCALING_WEIGHT: Record<string, number> = { 高: 3, 中: 2, 一般: 1 };
+
+export interface PlanSubject {
+  subject: SubjectKey;
+  /** 该科目被多少个目标要求（同一目标内的二选一只计一次） */
+  requiredBy: number;
+  /** 入选原因分类 */
+  role: "english" | "required" | "choice" | "filler";
+  /** 组内二选一时的备选科目 */
+  alternatives: SubjectKey[];
+  /** 要求该科目的目标名称，便于家长核对 */
+  supports: string[];
+  /** 本序列是否开设 */
+  offered: boolean;
+}
+
+export interface SubjectPlan {
+  /** Year 11 推荐组合 */
+  year11: PlanSubject[];
+  /** Year 12 推荐保留组合 */
+  year12: PlanSubject[];
+  /** Year 12 相对 Year 11 建议放弃的科目 */
+  dropped: PlanSubject[];
+  /** 因本序列未开设而无法满足的必需科目 */
+  unavailable: { subject: SubjectKey; supports: string[] }[];
+  /** 必需科目总数超过可用名额时的冲突提示 */
+  overflow: PlanSubject[];
+  /** 参与统计的目标数量 */
+  targetCount: number;
+}
+
+interface PlanTarget {
+  universityId: string;
+  programmeId: string;
+}
+
+/**
+ * 生成 Year 11 / Year 12 选课方案。
+ * hemisphere 决定可选科目范围；lang 仅影响目标名称的展示语言。
+ */
+export function buildSubjectPlan(
+  targets: PlanTarget[],
+  hemisphere: "north" | "south",
+  lang: "zh" | "en" = "zh",
+): SubjectPlan {
+  const offeredKeys = new Set(
+    SUBJECTS.filter((s) => (hemisphere === "north" ? s.north : s.south)).map((s) => s.key),
+  );
+  const zh = lang === "zh";
+
+  // 逐目标收集先修组，二选一在组内择优后只计一次
+  const counts = new Map<SubjectKey, { count: number; supports: string[]; alts: Set<SubjectKey> }>();
+  const unavailable = new Map<SubjectKey, string[]>();
+  let targetCount = 0;
+
+  const score = (key: SubjectKey) => {
+    const meta = SUBJECTS.find((s) => s.key === key);
+    const scaling = SCALING_WEIGHT[meta?.scaling ?? "一般"] ?? 1;
+    // 已被其他目标要求的科目优先，其次看 scaling
+    return (counts.get(key)?.count ?? 0) * 10 + scaling;
+  };
+
+  for (const target of targets) {
+    const uni = UNIVERSITIES.find((u) => u.id === target.universityId);
+    const prog = uni?.programmes.find((p) => p.id === target.programmeId);
+    if (!uni || !prog) continue;
+    targetCount += 1;
+    const label = `${zh ? uni.abbr : uni.abbr} · ${zh ? prog.nameZh : prog.name}`;
+
+    for (const group of prog.prerequisites) {
+      if (group.length === 0) continue;
+      const openInSequence = group.filter((k) => offeredKeys.has(k));
+      if (openInSequence.length === 0) {
+        // 整组都不在本序列开设，报为冲突而非静默忽略
+        const key = group[0];
+        unavailable.set(key, [...(unavailable.get(key) ?? []), label]);
+        continue;
+      }
+      // 组内择优：优先已被其他目标要求的科目，其次 scaling 更高者
+      const picked = openInSequence.slice().sort((a, b) => score(b) - score(a))[0];
+      const entry = counts.get(picked) ?? { count: 0, supports: [], alts: new Set<SubjectKey>() };
+      entry.count += 1;
+      entry.supports.push(label);
+      openInSequence.filter((k) => k !== picked).forEach((k) => entry.alts.add(k));
+      counts.set(picked, entry);
+    }
+  }
+
+  const toPlanSubject = (
+    subject: SubjectKey,
+    role: PlanSubject["role"],
+  ): PlanSubject => {
+    const entry = counts.get(subject);
+    return {
+      subject,
+      requiredBy: entry?.count ?? 0,
+      role,
+      alternatives: Array.from(entry?.alts ?? []),
+      supports: entry?.supports ?? [],
+      offered: offeredKeys.has(subject),
+    };
+  };
+
+  // 1. 英语线：毕业必需，EALD 与英语二选一
+  const englishKey: SubjectKey = offeredKeys.has("english") ? "english" : "eald";
+  const englishSlot: PlanSubject = {
+    ...toPlanSubject(englishKey, "english"),
+    alternatives: offeredKeys.has("eald") && englishKey !== "eald" ? ["eald"] : [],
+  };
+
+  // 2. 目标要求的科目，按被要求次数与 scaling 排序
+  const requiredSorted = Array.from(counts.entries())
+    .filter(([key]) => key !== englishKey && key !== "eald")
+    .sort((a, b) => {
+      if (b[1].count !== a[1].count) return b[1].count - a[1].count;
+      const sa = SCALING_WEIGHT[SUBJECTS.find((s) => s.key === a[0])?.scaling ?? "一般"] ?? 1;
+      const sb = SCALING_WEIGHT[SUBJECTS.find((s) => s.key === b[0])?.scaling ?? "一般"] ?? 1;
+      return sb - sa;
+    })
+    .map(([key]) => toPlanSubject(key, "required"));
+
+  const capacity = YEAR11_SIZE - 1; // 英语占一个位置
+  const takenRequired = requiredSorted.slice(0, capacity);
+  const overflow = requiredSorted.slice(capacity);
+
+  // 3. 名额未满时，用 scaling 较高且方向相容的科目补位
+  const chosen = new Set<SubjectKey>([englishSlot.subject, ...takenRequired.map((s) => s.subject)]);
+  const fillers: PlanSubject[] = [];
+  if (takenRequired.length < capacity) {
+    // 已占用的学科分组：同一分组内不重复补位，
+    // 避免出现「数学方法 + 专业数学 + 应用数学」这类实际不会同时修读的组合。
+    const usedGroups = new Set<string>();
+    Array.from(chosen).forEach((k) => {
+      const g = SUBJECTS.find((s) => s.key === k)?.group;
+      if (g) usedGroups.add(g);
+    });
+    const pool = SUBJECTS.filter(
+      (s) => offeredKeys.has(s.key) && !chosen.has(s.key) && s.key !== "eald",
+    ).sort((a, b) => (SCALING_WEIGHT[b.scaling] ?? 1) - (SCALING_WEIGHT[a.scaling] ?? 1));
+
+    // 第一轮：优先补入尚未覆盖的学科分组，保证方案横跨数学、科学与商科
+    for (const meta of pool) {
+      if (takenRequired.length + fillers.length >= capacity) break;
+      if (usedGroups.has(meta.group)) continue;
+      fillers.push(toPlanSubject(meta.key, "filler"));
+      chosen.add(meta.key);
+      usedGroups.add(meta.group);
+    }
+    // 第二轮：分组已全部覆盖仍有空位时，再按 scaling 补齐
+    for (const meta of pool) {
+      if (takenRequired.length + fillers.length >= capacity) break;
+      if (chosen.has(meta.key)) continue;
+      fillers.push(toPlanSubject(meta.key, "filler"));
+      chosen.add(meta.key);
+    }
+  }
+
+  const year11 = [englishSlot, ...takenRequired, ...fillers];
+
+  // 4. Year 12 保留四门：英语线 + 被要求最多的科目；补位科目最先让出
+  const year12Pool = [englishSlot, ...takenRequired, ...fillers];
+  const year12 = year12Pool.slice(0, YEAR12_SIZE);
+  const dropped = year12Pool.slice(YEAR12_SIZE);
+
+  return {
+    year11,
+    year12,
+    dropped,
+    unavailable: Array.from(unavailable.entries()).map(([subject, supports]) => ({
+      subject,
+      supports,
+    })),
+    overflow,
+    targetCount,
+  };
+}
+
+/** 方案中每门科目的入选说明 */
+export function planRoleLabel(role: PlanSubject["role"], lang: "zh" | "en"): string {
+  const map: Record<PlanSubject["role"], [string, string]> = {
+    english: ["毕业必需", "Graduation requirement"],
+    required: ["目标先修", "Target prerequisite"],
+    choice: ["组内择优", "Chosen within group"],
+    filler: ["提分补位", "Scaling filler"],
+  };
+  return lang === "zh" ? map[role][0] : map[role][1];
+}
