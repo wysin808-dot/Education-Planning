@@ -4,13 +4,13 @@
  * 打印时隐藏导航与操作按钮，页面之间强制分页。
  */
 import { SiteFooter, SiteHeader, Wordmark } from "@/components/Brand";
+import { BrochureBanner } from "@/components/Plates";
 import { FileDown } from "lucide-react";
 import { ScoreRule } from "@/components/ScoreRule";
 import { FIELDS, REGIONS, UNIVERSITIES } from "@/data/universities";
 import { TIER_META, datasetStats, tierDefinition, tierLabel } from "@/lib/matching";
 import { useLang } from "@/contexts/LangContext";
 
-const HERO = "/manus-storage/bv-hero-almanac_8d296b5d.png";
 const FIXED_BROCHURE_PDF = "/manus-storage/brentvale-wace-admissions-almanac-2026-27_60e7b1f0.pdf";
 
 export default function Brochure() {
@@ -62,11 +62,7 @@ export default function Brochure() {
         {/* 第一页：封面 */}
         <section className="brochure-print-page brochure-cover mx-auto w-full max-w-[52rem] border border-border bg-card print:max-w-none print:border-0 print:break-after-page">
           <div className="relative">
-            <img
-              src={HERO}
-              alt={t("招生年鉴书桌俯拍", "An overhead view of the admissions almanac on a desk")}
-              className="brochure-cover-image h-64 w-full object-cover sm:h-80"
-            />
+            <BrochureBanner className="brochure-cover-image h-64 w-full sm:h-80" />
             <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.25_0.03_158/0.55)] to-transparent" />
             <div className="absolute bottom-6 left-8 right-8">
               <span className="eyebrow text-paper">

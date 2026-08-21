@@ -203,7 +203,31 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
+
+/**
+ * 统计脚本按需注入。
+ *
+ * index.html 原先直接写死 `%VITE_ANALYTICS_ENDPOINT%/umami`：
+ * 未配置该环境变量时 Vite 不会替换占位符，浏览器于是对
+ * `/%VITE_ANALYTICS_ENDPOINT%/umami` 发起请求并稳定 404——
+ * 本地开发、离线预览与自建部署每开一页都会多一条控制台错误，
+ * 也让两个把控制台错误计入失败的回归脚本无法在 Manus 之外通过。
+ *
+ * 变量已配置时行为与此前完全一致，仅在缺失时跳过注入。
+ */
+function vitePluginAnalytics(): Plugin {
+  return {
+    name: "conditional-analytics",
+    transformIndexHtml(html) {
+      const endpoint = process.env.VITE_ANALYTICS_ENDPOINT;
+      const websiteId = process.env.VITE_ANALYTICS_WEBSITE_ID;
+      if (endpoint && websiteId) return html;
+      return html.replace(/\s*<script\b[^>]*%VITE_ANALYTICS_ENDPOINT%[\s\S]*?<\/script>/, "");
+    },
+  };
+}
+
+const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy(), vitePluginAnalytics()];
 
 export default defineConfig({
   plugins,

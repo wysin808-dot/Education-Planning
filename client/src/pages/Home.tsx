@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, BookOpenText, Clock3, GraduationCap, Ruler, Scale, Search } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
+import { AlmanacPlate, HandoutPlate } from "@/components/Plates";
 import { CountUp, Reveal, Stagger } from "@/components/Motion";
 import { ScoreRule } from "@/components/ScoreRule";
 import { TierLegend } from "@/components/TierBadge";
@@ -20,9 +21,7 @@ import { datasetStats } from "@/lib/matching";
 import { useLang } from "@/contexts/LangContext";
 import { getRecentTool, type RecentTool } from "@/lib/recent";
 
-const HERO = "/manus-storage/bv-hero-almanac_675b2c4b.png";
 /** 档案式文档配图优先于人物场景照，以贴合年鉴调性 */
-const ARCHIVE = "/manus-storage/bv-subjects_9e541983.png";
 
 export default function Home() {
   const stats = datasetStats();
@@ -143,14 +142,7 @@ export default function Home() {
           </div>
 
           <div className="relative border-l border-border">
-            <img
-              src={HERO}
-              alt={t(
-                "铺开的招生年鉴、黄铜圆规与钢笔构成的书桌俯拍",
-                "An overhead view of an open admissions almanac, brass dividers and a fountain pen",
-              )}
-              className="h-full min-h-[26rem] w-full object-cover"
-            />
+            <AlmanacPlate className="h-full min-h-[26rem] w-full" />
             <div className="absolute inset-x-0 bottom-0 border-t border-brass/50 bg-paper/94 px-6 py-4 backdrop-blur-sm">
               <p className="font-[family-name:var(--font-serif)] text-[0.875rem] leading-relaxed text-ink">
                 {t(
@@ -318,14 +310,7 @@ export default function Home() {
       <section>
         <Reveal className="container grid gap-12 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div className="relative">
-            <img
-              src={ARCHIVE}
-              alt={t(
-                "WACE 选课规划的索引卡、黄铜直尺与院校资料俯拍",
-                "Index cards, a brass ruler and university documents laid out for WACE subject planning",
-              )}
-              className="w-full object-cover"
-            />
+            <HandoutPlate className="w-full" />
             <p className="mt-3 text-[0.75rem] leading-relaxed text-muted-foreground">
               {t(
                 "查询结果均可打印为纸质讲义，用作家长面谈与宣讲会材料。",
