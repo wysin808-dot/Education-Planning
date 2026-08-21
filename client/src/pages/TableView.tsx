@@ -85,7 +85,7 @@ export default function TableView() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      <div className="border-b border-border bg-paper-deep/45">
+      <div className="print-title-band border-b border-border bg-paper-deep/45">
         <div className="container py-10">
           <span className="eyebrow text-brass">{t("WACE · 31 校速查", "WACE · 31-University Table")}</span>
           <h1 className="mt-3 text-[2.25rem] leading-tight text-green">
@@ -170,9 +170,15 @@ export default function TableView() {
               const shown = isOpen ? u.programmes : u.programmes.slice(0, previewCount);
               const hidden = u.programmes.length - shown.length;
               const regionMeta = REGIONS.find((r) => r.id === u.region);
+              /*
+               * 打印时不整块防断：一所院校的专业最多可达三十余条，
+               * 整块防断会让放不下的院校整体跳页，前一页因此留下半页空白。
+               * 改为只保证校名不与其首行分离（header 的 break-after-avoid），
+               * 长名录允许顺着流到下一页。
+               */
               return (
-              <article key={u.id} className="break-inside-avoid">
-                <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b-2 border-green pb-2.5">
+              <article key={u.id} className="print:break-inside-auto">
+                <header className="break-after-avoid flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b-2 border-green pb-2.5">
                   <div>
                     <span className="almanac-index">
                       {String(i + 1).padStart(2, "0")} /{" "}

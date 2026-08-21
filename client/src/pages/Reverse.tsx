@@ -159,7 +159,7 @@ export default function Reverse() {
       <SiteHeader />
       <main>
         {/* 标题区：与 A-Level 反查页同一规格 */}
-        <section className="border-b border-border bg-paper-deep/35">
+        <section className="print-title-band border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
             <p className="eyebrow text-brass">{t("WACE · 由目标规划", "WACE · Plan from a Target")}</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">
@@ -176,7 +176,7 @@ export default function Reverse() {
 
         <section className="container grid gap-8 py-9 lg:grid-cols-[22rem_1fr] lg:gap-12">
           {/* 左：目标定位 */}
-          <aside className="no-print lg:sticky lg:top-24 lg:self-start">
+          <aside className="no-print lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto">
             <div className="border border-border bg-card p-5">
               <p className="eyebrow text-brass">{t("目标定位", "Target selection")}</p>
 
