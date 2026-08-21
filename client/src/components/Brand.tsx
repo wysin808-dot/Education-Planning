@@ -248,14 +248,14 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
 
         <div className="flex min-w-0 shrink-0 items-center gap-3">
           {showCurriculumRow && (
-            <span className="border border-green bg-green px-2 py-1 text-[0.6875rem] tracking-[0.08em] text-primary-foreground sm:hidden">
+            <span className="border-2 border-green bg-green px-3 py-1.5 text-[0.8125rem] font-semibold tracking-[0.08em] text-primary-foreground sm:hidden">
               {current === "alevel" ? "A-Level" : "WACE"}
             </span>
           )}
           {showCurriculumRow && (
             <nav
               aria-label={t("课程体系", "Curriculum")}
-              className="hidden items-stretch border border-border sm:flex">
+              className="hidden items-stretch border-2 border-green/45 sm:flex">
               {curricula.map((c) => {
                 const active = current === c.id;
                 return (
@@ -264,15 +264,15 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
                     href={switchTo(c)}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex flex-col justify-center whitespace-nowrap px-3 py-1.5 text-left transition-colors duration-150",
+                      "flex flex-col justify-center whitespace-nowrap px-5 py-2.5 text-left transition-colors duration-150",
                       active
                         ? "bg-green text-primary-foreground"
                         : "text-muted-foreground hover:bg-paper-deep hover:text-green",
                     )}>
-                    <span className="text-[0.8125rem] leading-tight">{lang === "zh" ? c.zh : c.en}</span>
+                    <span className="text-[1.0625rem] font-semibold leading-tight">{lang === "zh" ? c.zh : c.en}</span>
                     <span
                       className={cn(
-                        "text-[0.5625rem] tracking-[0.12em]",
+                        "text-[0.75rem] tracking-[0.12em]",
                         active ? "text-paper/70" : "text-muted-foreground/75",
                       )}>
                       {lang === "zh" ? c.tagZh : c.tagEn}

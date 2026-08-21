@@ -127,6 +127,23 @@ export function alevelForwardMatch(query: AlevelForwardQuery): AlevelMatchRow[] 
   return rows.sort((a, b) => rank[b.tier] - rank[a.tier] || (b.gradeGap ?? -99) - (a.gradeGap ?? -99));
 }
 
+/**
+ * 院校层面的官方口径原文。
+ *
+ * 多数院校（31 校中 17 所）根本不公布可换算的 A-Level 字母等级门槛，
+ * 官方写的是 "good passes in at least three Advanced Level subjects" 这类文字。
+ * 此前界面在这种情况下只显示「顾问复核」四个字，家长会以为系统坏了；
+ * 实际上数据层存着院校原文，应当直接摆出来。
+ *
+ * 中文字段有 15 条以 "null；" 开头（录入时用它表示「无统一等级」），
+ * 属于内部标记而非院校原文，展示前剔除。
+ */
+function cleanGeneralProfile(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const cleaned = value.replace(/^null\s*[；;]\s*/, "").trim();
+  return cleaned.length > 0 ? cleaned : null;
+}
+
 export function alevelReverseLookup(universityId: string, programmeId: string) {
   const university = UNIVERSITIES.find((item) => item.id === universityId);
   const programme = university?.programmes.find((item) => item.id === programmeId);
@@ -147,6 +164,9 @@ export function alevelReverseLookup(universityId: string, programmeId: string) {
     deadlineZh: rule.universityRule.applicationSummaryZh,
     deadlineEn: rule.universityRule.applicationSummaryEn,
     extras: rule.fieldRule?.extras ?? [],
+    /** 院校层面的官方口径原文，用于没有可换算等级时如实呈现 */
+    generalProfileZh: cleanGeneralProfile(rule.universityRule.generalProfile),
+    generalProfileEn: cleanGeneralProfile(rule.universityRule.generalProfileEn),
   };
 }
 
@@ -211,15 +231,15 @@ export function adviseAlevelSubjects(targets: { universityId: string; programmeI
  * A-Level 选课方案生成器
  *
  * 规则来自 Cambridge International 的常规修读结构与 BCI 已确认的七门课程：
- *  1. AS（Year 12）通常开局四门，为 A2 保留一门可放弃的余量。
- *  2. A2（Year 13）保留三门作为 offer 计分主体（A*AA、AAA 等口径均按三门给出）。
+ *  1. AS（Year 11）通常开局四门，为 A2 保留一门可放弃的余量。
+ *  2. A2（Year 12）保留三门作为 offer 计分主体（A*AA、AAA 等口径均按三门给出）。
  *  3. 必修科目优先入选，其次为被建议的科目，最后按学术通用性补位。
  *  4. Further Mathematics 不替代 Mathematics，只在 Mathematics 已入选后追加。
  * ------------------------------------------------------------------ */
 
-/** AS（Year 12）建议开局的科目数 */
+/** AS（Year 11）建议开局的科目数 */
 export const ALEVEL_AS_SIZE = 4;
-/** A2（Year 13）保留并计入 offer 的科目数 */
+/** A2（Year 12）保留并计入 offer 的科目数 */
 export const ALEVEL_A2_SIZE = 3;
 
 /** 无目标时的通用优先序：学术通用性由高到低 */
@@ -245,9 +265,9 @@ export interface AlevelPlanSubject {
 }
 
 export interface AlevelSubjectPlan {
-  /** AS 年（Year 12）建议开局组合 */
+  /** AS 年（Year 11）建议开局组合 */
   as: AlevelPlanSubject[];
-  /** A2 年（Year 13）建议保留组合 */
+  /** A2 年（Year 12）建议保留组合 */
   a2: AlevelPlanSubject[];
   /** A2 相对 AS 建议放弃的科目 */
   dropped: AlevelPlanSubject[];

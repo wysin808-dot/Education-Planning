@@ -458,8 +458,8 @@ export default function AlevelFieldPlan() {
                   </h2>
                   <p className="mt-2 max-w-[70ch] text-[0.8125rem] leading-relaxed text-muted-foreground">
                     {t(
-                      `由该方向 ${plan.targetCount} 个专业的指定与建议科目合并推导。Year 12（AS）修 ${ALEVEL_AS_SIZE} 门，Year 13（A2）保留 ${ALEVEL_A2_SIZE} 门计入 offer。`,
-                      `Derived from the required and recommended subjects of all ${plan.targetCount} programmes in this field. Year 12 (AS) takes ${ALEVEL_AS_SIZE} subjects and Year 13 (A2) keeps ${ALEVEL_A2_SIZE} towards the offer.`,
+                      `由该方向 ${plan.targetCount} 个专业的指定与建议科目合并推导。Year 11（AS）修 ${ALEVEL_AS_SIZE} 门，Year 12（A2）保留 ${ALEVEL_A2_SIZE} 门计入 offer。`,
+                      `Derived from the required and recommended subjects of all ${plan.targetCount} programmes in this field. Year 11 (AS) takes ${ALEVEL_AS_SIZE} subjects and Year 12 (A2) keeps ${ALEVEL_A2_SIZE} towards the offer.`,
                     )}
                   </p>
                 </div>
@@ -467,7 +467,7 @@ export default function AlevelFieldPlan() {
                 <div className="grid gap-8 px-7 py-6 lg:grid-cols-2">
                   <div>
                     <p className="eyebrow text-brass">
-                      {t(`Year 12 · AS ${ALEVEL_AS_SIZE} 门`, `Year 12 · AS ${ALEVEL_AS_SIZE} subjects`)}
+                      {t(`Year 11 · AS ${ALEVEL_AS_SIZE} 门`, `Year 11 · AS ${ALEVEL_AS_SIZE} subjects`)}
                     </p>
                     <ul className="mt-3">
                       {plan.as.map((item, i) => (
@@ -477,7 +477,7 @@ export default function AlevelFieldPlan() {
                   </div>
                   <div>
                     <p className="eyebrow text-brass">
-                      {t(`Year 13 · A2 ${ALEVEL_A2_SIZE} 门`, `Year 13 · A2 ${ALEVEL_A2_SIZE} subjects`)}
+                      {t(`Year 12 · A2 ${ALEVEL_A2_SIZE} 门`, `Year 12 · A2 ${ALEVEL_A2_SIZE} subjects`)}
                     </p>
                     <ul className="mt-3">
                       {plan.a2.map((item, i) => (

@@ -171,7 +171,49 @@ export default function AlevelReverse() {
           </aside>
           {/* key 取院校与专业组合：切换目标时结果整块换页，与 WACE 反查页一致 */}
           {result && <article key={`${university.id}-${result.programme.id}`} className="swap min-w-0"><PrintHeader title={t("Cambridge A-Level 院校专业条件报告", "Cambridge A-Level programme requirements report")} /><div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5"><div><p className="almanac-index flex flex-wrap items-center gap-x-2 gap-y-1"><span>{university.abbr} · {university.region.toUpperCase()}</span><QsRank universityId={university.id} /></p><h2 className="mt-2 font-[family-name:var(--font-serif)] text-3xl leading-tight text-green">{lang === "zh" ? result.programme.nameZh : result.programme.name}</h2><p className="mt-2 text-[0.875rem] text-muted-foreground">{lang === "zh" ? university.nameZh : university.name} · {lang === "zh" ? result.programme.name : result.programme.nameZh}</p></div><div className="no-print flex gap-2"><ShortlistButton universityId={university.id} programmeId={result.programme.id} label={t("加入目标清单", "Save to shortlist")} variant="full" /><PrintReportButton compact /></div></div>
-            <div className="mt-6 grid gap-4 md:grid-cols-2"><section className="border-l-2 border-brass bg-paper-deep/35 p-5"><p className="eyebrow text-brass">{lang === "zh" ? profileLabel.zh : profileLabel.en}</p><p className="score mt-3 text-3xl text-green"><Tick>{result.gradeProfile ?? (lang === "zh" ? "顾问复核" : "Counsellor review")}</Tick></p><p className="mt-3 font-[family-name:var(--font-serif)] text-[0.875rem] leading-relaxed text-muted-foreground">{lang === "zh" ? result.noteZh : result.noteEn}</p></section><section className="border border-border bg-card p-5"><p className="eyebrow text-muted-foreground">{t("官方最低资格", "General qualification")}</p><p className="mt-3 text-[0.875rem] leading-relaxed text-green">{lang === "zh" ? (fact?.generalZh ?? "官方未公布") : (result.gradeProfile ? result.gradeProfile : (result.profileType === "published_grade" ? "Published grade profile" : "See official requirement wording below"))}</p></section></div>
+            {/*
+              等级条件的呈现。
+              31 校中仅 24% 的方向能给出可换算的字母等级；其余院校官方写的是
+              "good passes in at least three Advanced Level subjects" 这类文字。
+              此前这种情况只显示「顾问复核」四个字，家长会误以为系统没查出来，
+              因此改为：有等级就用等宽大号数字；没有就直接摆院校官方原文，
+              并保留一个小号状态标签说明为什么没有数字。
+            */}
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <section className="border-l-2 border-brass bg-paper-deep/35 p-5">
+                <p className="eyebrow text-brass">{lang === "zh" ? profileLabel.zh : profileLabel.en}</p>
+                {result.gradeProfile ? (
+                  <p className="score mt-3 text-3xl text-green">
+                    <Tick>{result.gradeProfile}</Tick>
+                  </p>
+                ) : (
+                  <>
+                    <p className="mt-3 font-[family-name:var(--font-serif)] text-[1.0625rem] leading-relaxed text-green">
+                      {(lang === "zh" ? result.generalProfileZh : result.generalProfileEn) ??
+                        t("该校官方未公布 A-Level 等级门槛", "No A-Level grade threshold is published")}
+                    </p>
+                    <p className="mt-2 inline-block border border-brass/50 bg-brass/8 px-2 py-0.5 text-[0.6875rem] text-[oklch(0.42_0.07_74)]">
+                      {t("官方未给出可换算等级", "No convertible grade published")}
+                    </p>
+                  </>
+                )}
+                <p className="mt-3 font-[family-name:var(--font-serif)] text-[0.875rem] leading-relaxed text-muted-foreground">
+                  {lang === "zh" ? result.noteZh : result.noteEn}
+                </p>
+              </section>
+              <section className="border border-border bg-card p-5">
+                <p className="eyebrow text-muted-foreground">{t("官方最低资格", "General qualification")}</p>
+                {/*
+                  中英文取同一对双语字段（alevelRules 的 generalProfile / generalProfileEn）。
+                  此前中文读 fact.generalZh、英文却走一条完全不同的回退链，
+                  而 AlevelUniversityFact 根本没有英文字段，两种语言因此看到不同内容。
+                */}
+                <p className="mt-3 text-[0.875rem] leading-relaxed text-green">
+                  {(lang === "zh" ? result.generalProfileZh : result.generalProfileEn) ??
+                    t("官方未公布", "Not published")}
+                </p>
+              </section>
+            </div>
             <div className="mt-7 grid gap-6 lg:grid-cols-2"><section><div className="flex items-center gap-2 border-b border-border pb-3"><GraduationCap className="h-4 w-4 text-brass" /><h3 className="font-[family-name:var(--font-serif)] text-xl text-green">{t("BCI 选课映射", "BCI subject mapping")}</h3></div><div className="mt-4 space-y-4"><div><p className="eyebrow text-tier-reach">{t("已知必需", "Known required")}</p><div className="mt-2 flex flex-wrap gap-2">{result.requiredSubjects.length ? result.requiredSubjects.map((subject) => <span key={subject} className="border border-tier-reach/40 bg-tier-reach/8 px-2.5 py-1 text-[0.8125rem] text-tier-reach">{alevelSubjectLabel(subject, lang)}</span>) : <span className="text-[0.8125rem] text-muted-foreground">{t("未公布可映射的必修科目", "No mappable required subjects published")}</span>}</div></div><div><p className="eyebrow text-brass">{t("建议组合", "Recommended")}</p><div className="mt-2 flex flex-wrap gap-2">{result.recommendedSubjects.length ? result.recommendedSubjects.map((subject) => <span key={subject} className="border border-brass/50 bg-brass/8 px-2.5 py-1 text-[0.8125rem] text-[oklch(0.42_0.07_74)]">{alevelSubjectLabel(subject, lang)}</span>) : <span className="text-[0.8125rem] text-muted-foreground">{t("无额外建议", "No additional recommendations")}</span>}</div></div></div></section><section><div className="flex items-center gap-2 border-b border-border pb-3"><Info className="h-4 w-4 text-brass" /><h3 className="font-[family-name:var(--font-serif)] text-xl text-green">{t("申请附注", "Application notes")}</h3></div><dl className="mt-4 space-y-4 text-[0.875rem] leading-relaxed"><div><dt className="eyebrow text-muted-foreground">{t("英语要求", "English")}</dt><dd className="mt-1 text-muted-foreground">{lang === "zh" ? result.englishZh : result.englishEn}</dd></div><div><dt className="eyebrow text-muted-foreground">{t("申请窗口", "Application window")}</dt><dd className="mt-1 text-muted-foreground">{lang === "zh" ? result.deadlineZh : result.deadlineEn}</dd></div></dl></section></div>
             {/* 分年选课：为当前这一个目标而定 */}
             {plan && (
@@ -211,7 +253,7 @@ export default function AlevelReverse() {
                   <div>
                     <div className="flex items-baseline justify-between gap-3 border-b-2 border-green pb-2.5">
                       <h4 className="font-[family-name:var(--font-serif)] text-[1.125rem] text-green">
-                        Year 12 · AS
+                        Year 11 · AS
                       </h4>
                       <span className="score text-[0.75rem] text-muted-foreground">
                         {plan.as.length} {t("门", "subjects")}
@@ -233,7 +275,7 @@ export default function AlevelReverse() {
                   <div>
                     <div className="flex items-baseline justify-between gap-3 border-b-2 border-green pb-2.5">
                       <h4 className="font-[family-name:var(--font-serif)] text-[1.125rem] text-green">
-                        Year 13 · A2
+                        Year 12 · A2
                       </h4>
                       <span className="score text-[0.75rem] text-muted-foreground">
                         {plan.a2.length} {t("门", "subjects")}

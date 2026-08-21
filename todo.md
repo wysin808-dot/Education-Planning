@@ -247,3 +247,10 @@
 - [x] 补齐子路径部署遗漏：PrintHeader 与 Plates 的品牌路径同样改走 BASE_URL。
 - [x] 单文件打包脚本覆盖 BASE_URL 模板串，并加「仍有未内联资源」的自检。
 
+## 依反馈文档修正三项（2026-08-21）
+- [x] A-Level 年级口径由 Year 12 / Year 13 改为 Year 11 / Year 12，与 WACE 一致；院校官方原文中的 "Year 12 or higher level pass" 属引述，原样保留。
+- [x] 页头体系切换控件放大一倍（单项 73×42 → 105×59，面积 2.02 倍），加粗边框并放大字号；手机端体系标记同步放大。
+- [x] A-Level 反查改呈现：无可换算等级时不再只显示「顾问复核」，直接摆出院校官方原文（如 NUS 的 good pass in at least three Advanced Level subjects）。
+- [x] 修掉「官方最低资格」卡的中英不一致：此前中文读 fact.generalZh、英文走另一条回退链，而该结构没有英文字段；现统一取 alevelRules 的双语字段。
+- [x] 中文 generalProfile 中 15 条录入残留的 "null；" 前缀在展示前剔除。
+
