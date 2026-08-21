@@ -15,7 +15,10 @@
 import { REGIONS, UNIVERSITIES } from "@/data/universities";
 import { useLang } from "@/contexts/LangContext";
 
-const CREST = "/brand/bci-crest.png";
+/** 与 Brand.tsx 一致：走 BASE_URL，子路径部署时才不会裂图 */
+const BASE = import.meta.env.BASE_URL;
+const CREST = `${BASE}brand/bci-crest.png`;
+const CREST_WHITE = `${BASE}brand/bci-crest-white.png`;
 
 /** 标尺刻度：60–100，与 ScoreRule 的区间一致 */
 function ruleTicks(x0: number, x1: number, y: number) {
@@ -319,7 +322,7 @@ export function BrochureBanner({ className }: { className?: string }) {
         </g>
 
         {/* 反白徽章 */}
-        <image href="/brand/bci-crest-white.png" x="700" y="85" width="150" height="150" opacity="0.95" />
+        <image href={CREST_WHITE} x="700" y="85" width="150" height="150" opacity="0.95" />
 
         {/*
          * 标尺母题置于上缘：页面会在本横幅的左下角叠加宣传册标题，
