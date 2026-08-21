@@ -29,10 +29,11 @@ import { saveRecentTool } from "@/lib/recent";
  * 红版用于纸感浅底，反白版用于深墨绿页脚等深色底。
  * 一律只做裁切与透明通道处理，未重绘任何笔画，也不以反相代替官方反白版。
  */
-const LOGO_RED = "/brand/bci-logo-horizontal.png";
-const LOGO_WHITE = "/brand/bci-logo-horizontal-white.png";
-const CREST_RED = "/brand/bci-crest.png";
-const CREST_WHITE = "/brand/bci-crest-white.png";
+const BASE = import.meta.env.BASE_URL;
+const LOGO_RED = `${BASE}brand/bci-logo-horizontal.png`;
+const LOGO_WHITE = `${BASE}brand/bci-logo-horizontal-white.png`;
+const CREST_RED = `${BASE}brand/bci-crest.png`;
+const CREST_WHITE = `${BASE}brand/bci-crest-white.png`;
 
 export function Wordmark({
   variant = "dark",
