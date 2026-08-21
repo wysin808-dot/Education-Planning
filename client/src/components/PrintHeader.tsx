@@ -5,7 +5,7 @@
  */
 import { useLang } from "@/contexts/LangContext";
 
-const CREST = "/manus-storage/bci-crest_444d5067.png";
+const CREST = "/brand/bci-crest.png";
 
 export function PrintHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   const { t, lang } = useLang();

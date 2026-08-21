@@ -21,10 +21,20 @@ import { useShortlist } from "@/contexts/ShortlistContext";
 import { INTERNAL_ONLY, WACE_PUBLIC } from "@/lib/curriculum";
 import { saveRecentTool } from "@/lib/recent";
 
-const LOGO_RED = "/manus-storage/bci-logo-horizontal_ead9c912.png";
-const LOGO_WHITE = "/manus-storage/bci-logo-horizontal-white_4bd4c272.png";
-const CREST_RED = "/manus-storage/bci-crest_444d5067.png";
-const CREST_WHITE = "/manus-storage/bci-crest-white_94d24f24.png";
+/**
+ * 品牌资产收进仓库（client/public/brand），不再依赖外部存储，
+ * 本地开发、离线与自建部署下都能正常显示。
+ *
+ * 两个文件同源：bci-logo-horizontal.png 为官方横版锁定图原件，
+ * bci-crest.png 由同一份原件左段裁切而来，只裁不改，未重绘任何笔画。
+ *
+ * 深色底（页脚）尚无官方反白版本。反相红色版会把徽章内部的盾徽与书页
+ * 一并压成白块，属于改绘官方标识，故改以浅色承托底盛放原件——
+ * 拿到官方反白文件后，把它放进同一目录并在此处改回两个常量即可，
+ * 同时移除下方的 plate 承托样式。
+ */
+const LOGO_RED = "/brand/bci-logo-horizontal.png";
+const CREST_RED = "/brand/bci-crest.png";
 
 export function Wordmark({
   variant = "dark",
@@ -41,9 +51,13 @@ export function Wordmark({
     return (
       <span className="flex min-w-0 items-center gap-2.5 sm:gap-3" title={t(`博林国际学院 · ${fullName}`, fullName)}>
         <img
-          src={light ? CREST_WHITE : CREST_RED}
+          src={CREST_RED}
           alt="Brentvale College"
-          className="h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9"
+          className={cn(
+            "h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9",
+            // 深色底：以浅色承托底盛放官方原件，不反相、不改绘
+            light && "rounded-full bg-paper p-0.5",
+          )}
         />
         <span className="min-w-0 border-l border-brass/60 pl-2.5 sm:pl-3">
           <span
@@ -67,9 +81,13 @@ export function Wordmark({
   return (
     <span className="flex items-center gap-3.5" title={t(`博林国际学院 · ${fullName}`, fullName)}>
       <img
-        src={light ? LOGO_WHITE : LOGO_RED}
+        src={LOGO_RED}
         alt="Brentvale College International"
-        className="h-10 w-auto shrink-0 object-contain sm:h-11"
+        className={cn(
+          "h-10 w-auto shrink-0 object-contain sm:h-11",
+          // 深色底：同上，承托而非反相
+          light && "rounded-sm bg-paper px-2 py-1",
+        )}
       />
       <span
         className={cn(
