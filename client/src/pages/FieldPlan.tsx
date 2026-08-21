@@ -317,14 +317,34 @@ export default function FieldPlan() {
                   </div>
                 </div>
 
-                <div className="border-t border-border px-7 py-6">
-                  <p className="eyebrow text-muted-foreground">
-                    {t("方向选课要义", "What this field asks of the subject set")}
-                  </p>
-                  <p className="mt-2 font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-ink">
-                    {lang === "zh" ? meta.advice : meta.adviceEn}
-                  </p>
-                </div>
+                {/* 方向档案：两栏定义列表，回答「这个方向到底学什么、出来做什么」 */}
+                <dl className="divide-y divide-border border-t border-border">
+                  {[
+                    {
+                      k: t("方向介绍", "About this field"),
+                      v: lang === "zh" ? meta.intro : meta.introEn,
+                    },
+                    {
+                      k: t("大学阶段课程", "University coursework"),
+                      v: lang === "zh" ? meta.courses : meta.coursesEn,
+                    },
+                    {
+                      k: t("就业方向", "Where graduates go"),
+                      v: lang === "zh" ? meta.careers : meta.careersEn,
+                    },
+                    {
+                      k: t("选课要义", "What it asks of your subjects"),
+                      v: lang === "zh" ? meta.advice : meta.adviceEn,
+                    },
+                  ].map((row) => (
+                    <div key={row.k} className="grid gap-2 px-7 py-5 sm:grid-cols-[8rem_1fr] sm:gap-6">
+                      <dt className="eyebrow pt-0.5 text-muted-foreground">{row.k}</dt>
+                      <dd className="font-[family-name:var(--font-serif)] text-[0.9375rem] leading-relaxed text-ink">
+                        {row.v}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
 
                 {markers.length > 0 && (
                   <div className="border-t border-border px-7 py-7">

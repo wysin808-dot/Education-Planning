@@ -360,6 +360,18 @@ export interface FieldMeta {
   key: FieldKey;
   zh: string;
   en: string;
+  /** 方向介绍：这个方向研究什么、学制与资格路径的一般情况 */
+  intro: string;
+  introEn: string;
+  /** 大学阶段的典型课程，帮助学生判断自己是否真的想读 */
+  courses: string;
+  coursesEn: string;
+  /**
+   * 常见就业去向。仅陈述该学科群的一般出路，
+   * 不含薪资、比例等本数据集无来源可依的数字。
+   */
+  careers: string;
+  careersEn: string;
   /** 该方向在 WACE 阶段的通用选课建议 */
   advice: string;
   /** 英文界面使用的方向建议 */
@@ -371,6 +383,18 @@ export const FIELDS: FieldMeta[] = [
     key: "medicine",
     zh: "医学与健康",
     en: "Medicine and Health",
+    intro:
+      "研究人体、疾病与健康照护的学科群，涵盖临床医学、牙医、药学、护理与联合健康专业。学制普遍长于其他方向（临床医学多为五至六年），课程后段以医院轮转为主；取得学位后仍须完成所在地医务委员会注册与住院培训，才能独立执业。",
+    introEn:
+      "The study of the human body, disease and health care, spanning medicine, dentistry, pharmacy, nursing and the allied health professions. Degrees run longer than most fields — clinical medicine is typically five to six years — and the later years are built around hospital rotations. Registration with the local medical board and postgraduate training are still required before independent practice.",
+    courses:
+      "解剖学、生理学、生物化学、病理学、药理学、循证医学与临床技能；后期为内科、外科、儿科、妇产与精神科等临床轮转。",
+    coursesEn:
+      "Anatomy, physiology, biochemistry, pathology, pharmacology, evidence-based medicine and clinical skills, followed by rotations through internal medicine, surgery, paediatrics, obstetrics and psychiatry.",
+    careers:
+      "医生、牙医、药剂师、护理师、物理与职业治疗师，以及公共卫生、医学研究、医疗器械与卫生政策岗位。",
+    careersEn:
+      "Doctor, dentist, pharmacist, nurse, physiotherapist or occupational therapist, as well as roles in public health, medical research, medical devices and health policy.",
     advice:
       "化学几乎是不可替代的先修，通常需再加人体生物或物理；澳洲与英国的医学普遍要求 UCAT，且多数院校在 ATAR 99 以上竞争。",
     adviceEn: "Chemistry is an all but irreplaceable prerequisite, normally taken with Human Biology or Physics. Medicine in Australia and the United Kingdom generally requires the UCAT, and most institutions compete above ATAR 99.",
@@ -379,6 +403,18 @@ export const FIELDS: FieldMeta[] = [
     key: "law",
     zh: "法律",
     en: "Law",
+    intro:
+      "研究法律规则、制度与争议解决的学科。英联邦体系多为本科直入的 LLB，澳洲常见法学与商科、文科的双学位组合。取得学位并不等于取得执业资格——各地普遍还需完成实务训练课程与执业考试。",
+    introEn:
+      "The study of legal rules, institutions and dispute resolution. Commonwealth systems generally admit students directly into an undergraduate LLB, and Australian universities commonly pair law with a second degree in business or arts. The degree alone does not confer the right to practise: practical legal training and admission examinations are normally required as well.",
+    courses:
+      "合同法、侵权法、刑法、宪法与行政法、财产法、公司法、证据法，以及法律研究与写作、模拟法庭与实务诊所。",
+    coursesEn:
+      "Contract, tort, criminal, constitutional and administrative law, property, corporate law and evidence, alongside legal research and writing, mooting and practical clinics.",
+    careers:
+      "事务所律师、企业法务、法官助理与公职，以及合规、监管、投资银行与管理咨询等重视论证与文书能力的岗位。",
+    careersEn:
+      "Practice in law firms, in-house counsel, judicial associate and public service roles, as well as compliance, regulation, investment banking and consulting, where the reasoning and drafting skills transfer directly.",
     advice:
       "多数法律专业不设科目先修，但重视论文写作能力，建议修读英语、历史或地理；英国法律需 LNAT，新加坡管理大学法律需笔试加面试。",
     adviceEn: "Most law programmes set no subject prerequisites but place weight on essay-writing ability, so English, History or Geography are advisable. Law in the United Kingdom requires the LNAT, and law at Singapore Management University requires a written test and an interview.",
@@ -387,6 +423,18 @@ export const FIELDS: FieldMeta[] = [
     key: "computing",
     zh: "计算机与数据",
     en: "Computing and Data",
+    intro:
+      "研究计算、算法、软件系统与数据的学科群，覆盖计算机科学、软件工程、人工智能、数据科学与信息安全。理论与工程实践并重，个人项目、开源贡献与实习在求职中的权重往往不低于成绩。",
+    introEn:
+      "The study of computation, algorithms, software systems and data, spanning computer science, software engineering, artificial intelligence, data science and information security. Theory and engineering practice carry equal weight, and personal projects, open-source contributions and internships often matter as much as grades when hiring.",
+    courses:
+      "程序设计、数据结构与算法、离散数学、计算机体系结构、操作系统、计算机网络、数据库系统、软件工程与机器学习。",
+    coursesEn:
+      "Programming, data structures and algorithms, discrete mathematics, computer architecture, operating systems, networks, database systems, software engineering and machine learning.",
+    careers:
+      "软件工程师、数据科学家、机器学习工程师、安全工程师、技术产品经理，以及金融科技、芯片与科研岗位。",
+    careersEn:
+      "Software engineer, data scientist, machine-learning engineer, security engineer and technical product manager, as well as roles in financial technology, semiconductors and research.",
     advice:
       "数学方法是硬性门槛，冲刺英美顶校需同时修读专业数学；计算机科学科目有帮助但不能替代数学先修。",
     adviceEn: "Mathematics Methods is a hard threshold; students targeting the most selective British and American institutions should also take Mathematics Specialist. Computer science courses are helpful but do not substitute for the mathematics prerequisite.",
@@ -395,6 +443,18 @@ export const FIELDS: FieldMeta[] = [
     key: "engineering",
     zh: "工程",
     en: "Engineering",
+    intro:
+      "以数学与物理为基础、设计与建造实体系统的学科群，含机械、电子电气、土木、化工、航空与生物医学工程。多数院校第一年为通识工程，第二年起分流方向；澳洲与英国的工程学位通常为四年荣誉学制。",
+    introEn:
+      "Grounded in mathematics and physics, engineering designs and builds physical systems across mechanical, electrical and electronic, civil, chemical, aerospace and biomedical disciplines. Most universities run a common first year and stream into a specialism from the second; Australian and British engineering degrees are usually four-year honours programmes.",
+    courses:
+      "工程数学、静力学与动力学、热力学、材料科学、电路与信号、流体力学、控制系统，以及贯穿全程的工程设计与团队项目。",
+    coursesEn:
+      "Engineering mathematics, statics and dynamics, thermodynamics, materials science, circuits and signals, fluid mechanics and control systems, with design and team projects running throughout.",
+    careers:
+      "各方向的工程师、项目与工艺管理，以及能源、交通、制造、半导体、建筑与咨询行业；部分地区独立执业需取得工程师注册资格。",
+    careersEn:
+      "Engineering roles in each specialism, project and process management, and work across energy, transport, manufacturing, semiconductors, construction and consulting. Some jurisdictions require professional registration for independent practice.",
     advice: "数学方法加物理是标准组合，部分土木与化工方向接受化学；建议再修专业数学以提升 ATAR 与学术匹配度。",
     adviceEn: "Mathematics Methods with Physics is the standard combination, and some civil and chemical engineering pathways accept Chemistry. Taking Mathematics Specialist as well is advisable to raise both the ATAR and academic fit.",
   },
@@ -402,6 +462,18 @@ export const FIELDS: FieldMeta[] = [
     key: "business",
     zh: "商科与经济",
     en: "Business and Economics",
+    intro:
+      "研究经济运行、企业管理与金融市场的学科群，含经济学、金融、会计、市场营销、商业分析与管理。经济学偏理论与量化，商科偏应用与实务，两者的数学要求差别明显，选校前应先分清。",
+    introEn:
+      "The study of how economies work and how firms and markets are managed, covering economics, finance, accounting, marketing, business analytics and management. Economics leans theoretical and quantitative while business leans applied; their mathematics requirements differ markedly, so the distinction is worth settling before choosing a course.",
+    courses:
+      "微观与宏观经济学、计量经济学、财务与管理会计、公司金融、统计学与商业分析、市场营销、运营管理与战略。",
+    coursesEn:
+      "Microeconomics and macroeconomics, econometrics, financial and management accounting, corporate finance, statistics and business analytics, marketing, operations and strategy.",
+    careers:
+      "投资银行、资产管理、会计师事务所与审计、管理咨询、企业财务与市场，以及经济研究与政策分析。会计方向通常须另行考取 CPA、CA 或 ACCA 等专业资格。",
+    careersEn:
+      "Investment banking, asset management, accounting firms and audit, management consulting, corporate finance and marketing, and economic research or policy analysis. Accounting routes normally require a professional qualification such as CPA, CA or ACCA in addition to the degree.",
     advice:
       "数学方法为主流要求，应用数学仅被部分院校接受；经济学与会计可增强学术契合度，LSE 经济学等专业需 TMUA。",
     adviceEn: "Mathematics Methods is the mainstream requirement and Mathematics Applications is accepted by only some universities. Economics and Accounting and Finance strengthen academic fit, and programmes such as Economics at LSE require the TMUA.",
@@ -410,6 +482,18 @@ export const FIELDS: FieldMeta[] = [
     key: "science",
     zh: "理科与生物医学",
     en: "Science",
+    intro:
+      "探究自然规律与生命过程的基础学科群，含数学、物理、化学、生物、生物医学与环境科学。多数为三年制理学士，研究导向明显，继续攻读硕士或博士的比例高于其他方向。",
+    introEn:
+      "The foundational study of natural laws and living systems, covering mathematics, physics, chemistry, biology, biomedical and environmental science. Most are three-year bachelor of science degrees with a strong research orientation, and a higher share of graduates continue to a master's or doctorate than in other fields.",
+    courses:
+      "依方向而定：微积分与线性代数、普通与有机化学、细胞与分子生物学、遗传学、力学与电磁学、统计方法，以及贯穿全程的实验课。",
+    coursesEn:
+      "Varies by specialism: calculus and linear algebra, general and organic chemistry, cell and molecular biology, genetics, mechanics and electromagnetism, and statistical methods, with laboratory work throughout.",
+    careers:
+      "科研与实验室岗位、生物科技与制药、环境与可持续发展、数据分析、专利与科学传播，以及中学与大学教职。",
+    careersEn:
+      "Research and laboratory roles, biotechnology and pharmaceuticals, environment and sustainability, data analysis, patents and science communication, and teaching at secondary or university level.",
     advice:
       "按目标细分选科：生物医学需化学加人体生物或生物，物理科学需数学加物理，环境科学建议化学搭配生物。",
     adviceEn: "Choose courses according to the specific target: biomedical science requires Chemistry with Human Biology or Biology, physical sciences require Mathematics with Physics, and environmental science is best served by Chemistry with Biology.",
@@ -418,6 +502,18 @@ export const FIELDS: FieldMeta[] = [
     key: "design",
     zh: "建筑与设计",
     en: "Architecture and Design",
+    intro:
+      "以空间、产品与人居环境为对象的设计学科，含建筑学、景观建筑、城市规划与工业设计。作品集在录取中权重很高；建筑学的注册资格路径尤其长，本科之后通常还需硕士与实习年限方可注册。",
+    introEn:
+      "Design disciplines concerned with space, products and the built environment, covering architecture, landscape architecture, urban planning and industrial design. Portfolios weigh heavily in admission, and the route to registration in architecture is particularly long: a master's degree and a period of supervised practice normally follow the bachelor's.",
+    courses:
+      "设计工作室（studio）为核心，配合建筑历史与理论、建筑技术与结构、环境控制与可持续设计、数字建模与制图、城市设计。",
+    coursesEn:
+      "The design studio sits at the centre, supported by architectural history and theory, building technology and structures, environmental control and sustainable design, digital modelling and drafting, and urban design.",
+    careers:
+      "建筑师、景观与城市设计师、室内与产品设计师，以及地产开发、工程顾问、公共部门规划与遗产保护岗位。",
+    careersEn:
+      "Architect, landscape and urban designer, interior and product designer, along with roles in property development, engineering consultancy, public-sector planning and heritage conservation.",
     advice:
       "作品集权重高于分数，BCI 未开设设计类 ATAR 课程，建议以数学方法搭配物理或应用信息技术打底，并在课外持续积累作品集。",
     adviceEn: "The portfolio carries more weight than the score. BCI does not offer design ATAR courses, so Mathematics Methods with Physics or Applied Information Technology is a sound foundation, alongside continuous portfolio development outside the classroom.",
@@ -426,6 +522,18 @@ export const FIELDS: FieldMeta[] = [
     key: "creative",
     zh: "艺术与创意",
     en: "Art and Creative Practice",
+    intro:
+      "以视觉、听觉与叙事创作为核心的学科群，含纯艺术、视觉艺术、音乐、影视、戏剧、动画与数码艺术、创意媒体、平面设计与艺术史。与其他方向最大的不同在于：录取以作品集或试音为第一依据，学术成绩多为并行门槛而非决定因素。",
+    introEn:
+      "Disciplines built on visual, sonic and narrative practice, covering fine and visual art, music, film, drama, animation and digital art, creative media, graphic design and art history. What sets this field apart is the basis of admission: a portfolio or audition comes first, and academic results usually serve as a parallel threshold rather than the deciding factor.",
+    courses:
+      "工作室创作与评图（critique）、艺术史与理论、媒介技法（绘画、雕塑、摄影、动画、录音与后期）、表演与合奏、剧本与影像制作、策展与艺术管理。",
+    coursesEn:
+      "Studio practice and critique, art history and theory, medium-specific technique (painting, sculpture, photography, animation, recording and post-production), performance and ensemble work, screenwriting and film production, and curating and arts management.",
+    careers:
+      "艺术家与设计师、动画与影视从业者、演奏与作曲、策展与艺术行政，以及游戏、广告、出版与文化机构。该方向的自由职业与项目制比例明显高于其他方向，收入结构也更不规则。",
+    careersEn:
+      "Artist and designer, animation and film practitioner, performer and composer, curator and arts administrator, and roles in games, advertising, publishing and cultural institutions. Freelance and project-based work is far more common here than in other fields, and income is correspondingly less regular.",
     advice:
       "录取以作品集或试音为第一依据，分数多为并行门槛而非决定因素。BCI 未开设艺术类 ATAR 课程，应以 EALD 保障写作与陈述能力、以应用信息技术承接数字创作，并在校外持续积累可展示的作品；音乐方向须另行考取 ABRSM 等级作为资格佐证。",
     adviceEn:
@@ -435,6 +543,18 @@ export const FIELDS: FieldMeta[] = [
     key: "arts",
     zh: "人文社科与传媒",
     en: "Arts and Social Sciences",
+    intro:
+      "研究人类社会、文化与传播的学科群，含文学、历史、哲学、心理学、社会学、政治与国际关系、传播与新闻。多数为文学士，课程以论文写作与研讨课为主，选课弹性大，常可跨学科组合主辅修。",
+    introEn:
+      "The study of society, culture and communication, covering literature, history, philosophy, psychology, sociology, politics and international relations, and media and journalism. Most are bachelor of arts degrees built on essay writing and seminars, with considerable freedom to combine majors and minors across disciplines.",
+    courses:
+      "学科导论与理论、研究方法与统计（社科方向）、论文写作与研讨课、语言与文本分析、田野调查或实习项目。",
+    coursesEn:
+      "Disciplinary foundations and theory, research methods and statistics for the social sciences, essay writing and seminars, language and textual analysis, and fieldwork or internship projects.",
+    careers:
+      "传媒与出版、公共关系与市场传播、政府与国际组织、教育与研究、社会服务与非营利机构，以及重视写作与分析能力的通用管理岗位。",
+    careersEn:
+      "Media and publishing, public relations and marketing communications, government and international organisations, education and research, social services and the non-profit sector, and general management roles that reward writing and analysis.",
     advice:
       "以英语或 EALD 等论文写作型科目为主，心理学适合社科方向，语言类专业可用中文科目佐证语言资格。",
     adviceEn: "Build the programme around essay-writing courses such as English or EALD. Psychology suits social science pathways, and the Chinese courses can evidence language qualifications for language programmes.",
@@ -443,6 +563,18 @@ export const FIELDS: FieldMeta[] = [
     key: "education",
     zh: "教育",
     en: "Education",
+    intro:
+      "研究教学、学习与教育制度的学科，含小学与中学教育、幼儿教育与教育心理学。课程普遍嵌入教学实习，学位与教师资格常为一体；毕业后须取得所在地教师注册资格方可在公立学校任教。",
+    introEn:
+      "The study of teaching, learning and educational systems, covering primary and secondary education, early childhood education and educational psychology. Supervised teaching placements are embedded in the degree, which commonly carries the teaching qualification with it, though registration with the local teaching authority is still required to teach in state schools.",
+    courses:
+      "教育心理学与儿童发展、课程与教学法、学科教学法、教育评估、包容性教育与特殊需要、课堂管理，以及分学期的教学实习。",
+    coursesEn:
+      "Educational psychology and child development, curriculum and pedagogy, subject-specific teaching methods, assessment, inclusive and special-needs education, classroom management, and teaching placements spread across the degree.",
+    careers:
+      "中小学与幼儿教师、教育行政与课程开发、教育科技与企业培训、教育研究与政策；国际学校与课外培训机构亦为常见去向。",
+    careersEn:
+      "Teaching in schools and early childhood settings, educational administration and curriculum development, education technology and corporate training, and education research and policy. International schools and tutoring providers are also common destinations.",
     advice: "教育类专业普遍需要面试，英语能力权重高，建议保持英语成绩并积累教学或志愿服务经历。",
     adviceEn: "Education programmes generally require an interview and place heavy weight on English proficiency, so maintaining English results and accumulating teaching or volunteering experience is advisable.",
   },

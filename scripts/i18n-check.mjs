@@ -32,7 +32,7 @@ for (const [field, expected] of PAIRS) {
 }
 
 // note / advice 属于科目与方向元数据
-for (const field of ["note", "advice"]) {
+for (const field of ["note", "advice", "intro", "courses", "careers"]) {
   const zh = (src.match(new RegExp(`^\\s*${field}:(?!\\s*(string|number))`, "gm")) ?? []).length;
   const en = (src.match(new RegExp(`^\\s*${field}En:(?!\\s*(string|number))`, "gm")) ?? []).length;
   console.log(`  · ${field}: 中文 ${zh} / 英文 ${en}`);
