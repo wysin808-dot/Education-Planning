@@ -25,16 +25,14 @@ import { saveRecentTool } from "@/lib/recent";
  * 品牌资产收进仓库（client/public/brand），不再依赖外部存储，
  * 本地开发、离线与自建部署下都能正常显示。
  *
- * 两个文件同源：bci-logo-horizontal.png 为官方横版锁定图原件，
- * bci-crest.png 由同一份原件左段裁切而来，只裁不改，未重绘任何笔画。
- *
- * 深色底（页脚）尚无官方反白版本。反相红色版会把徽章内部的盾徽与书页
- * 一并压成白块，属于改绘官方标识，故改以浅色承托底盛放原件——
- * 拿到官方反白文件后，把它放进同一目录并在此处改回两个常量即可，
- * 同时移除下方的 plate 承托样式。
+ * 四个文件同源，均由官方品牌规范矢量原件（BCI SVG.pdf）导出：
+ * 红版用于纸感浅底，反白版用于深墨绿页脚等深色底。
+ * 一律只做裁切与透明通道处理，未重绘任何笔画，也不以反相代替官方反白版。
  */
 const LOGO_RED = "/brand/bci-logo-horizontal.png";
+const LOGO_WHITE = "/brand/bci-logo-horizontal-white.png";
 const CREST_RED = "/brand/bci-crest.png";
+const CREST_WHITE = "/brand/bci-crest-white.png";
 
 export function Wordmark({
   variant = "dark",
@@ -51,13 +49,9 @@ export function Wordmark({
     return (
       <span className="flex min-w-0 items-center gap-2.5 sm:gap-3" title={t(`博林国际学院 · ${fullName}`, fullName)}>
         <img
-          src={CREST_RED}
+          src={light ? CREST_WHITE : CREST_RED}
           alt="Brentvale College"
-          className={cn(
-            "h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9",
-            // 深色底：以浅色承托底盛放官方原件，不反相、不改绘
-            light && "rounded-full bg-paper p-0.5",
-          )}
+          className="h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9"
         />
         <span className="min-w-0 border-l border-brass/60 pl-2.5 sm:pl-3">
           <span
@@ -81,13 +75,9 @@ export function Wordmark({
   return (
     <span className="flex items-center gap-3.5" title={t(`博林国际学院 · ${fullName}`, fullName)}>
       <img
-        src={LOGO_RED}
+        src={light ? LOGO_WHITE : LOGO_RED}
         alt="Brentvale College International"
-        className={cn(
-          "h-10 w-auto shrink-0 object-contain sm:h-11",
-          // 深色底：同上，承托而非反相
-          light && "rounded-sm bg-paper px-2 py-1",
-        )}
+        className="h-10 w-auto shrink-0 object-contain sm:h-11"
       />
       <span
         className={cn(
