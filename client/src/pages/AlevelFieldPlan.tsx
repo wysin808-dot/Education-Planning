@@ -139,7 +139,7 @@ export default function AlevelFieldPlan() {
       </div>
 
       <section className="container grid gap-8 py-9 lg:grid-cols-[22rem_1fr] lg:gap-12">
-        <aside className="no-print lg:sticky lg:top-24 lg:self-start">
+        <aside className="no-print lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto">
           <div className="border border-border bg-card p-6">
             <p className="eyebrow text-brass">{t("方向定位", "Field selection")}</p>
 

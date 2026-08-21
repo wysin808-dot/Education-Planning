@@ -3,7 +3,7 @@
  * 仅把官方明确公布的等级条件用于分层；其他结果保留为“顾问复核”，并显示原始口径说明。
  */
 import { useMemo, useState } from "react";
-import { AlertTriangle, Check, ChevronDown, Printer, SlidersHorizontal } from "lucide-react";
+import { AlertTriangle, Check, ChevronDown, Printer, SlidersHorizontal, X } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/Brand";
 import { QsRank } from "@/components/QsRank";
 import { Tick } from "@/components/Motion";
@@ -34,6 +34,37 @@ export default function AlevelForward() {
   const rows = useMemo(() => selectedCount >= 3 ? alevelForwardMatch({ grades, regions, fields }) : [], [grades, regions, fields, selectedCount]);
 
   const toggle = <T,>(list: T[], item: T, setter: (value: T[]) => void) => setter(list.includes(item) ? list.filter((x) => x !== item) : [...list, item]);
+  /** 折叠筛选时的已选条件摘要，与 /wace/forward 的 summaryChips 对位 */
+  const summaryChips = useMemo(() => {
+    const chips: { key: string; label: string }[] = [];
+    chips.push({ key: "grades", label: t(`${selectedCount} 门预测成绩`, `${selectedCount} predicted grades`) });
+    chips.push({
+      key: "regions",
+      label:
+        regions.length === 0
+          ? t("地区：全部", "Regions: all")
+          : `${t("地区：", "Regions: ")}${regions
+              .map((id) => {
+                const meta = REGIONS.find((r) => r.id === id);
+                return lang === "zh" ? meta?.label : meta?.labelEn;
+              })
+              .join(lang === "zh" ? "、" : ", ")}`,
+    });
+    chips.push({
+      key: "fields",
+      label:
+        fields.length === 0
+          ? t("方向：全部", "Fields: all")
+          : `${t("方向：", "Fields: ")}${fields
+              .map((key) => {
+                const meta = FIELDS.find((f) => f.key === key);
+                return lang === "zh" ? meta?.zh : meta?.en;
+              })
+              .join(lang === "zh" ? "、" : ", ")}`,
+    });
+    return chips;
+  }, [selectedCount, regions, fields, lang]);
+
   const gradeText = ALEVEL_SUBJECTS.filter((subject) => grades[subject.key]).map((subject) => `${lang === "zh" ? subject.zh : subject.en} ${grades[subject.key]}`).join(" · ");
 
   return (
@@ -50,35 +81,158 @@ export default function AlevelForward() {
                 <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">{t("输入至少 3 门预测 A-Level 成绩。公开等级条件会被分层；未公布等级的课程保留为顾问复核。", "Enter predicted grades for at least three A-Level subjects. Published grade profiles are tiered; unpublished thresholds remain for counsellor review.")}</p>
                 <OfferGradeRule compact className="mt-5 max-w-3xl" />
               </div>
-              {selectedCount >= 3 && <PrintReportButton compact />}
+              <PrintReportButton compact />
             </div>
           </div>
         </section>
         <div className="container grid gap-8 py-9 lg:grid-cols-[19rem_1fr] lg:gap-12">
-          <aside className="no-print lg:sticky lg:top-24 lg:self-start">
-            <button type="button" onClick={() => setFiltersOpen((v) => !v)} className="flex w-full items-center justify-between border border-green bg-green px-4 py-3 text-[0.8125rem] text-primary-foreground lg:hidden">
-              <span className="flex items-center gap-2"><SlidersHorizontal className="h-4 w-4" /> {t("成绩与筛选", "Grades & filters")}</span><ChevronDown className={cn("h-4 w-4 transition-transform", filtersOpen && "rotate-180")} />
+          {/*
+            侧栏与 /wace/forward 严格对位：手机折叠开关 → 折叠时的已选条件摘要 →
+            查询条件（成绩 / 地区 / 方向）→ 清除筛选 → 分层口径图例。
+            此前本页只有成绩与两组筛选，缺摘要、缺「不勾选即全选」的说明、
+            缺清除入口、也缺分层口径，家长在两套体系间切换时读到的结构不一样。
+          */}
+          <aside className="no-print lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto">
+            <button
+              type="button"
+              onClick={() => setFiltersOpen((v) => !v)}
+              aria-expanded={filtersOpen}
+              className="mb-4 flex w-full items-center justify-between border border-green bg-green px-4 py-3 text-left text-[0.8125rem] text-primary-foreground lg:hidden">
+              <span className="inline-flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4" />
+                {t("成绩与筛选", "Grades & filters")}
+              </span>
+              <ChevronDown className={cn("h-4 w-4 transition-transform", filtersOpen && "rotate-180")} />
             </button>
-            <div className={cn("border border-border bg-card p-5 lg:block", !filtersOpen && "hidden")}>
-              <p className="eyebrow text-brass">{t("预测成绩", "Predicted grades")}</p>
-              <div className="mt-4 space-y-3">
-                {ALEVEL_SUBJECTS.map((subject) => (
-                  <label key={subject.key} className="flex items-center justify-between gap-3 text-[0.8125rem] text-green">
-                    <span>{lang === "zh" ? subject.zh : subject.en}</span>
-                    <select value={grades[subject.key]} onChange={(event) => setGrades((prev) => ({ ...prev, [subject.key]: event.target.value as AlevelGrade }))} className="w-16 border border-border bg-paper px-2 py-1.5 text-center text-green">
-                      {GRADES.map((grade) => <option key={grade.value} value={grade.value}>{grade.label}</option>)}
-                    </select>
-                  </label>
-                ))}
+
+            {/* 折叠状态下的已选条件摘要：无需展开即可复核输入 */}
+            {!filtersOpen && (
+              <div className="mb-4 border border-border bg-paper-deep/45 p-3.5 lg:hidden">
+                <span className="almanac-index">{t("已选条件 / SUMMARY", "SUMMARY")}</span>
+                <div className="mt-2.5 flex flex-wrap gap-1.5 border-t border-border pt-2.5">
+                  {summaryChips.map((chip) => (
+                    <span
+                      key={chip.key}
+                      className="border border-brass/45 bg-brass/8 px-2 py-0.5 text-[0.6875rem] leading-relaxed text-[oklch(0.42_0.07_74)]">
+                      {chip.label}
+                    </span>
+                  ))}
+                </div>
+                {selectedCount > 0 && selectedCount < 3 && (
+                  <p className="mt-2.5 flex items-start gap-1.5 text-[0.6875rem] leading-relaxed text-[oklch(0.48_0.07_74)]">
+                    <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+                    {t("不足三门，等级匹配需至少三门。", "Fewer than three subjects; matching needs at least three.")}
+                  </p>
+                )}
               </div>
-              <p className={cn("mt-4 border-t border-border pt-3 text-[0.75rem]", selectedCount >= 3 ? "text-tier-safe" : "text-tier-reach")}>{t(`已填 ${selectedCount}/3–4 门`, `${selectedCount}/3–4 subjects entered`)}</p>
-              <div className="mt-6 border-t border-border pt-5">
-                <p className="eyebrow text-muted-foreground">{t("目标地区", "Regions")}</p>
-                <div className="mt-3 flex flex-wrap gap-2">{REGIONS.map((region) => <button key={region.id} type="button" onClick={() => toggle(regions, region.id, setRegions)} className={cn("border px-2 py-1 text-[0.75rem]", regions.includes(region.id) ? "border-green bg-green text-primary-foreground" : "border-border text-muted-foreground")}>{lang === "zh" ? region.label : region.labelEn}</button>)}</div>
+            )}
+
+            <div className={cn("lg:block", !filtersOpen && "hidden")}>
+              <div className="border border-border bg-card p-5">
+                <span className="almanac-index">{t("查询条件 / QUERY", "QUERY")}</span>
+
+                <div className="mt-4 border-t border-border pt-5">
+                  <p className="eyebrow text-brass">{t("预测成绩", "Predicted grades")}</p>
+                  <div className="mt-4 space-y-3">
+                    {ALEVEL_SUBJECTS.map((subject) => (
+                      <label key={subject.key} className="flex items-center justify-between gap-3 text-[0.8125rem] text-green">
+                        <span>{lang === "zh" ? subject.zh : subject.en}</span>
+                        <select
+                          value={grades[subject.key]}
+                          onChange={(event) => setGrades((prev) => ({ ...prev, [subject.key]: event.target.value as AlevelGrade }))}
+                          className="w-16 border border-border bg-paper px-2 py-1.5 text-center text-green outline-none transition-colors focus:border-brass">
+                          {GRADES.map((grade) => <option key={grade.value} value={grade.value}>{grade.label}</option>)}
+                        </select>
+                      </label>
+                    ))}
+                  </div>
+                  <p className={cn("mt-4 text-[0.75rem]", selectedCount >= 3 ? "text-tier-safe" : "text-tier-reach")}>
+                    {t(`已填 ${selectedCount}/3–4 门`, `${selectedCount}/3–4 subjects entered`)}
+                  </p>
+                </div>
+
+                <div className="mt-7 border-t border-border pt-6">
+                  <span className="eyebrow text-brass">{t("目标地区", "Regions")}</span>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {REGIONS.map((region) => (
+                      <button
+                        key={region.id}
+                        type="button"
+                        onClick={() => toggle(regions, region.id, setRegions)}
+                        className={cn(
+                          "border px-2 py-1 text-[0.75rem] transition-colors duration-150",
+                          regions.includes(region.id)
+                            ? "border-green bg-green text-primary-foreground"
+                            : "border-input text-muted-foreground hover:border-brass hover:text-green",
+                        )}>
+                        {lang === "zh" ? region.label : region.labelEn}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[0.75rem] text-muted-foreground">
+                    {t("不勾选则包含全部地区。", "Leave unselected to include every region.")}
+                  </p>
+                </div>
+
+                <div className="mt-7 border-t border-border pt-6">
+                  <span className="eyebrow text-brass">{t("专业方向", "Field of study")}</span>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {FIELDS.map((field) => (
+                      <button
+                        key={field.key}
+                        type="button"
+                        onClick={() => toggle(fields, field.key, setFields)}
+                        className={cn(
+                          "border px-2 py-1 text-[0.75rem] transition-colors duration-150",
+                          fields.includes(field.key)
+                            ? "border-green bg-green text-primary-foreground"
+                            : "border-input text-muted-foreground hover:border-brass hover:text-green",
+                        )}>
+                        {lang === "zh" ? field.zh : field.en}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[0.75rem] text-muted-foreground">
+                    {t("不勾选则包含全部方向。", "Leave unselected to include every field.")}
+                  </p>
+                </div>
+
+                {(regions.length > 0 || fields.length > 0) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRegions([]);
+                      setFields([]);
+                    }}
+                    className="mt-6 inline-flex items-center gap-1.5 text-[0.8125rem] text-muted-foreground transition-colors hover:text-green">
+                    <X className="h-3.5 w-3.5" />
+                    {t("清除筛选条件", "Clear filters")}
+                  </button>
+                )}
               </div>
-              <div className="mt-5 border-t border-border pt-5">
-                <p className="eyebrow text-muted-foreground">{t("专业方向", "Fields")}</p>
-                <div className="mt-3 flex flex-wrap gap-2">{FIELDS.map((field) => <button key={field.key} type="button" onClick={() => toggle(fields, field.key, setFields)} className={cn("border px-2 py-1 text-[0.75rem]", fields.includes(field.key) ? "border-green bg-green text-primary-foreground" : "border-border text-muted-foreground")}>{lang === "zh" ? field.zh : field.en}</button>)}</div>
+
+              {/* 分层口径速查：A-Level 的四档与 WACE 对位，仅口径换成等级 */}
+              <div className="mt-5 border border-border bg-paper-deep/40 p-5">
+                <span className="almanac-index">{t("分层口径 / LEGEND", "LEGEND")}</span>
+                <dl className="mt-4 space-y-3 border-t border-border pt-4">
+                  {ORDER.map((tierKey) => {
+                    const meta = ALEVEL_TIER_META[tierKey];
+                    return (
+                      <div key={tierKey}>
+                        <dt>
+                          <span
+                            className="inline-block border px-1.5 py-0.5 text-[0.6875rem]"
+                            style={{ color: meta.color, borderColor: meta.color }}>
+                            {lang === "zh" ? meta.zh : meta.en}
+                          </span>
+                        </dt>
+                        <dd className="mt-1.5 font-[family-name:var(--font-serif)] text-[0.75rem] leading-relaxed text-muted-foreground">
+                          {lang === "zh" ? meta.definitionZh : meta.definitionEn}
+                        </dd>
+                      </div>
+                    );
+                  })}
+                </dl>
               </div>
             </div>
           </aside>

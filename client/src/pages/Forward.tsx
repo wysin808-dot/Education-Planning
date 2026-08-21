@@ -306,7 +306,7 @@ export default function Forward() {
         />
 
         {/* 左侧索引栏 */}
-        <aside className="no-print lg:sticky lg:top-28 lg:self-start">
+        <aside className="no-print lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto">
           <button
             type="button"
             onClick={() => setFiltersOpen((open) => !open)}
