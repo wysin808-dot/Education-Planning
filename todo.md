@@ -233,4 +233,7 @@
 - [x] 封面横幅左下角留空，避免压住页面叠加的宣传册标题。
 - [x] 统计脚本改为按需注入：未配置 VITE_ANALYTICS_ENDPOINT 时不再产生 404。
 - [x] 回归由 13/16 提升至 15/16；仅剩 print-layout-check 依赖外部托管的固定宣传册 PDF。
+- [x] 新增 scripts/build-standalone.mjs：打成单个自包含 HTML，可直接发给同事本地打开。
+- [x] 新增 vercel.json：SPA 改写规则与 noindex 响应头，供部署到 Vercel 供同事在线访问。
+- [x] App.tsx 支持可选哈希路由（VITE_HASH_ROUTER），仅单文件预览启用，正式部署行为不变。
 

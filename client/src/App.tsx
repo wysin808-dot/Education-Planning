@@ -5,7 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { useEffect } from "react";
-import { Redirect, Route, Switch, useLocation } from "wouter";
+import { Redirect, Route, Router as WouterRouter, Switch, useLocation } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LangProvider } from "./contexts/LangContext";
@@ -93,7 +94,19 @@ function App() {
             <TooltipProvider>
               <Toaster />
               <SearchIndexPolicy />
-              <Router />
+              {/*
+               * 默认使用浏览器路径路由。
+               * 打成单文件、放在静态托管的子路径下预览时（VITE_HASH_ROUTER=true），
+               * 路径路由拿不到服务端改写，改用哈希路由才能让深层链接可用。
+               * 正式部署不设该变量，行为与此前完全一致。
+               */}
+              {import.meta.env.VITE_HASH_ROUTER === "true" ? (
+                <WouterRouter hook={useHashLocation}>
+                  <Router />
+                </WouterRouter>
+              ) : (
+                <Router />
+              )}
             </TooltipProvider>
           </ShortlistProvider>
         </LangProvider>
