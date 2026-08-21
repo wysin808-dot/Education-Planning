@@ -101,7 +101,7 @@ export default function AlevelSubjects() {
     <div className="min-h-screen bg-paper">
       <SiteHeader />
       <main>
-        <section className="border-b border-border bg-paper-deep/35">
+        <section className="print-title-band border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
             <p className="eyebrow text-brass">{t("A-Level · 选课规划", "A-Level · Subject Planner")}</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">

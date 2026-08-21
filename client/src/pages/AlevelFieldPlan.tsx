@@ -118,7 +118,7 @@ export default function AlevelFieldPlan() {
       <SiteHeader />
       <PrintHeader title={t("Cambridge A-Level 学科方向升学方案", "Cambridge A-Level field pathway report")} />
 
-      <div className="border-b border-border bg-paper-deep/45">
+      <div className="print-title-band border-b border-border bg-paper-deep/45">
         <div className="container flex flex-wrap items-end justify-between gap-4 py-8">
           <div>
             <p className="eyebrow text-brass">

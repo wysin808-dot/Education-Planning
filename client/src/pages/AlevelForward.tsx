@@ -40,7 +40,7 @@ export default function AlevelForward() {
     <div className="min-h-screen bg-paper">
       <SiteHeader />
       <main>
-        <section className="border-b border-border bg-paper-deep/35">
+        <section className="print-title-band border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
             
             <p className="eyebrow text-brass">{t("A-Level · 有成绩规划", "A-Level · Plan from Grades")}</p>

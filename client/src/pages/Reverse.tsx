@@ -159,7 +159,7 @@ export default function Reverse() {
       <SiteHeader />
       <main>
         {/* 标题区：与 A-Level 反查页同一规格 */}
-        <section className="border-b border-border bg-paper-deep/35">
+        <section className="print-title-band border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
             <p className="eyebrow text-brass">{t("WACE · 由目标规划", "WACE · Plan from a Target")}</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">
