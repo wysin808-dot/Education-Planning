@@ -37,8 +37,15 @@ try {
 
     // 每个体系六项功能页，另加宣传册
     const entryCount = await menu.locator("a").count();
-    // 两套体系各 7 项功能页（总览 / 有成绩规划 / 由目标规划 / 由方向规划 / 选课规划 / 31 校速查 / 目标清单）加宣传册
-    const EXPECTED_ENTRIES = 15;
+    /*
+     * WACE 8 项（总览 / 有成绩规划 / 由目标规划 / 由方向规划 / 升学时间轴 /
+     * 选课规划 / 31 校速查 / 目标清单）+ A-Level 7 项 + 宣传册。
+     *
+     * 两侧不等：升学时间轴锚定「11 月考试、12 月正式 ATAR」，是 WACE 特有的周期；
+     * A-Level 的出分与申请节奏不同，在取得可核验的官方日期之前不建对位页面——
+     * 宁可暂时不对位，也不拿经验值凑一个看起来对称的页面。
+     */
+    const EXPECTED_ENTRIES = 16;
     if (entryCount !== EXPECTED_ENTRIES) {
       throw new Error(`${start} 目录入口数量异常：预期 ${EXPECTED_ENTRIES}，实际 ${entryCount}`);
     }

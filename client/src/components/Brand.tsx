@@ -131,6 +131,7 @@ const WACE_NAV: NavItem[] = [
   { href: "/wace/forward", zh: "有成绩规划", en: "Plan from Grades", noteZh: "输入预计 ATAR，查看可申请的院校与专业", noteEn: "Enter a projected ATAR to find reachable universities and programmes" },
   { href: "/wace/reverse", zh: "由目标规划", en: "Plan from a Target", noteZh: "锁定院校专业，反查 ATAR、先修与分年选课", noteEn: "Start from a programme and work back to its ATAR, prerequisites and year-by-year subjects" },
   { href: "/wace/field", zh: "由方向规划", en: "Plan from a Field", noteZh: "选定学科方向，反查院校、门槛与分年选课", noteEn: "Choose a field and work back to universities, thresholds and year-by-year subjects" },
+  { href: "/wace/timeline", zh: "升学时间轴", en: "Timeline", noteZh: "从 11 月考试、12 月出分到 8 月入学的完整节点", noteEn: "Every stage from November examinations and December results to the August intake" },
   { href: "/wace/subjects", zh: "选课规划", en: "Subject Planner", noteZh: "按收藏目标规划 WACE 选课组合", noteEn: "Plan WACE subjects from your shortlisted goals" },
   { href: "/wace/table", zh: "31 校速查", en: "31-University Table", noteZh: "31 所院校 ATAR 门槛的打印速查表", noteEn: "A printable quick-reference table of ATAR thresholds" },
   { href: "/wace/shortlist", zh: "目标清单", en: "Shortlist", noteZh: "汇总收藏专业，形成个人目标清单", noteEn: "Review saved programmes as a personal shortlist" },

@@ -17,6 +17,7 @@ import Home from "./pages/Home";
 import Forward from "./pages/Forward";
 import Reverse from "./pages/Reverse";
 import FieldPlan from "./pages/FieldPlan";
+import Timeline from "./pages/Timeline";
 import Subjects from "./pages/Subjects";
 import TableView from "./pages/TableView";
 import Brochure from "./pages/Brochure";
@@ -62,6 +63,7 @@ function Router() {
       <Route path="/wace/forward" component={Forward} />
       <Route path="/wace/reverse" component={Reverse} />
       <Route path="/wace/field" component={FieldPlan} />
+      <Route path="/wace/timeline" component={Timeline} />
       <Route path="/wace/subjects" component={Subjects} />
       <Route path="/wace/table" component={TableView} />
       <Route path="/wace/shortlist" component={Shortlist} />

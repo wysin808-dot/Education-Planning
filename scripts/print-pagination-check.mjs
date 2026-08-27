@@ -25,6 +25,7 @@ const PAGES = [
   "/wace/forward",
   "/wace/reverse",
   "/wace/field",
+  "/wace/timeline",
   "/wace/subjects",
   "/wace/table",
   "/wace/shortlist",
