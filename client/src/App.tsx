@@ -54,6 +54,12 @@ function SearchIndexPolicy() {
   return null;
 }
 
+/**
+ * 路由基路径：由 Vite 的 BASE_URL 推导，去掉末尾斜杠。
+ * 根路径部署时 BASE_URL 为 "/"，此处得到 ""，wouter 视为无 base。
+ */
+const ROUTER_BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 function Router() {
   return (
     <Switch>
@@ -107,7 +113,16 @@ function App() {
                   <Router />
                 </WouterRouter>
               ) : (
-                <Router />
+                /*
+                 * 子路径部署时，路由必须知道自己挂在哪一层。
+                 * Vite 的 base 只改资源 URL；wouter 仍拿完整 pathname 去匹配，
+                 * 部署到 /planner/ 后 "/planner/wace" 匹配不上 "/wace"，
+                 * 结果整站每一页都落到 404。base 取自同一个 BASE_URL，
+                 * 根路径部署时为空字符串，行为与此前一致。
+                 */
+                <WouterRouter base={ROUTER_BASE}>
+                  <Router />
+                </WouterRouter>
               )}
             </TooltipProvider>
           </ShortlistProvider>
