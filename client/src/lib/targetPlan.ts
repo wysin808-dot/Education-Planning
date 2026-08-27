@@ -676,9 +676,9 @@ export function preparationKindLabel(kind: PreparationItem["kind"], lang: "zh" |
  * Cambridge A-Level 版本的单目标方案
  * ------------------------------------------------------------------ */
 
-/** AS（Year 12）建议开局科目数 */
+/** AS（Year 11）建议开局科目数 */
 export const AS_SUBJECTS = 4;
-/** A2（Year 13）计入 offer 的科目数 */
+/** A2（Year 12）计入 offer 的科目数 */
 export const A2_SUBJECTS = 3;
 
 export interface AlevelTargetPlanSubject {

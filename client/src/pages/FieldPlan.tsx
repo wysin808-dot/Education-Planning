@@ -129,7 +129,7 @@ export default function FieldPlan() {
       <SiteHeader />
       <PrintHeader title={t("WACE 学科方向升学方案", "WACE field pathway report")} />
 
-      <div className="border-b border-border bg-paper-deep/45">
+      <div className="print-title-band border-b border-border bg-paper-deep/45">
         <div className="container flex flex-wrap items-end justify-between gap-4 py-8">
           <div>
             <p className="eyebrow text-brass">{t("WACE · 由方向规划", "WACE · Plan from a Field")}</p>
@@ -149,7 +149,7 @@ export default function FieldPlan() {
 
       <section className="container grid gap-8 py-9 lg:grid-cols-[22rem_1fr] lg:gap-12">
         {/* 方向定位侧栏 */}
-        <aside className="no-print lg:sticky lg:top-24 lg:self-start">
+        <aside className="no-print lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto">
           <div className="border border-border bg-card p-6">
             <p className="eyebrow text-brass">{t("方向定位", "Field selection")}</p>
 

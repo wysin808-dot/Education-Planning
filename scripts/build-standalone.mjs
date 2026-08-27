@@ -42,11 +42,23 @@ for (const src of html.match(/(?<=<script[^>]*src=")[^"]+\.js/g) ?? []) {
   );
 }
 
-// 品牌图片转 data URI
+// 品牌图片转 data URI。
+// 组件里的路径写作 `${import.meta.env.BASE_URL}brand/xxx.png`，
+// 打包后字符串是不带前导斜杠的 "brand/xxx.png"，两种写法都要替换。
 const brandDir = path.join(dist, "brand");
 for (const name of readdirSync(brandDir)) {
   const b64 = readFileSync(path.join(brandDir, name)).toString("base64");
-  html = html.split(`/brand/${name}`).join(`data:image/png;base64,${b64}`);
+  const dataUri = `data:image/png;base64,${b64}`;
+  const esc = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // 1) 直接量：Vite 在 base 为 "/" 时会把模板折叠成 "/brand/xxx.png"
+  html = html.split(`/brand/${name}`).join(dataUri);
+  // 2) 运行时模板：`${BASE}brand/xxx.png`，整段换成字符串直接量
+  html = html.replace(new RegExp("`\\$\\{[A-Za-z0-9_$]+\\}brand/" + esc + "`", "g"), `"${dataUri}"`);
+  // 3) 裸引号形式
+  html = html.split(`"brand/${name}"`).join(`"${dataUri}"`);
+}
+if (html.includes("brand/bci-crest")) {
+  throw new Error("单文件打包失败：仍有未内联的 brand 资源引用");
 }
 
 const outDir = path.join(root, "dist");

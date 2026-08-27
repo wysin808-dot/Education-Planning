@@ -87,7 +87,7 @@ export default function Shortlist() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      <div className="border-b border-border bg-paper-deep/45">
+      <div className="print-title-band border-b border-border bg-paper-deep/45">
         <div className="container py-10">
           <span className="eyebrow text-brass">{t("目标清单 · Shortlist", "Shortlist")}</span>
           <h1 className="mt-3 text-[2.25rem] leading-tight text-green">

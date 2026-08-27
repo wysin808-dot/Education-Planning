@@ -10,7 +10,7 @@ import { qsSortKey } from "@/data/qs";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { REGIONS, UNIVERSITIES, type Region } from "@/data/universities";
 import { ShortlistButton } from "@/components/ShortlistButton";
-import { confidenceLabel, extraLabel } from "@/lib/matching";
+import { confidenceLabel, extraLabel, subjectGroupLabelBy } from "@/lib/matching";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/contexts/LangContext";
 import { useIsMobile } from "@/hooks/useMobile";
@@ -85,7 +85,7 @@ export default function TableView() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      <div className="border-b border-border bg-paper-deep/45">
+      <div className="print-title-band border-b border-border bg-paper-deep/45">
         <div className="container py-10">
           <span className="eyebrow text-brass">{t("WACE · 31 校速查", "WACE · 31-University Table")}</span>
           <h1 className="mt-3 text-[2.25rem] leading-tight text-green">
@@ -170,9 +170,15 @@ export default function TableView() {
               const shown = isOpen ? u.programmes : u.programmes.slice(0, previewCount);
               const hidden = u.programmes.length - shown.length;
               const regionMeta = REGIONS.find((r) => r.id === u.region);
+              /*
+               * 打印时不整块防断：一所院校的专业最多可达三十余条，
+               * 整块防断会让放不下的院校整体跳页，前一页因此留下半页空白。
+               * 改为只保证校名不与其首行分离（header 的 break-after-avoid），
+               * 长名录允许顺着流到下一页。
+               */
               return (
-              <article key={u.id} className="break-inside-avoid">
-                <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b-2 border-green pb-2.5">
+              <article key={u.id} className="print:break-inside-auto">
+                <header className="break-after-avoid flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b-2 border-green pb-2.5">
                   <div>
                     <span className="almanac-index">
                       {String(i + 1).padStart(2, "0")} /{" "}
@@ -281,14 +287,47 @@ export default function TableView() {
                             <td className="score py-2.5 pr-3 text-right text-[0.875rem] text-ink">
                               {(p.atar ?? u.minAtar) === null ? "—" : (p.atar ?? u.minAtar)!.toFixed(2)}
                             </td>
-                            <td className="py-2.5 font-[family-name:var(--font-serif)] text-[0.8125rem] leading-relaxed text-muted-foreground">
-                              {lang === "zh" ? p.atarNote : (p.atarNoteEn ?? p.atarNote)}
-                              {p.extras.length > 0 && (
-                                <span className="mt-1 block text-[oklch(0.48_0.07_74)]">
-                                  {t("附加：", "Extras: ")}
-                                  {p.extras.map((e) => extraLabel(e, lang)).join(lang === "zh" ? "、" : ", ")}
+                            {/*
+                              这一列以数据层为准，不以散文为准。
+                              此前只渲染 atarNote，而该字段与 prerequisites 会脱节——
+                              例如 NUS 医学的先修是「化学 + 人体生物 / 生物 / 物理 三选一」，
+                              散文却写成「生物或物理之一」漏掉人体生物；
+                              NUS 计算机科学的先修是数学方法，散文里一个字都没提。
+                              故先修科目改为由 prerequisites 结构化渲染（组内以「或」表达），
+                              atarNote 退为次要说明。
+                            */}
+                            <td className="py-2.5 text-[0.8125rem] leading-relaxed">
+                              {p.prerequisites.length > 0 && (
+                                <span className="mb-1.5 flex flex-wrap items-baseline gap-1.5">
+                                  <span className="eyebrow shrink-0 text-tier-reach">
+                                    {t("必修", "Required")}
+                                  </span>
+                                  {p.prerequisites.map((group, gi) => (
+                                    <span
+                                      key={gi}
+                                      className="border border-tier-reach/45 bg-tier-reach/8 px-1.5 py-0.5 text-[0.75rem] text-tier-reach">
+                                      {subjectGroupLabelBy(group, lang)}
+                                    </span>
+                                  ))}
                                 </span>
                               )}
+                              {p.extras.length > 0 && (
+                                <span className="mb-1.5 flex flex-wrap items-baseline gap-1.5">
+                                  <span className="eyebrow shrink-0 text-brass">
+                                    {t("选拔", "Assessment")}
+                                  </span>
+                                  {p.extras.map((e) => (
+                                    <span
+                                      key={e}
+                                      className="border border-brass/50 bg-brass/8 px-1.5 py-0.5 text-[0.75rem] text-[oklch(0.42_0.07_74)]">
+                                      {extraLabel(e, lang)}
+                                    </span>
+                                  ))}
+                                </span>
+                              )}
+                              <span className="block font-[family-name:var(--font-serif)] text-muted-foreground">
+                                {lang === "zh" ? p.atarNote : (p.atarNoteEn ?? p.atarNote)}
+                              </span>
                             </td>
                           </tr>
                         ))}

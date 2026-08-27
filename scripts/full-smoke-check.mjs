@@ -7,6 +7,7 @@ const routes = [
   ["/wace/forward", /ATAR|分数/],
   ["/wace/reverse", /院校|University/],
   ["/wace/field", /方向|Field/],
+  ["/wace/timeline", /时间轴|Timeline/],
   ["/wace/subjects", /选课|Subject/],
   ["/wace/table", /门槛|Threshold/],
   ["/wace/shortlist", /清单|Shortlist/],

@@ -118,7 +118,7 @@ export default function AlevelFieldPlan() {
       <SiteHeader />
       <PrintHeader title={t("Cambridge A-Level 学科方向升学方案", "Cambridge A-Level field pathway report")} />
 
-      <div className="border-b border-border bg-paper-deep/45">
+      <div className="print-title-band border-b border-border bg-paper-deep/45">
         <div className="container flex flex-wrap items-end justify-between gap-4 py-8">
           <div>
             <p className="eyebrow text-brass">
@@ -139,7 +139,7 @@ export default function AlevelFieldPlan() {
       </div>
 
       <section className="container grid gap-8 py-9 lg:grid-cols-[22rem_1fr] lg:gap-12">
-        <aside className="no-print lg:sticky lg:top-24 lg:self-start">
+        <aside className="no-print lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto">
           <div className="border border-border bg-card p-6">
             <p className="eyebrow text-brass">{t("方向定位", "Field selection")}</p>
 
@@ -458,8 +458,8 @@ export default function AlevelFieldPlan() {
                   </h2>
                   <p className="mt-2 max-w-[70ch] text-[0.8125rem] leading-relaxed text-muted-foreground">
                     {t(
-                      `由该方向 ${plan.targetCount} 个专业的指定与建议科目合并推导。Year 12（AS）修 ${ALEVEL_AS_SIZE} 门，Year 13（A2）保留 ${ALEVEL_A2_SIZE} 门计入 offer。`,
-                      `Derived from the required and recommended subjects of all ${plan.targetCount} programmes in this field. Year 12 (AS) takes ${ALEVEL_AS_SIZE} subjects and Year 13 (A2) keeps ${ALEVEL_A2_SIZE} towards the offer.`,
+                      `由该方向 ${plan.targetCount} 个专业的指定与建议科目合并推导。Year 11（AS）修 ${ALEVEL_AS_SIZE} 门，Year 12（A2）保留 ${ALEVEL_A2_SIZE} 门计入 offer。`,
+                      `Derived from the required and recommended subjects of all ${plan.targetCount} programmes in this field. Year 11 (AS) takes ${ALEVEL_AS_SIZE} subjects and Year 12 (A2) keeps ${ALEVEL_A2_SIZE} towards the offer.`,
                     )}
                   </p>
                 </div>
@@ -467,7 +467,7 @@ export default function AlevelFieldPlan() {
                 <div className="grid gap-8 px-7 py-6 lg:grid-cols-2">
                   <div>
                     <p className="eyebrow text-brass">
-                      {t(`Year 12 · AS ${ALEVEL_AS_SIZE} 门`, `Year 12 · AS ${ALEVEL_AS_SIZE} subjects`)}
+                      {t(`Year 11 · AS ${ALEVEL_AS_SIZE} 门`, `Year 11 · AS ${ALEVEL_AS_SIZE} subjects`)}
                     </p>
                     <ul className="mt-3">
                       {plan.as.map((item, i) => (
@@ -477,7 +477,7 @@ export default function AlevelFieldPlan() {
                   </div>
                   <div>
                     <p className="eyebrow text-brass">
-                      {t(`Year 13 · A2 ${ALEVEL_A2_SIZE} 门`, `Year 13 · A2 ${ALEVEL_A2_SIZE} subjects`)}
+                      {t(`Year 12 · A2 ${ALEVEL_A2_SIZE} 门`, `Year 12 · A2 ${ALEVEL_A2_SIZE} subjects`)}
                     </p>
                     <ul className="mt-3">
                       {plan.a2.map((item, i) => (

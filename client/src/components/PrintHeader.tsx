@@ -5,7 +5,8 @@
  */
 import { useLang } from "@/contexts/LangContext";
 
-const CREST = "/brand/bci-crest.png";
+/** 与 Brand.tsx 一致：走 BASE_URL，子路径部署时才不会裂图 */
+const CREST = `${import.meta.env.BASE_URL}brand/bci-crest.png`;
 
 export function PrintHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   const { t, lang } = useLang();

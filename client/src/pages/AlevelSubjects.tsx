@@ -1,6 +1,6 @@
 /**
  * 设计风格：Admissions Almanac
- * A-Level 选课规划：与 WACE 选课页同构，先给出 AS（Year 12）与 A2（Year 13）
+ * A-Level 选课规划：与 WACE 选课页同构，先给出 AS（Year 11）与 A2（Year 12）
  * 的具体组合与冲突诊断，再列推导依据，最后才是课程目录与方向参考。
  * 目标来源为全站共享的收藏清单，本页只读。
  */
@@ -101,11 +101,11 @@ export default function AlevelSubjects() {
     <div className="min-h-screen bg-paper">
       <SiteHeader />
       <main>
-        <section className="border-b border-border bg-paper-deep/35">
+        <section className="print-title-band border-b border-border bg-paper-deep/35">
           <div className="container py-9 lg:py-12">
             <p className="eyebrow text-brass">{t("A-Level · 选课规划", "A-Level · Subject Planner")}</p>
             <h1 className="mt-3 font-[family-name:var(--font-serif)] text-3xl text-green sm:text-4xl">
-              {t("Year 12 与 Year 13 选课方案", "Year 12 and Year 13 subject plan")}
+              {t("Year 11 与 Year 12 选课方案", "Year 11 and Year 12 subject plan")}
             </h1>
             <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground">
               {t(
@@ -183,7 +183,7 @@ export default function AlevelSubjects() {
                 <div>
                   <span className="almanac-index">{t("方案一", "Stage one")}</span>
                   <h2 className="mt-0.5 font-[family-name:var(--font-serif)] text-[1.375rem] text-green">
-                    Year 12 · AS
+                    Year 11 · AS
                   </h2>
                 </div>
                 <span className="score text-[0.8125rem] text-muted-foreground">
@@ -208,7 +208,7 @@ export default function AlevelSubjects() {
                 <div>
                   <span className="almanac-index">{t("方案二", "Stage two")}</span>
                   <h2 className="mt-0.5 font-[family-name:var(--font-serif)] text-[1.375rem] text-green">
-                    Year 13 · A2
+                    Year 12 · A2
                   </h2>
                 </div>
                 <span className="score text-[0.8125rem] text-muted-foreground">

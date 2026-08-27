@@ -29,10 +29,11 @@ import { saveRecentTool } from "@/lib/recent";
  * 红版用于纸感浅底，反白版用于深墨绿页脚等深色底。
  * 一律只做裁切与透明通道处理，未重绘任何笔画，也不以反相代替官方反白版。
  */
-const LOGO_RED = "/brand/bci-logo-horizontal.png";
-const LOGO_WHITE = "/brand/bci-logo-horizontal-white.png";
-const CREST_RED = "/brand/bci-crest.png";
-const CREST_WHITE = "/brand/bci-crest-white.png";
+const BASE = import.meta.env.BASE_URL;
+const LOGO_RED = `${BASE}brand/bci-logo-horizontal.png`;
+const LOGO_WHITE = `${BASE}brand/bci-logo-horizontal-white.png`;
+const CREST_RED = `${BASE}brand/bci-crest.png`;
+const CREST_WHITE = `${BASE}brand/bci-crest-white.png`;
 
 export function Wordmark({
   variant = "dark",
@@ -130,6 +131,7 @@ const WACE_NAV: NavItem[] = [
   { href: "/wace/forward", zh: "有成绩规划", en: "Plan from Grades", noteZh: "输入预计 ATAR，查看可申请的院校与专业", noteEn: "Enter a projected ATAR to find reachable universities and programmes" },
   { href: "/wace/reverse", zh: "由目标规划", en: "Plan from a Target", noteZh: "锁定院校专业，反查 ATAR、先修与分年选课", noteEn: "Start from a programme and work back to its ATAR, prerequisites and year-by-year subjects" },
   { href: "/wace/field", zh: "由方向规划", en: "Plan from a Field", noteZh: "选定学科方向，反查院校、门槛与分年选课", noteEn: "Choose a field and work back to universities, thresholds and year-by-year subjects" },
+  { href: "/wace/timeline", zh: "升学时间轴", en: "Timeline", noteZh: "从 11 月考试、12 月出分到 8 月入学的完整节点", noteEn: "Every stage from November examinations and December results to the August intake" },
   { href: "/wace/subjects", zh: "选课规划", en: "Subject Planner", noteZh: "按收藏目标规划 WACE 选课组合", noteEn: "Plan WACE subjects from your shortlisted goals" },
   { href: "/wace/table", zh: "31 校速查", en: "31-University Table", noteZh: "31 所院校 ATAR 门槛的打印速查表", noteEn: "A printable quick-reference table of ATAR thresholds" },
   { href: "/wace/shortlist", zh: "目标清单", en: "Shortlist", noteZh: "汇总收藏专业，形成个人目标清单", noteEn: "Review saved programmes as a personal shortlist" },
@@ -247,14 +249,14 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
 
         <div className="flex min-w-0 shrink-0 items-center gap-3">
           {showCurriculumRow && (
-            <span className="border border-green bg-green px-2 py-1 text-[0.6875rem] tracking-[0.08em] text-primary-foreground sm:hidden">
+            <span className="border-2 border-green bg-green px-3 py-1.5 text-[0.8125rem] font-semibold tracking-[0.08em] text-primary-foreground sm:hidden">
               {current === "alevel" ? "A-Level" : "WACE"}
             </span>
           )}
           {showCurriculumRow && (
             <nav
               aria-label={t("课程体系", "Curriculum")}
-              className="hidden items-stretch border border-border sm:flex">
+              className="hidden items-stretch border-2 border-green/45 sm:flex">
               {curricula.map((c) => {
                 const active = current === c.id;
                 return (
@@ -263,15 +265,15 @@ export function SiteHeader({ chooser = false }: { chooser?: boolean }) {
                     href={switchTo(c)}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex flex-col justify-center whitespace-nowrap px-3 py-1.5 text-left transition-colors duration-150",
+                      "flex flex-col justify-center whitespace-nowrap px-5 py-2.5 text-left transition-colors duration-150",
                       active
                         ? "bg-green text-primary-foreground"
                         : "text-muted-foreground hover:bg-paper-deep hover:text-green",
                     )}>
-                    <span className="text-[0.8125rem] leading-tight">{lang === "zh" ? c.zh : c.en}</span>
+                    <span className="text-[1.0625rem] font-semibold leading-tight">{lang === "zh" ? c.zh : c.en}</span>
                     <span
                       className={cn(
-                        "text-[0.5625rem] tracking-[0.12em]",
+                        "text-[0.75rem] tracking-[0.12em]",
                         active ? "text-paper/70" : "text-muted-foreground/75",
                       )}>
                       {lang === "zh" ? c.tagZh : c.tagEn}
