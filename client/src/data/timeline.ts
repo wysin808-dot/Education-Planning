@@ -35,8 +35,15 @@ export interface AdmissionTimeline {
   universityId: string;
   applicationOpen: TimelinePoint | null;
   applicationDeadline: TimelinePoint | null;
-  /** 面试、笔试、作品集评审等附加选拔的窗口 */
-  assessmentWindow: TimelinePoint | null;
+  /*
+   * 此处曾有 assessmentWindow（选拔窗口）字段，已移除。
+   *
+   * 各校官方并未公布统一的选拔月份，规划稿给出的是「视专业而定」
+   * 「部分课程设面试或评估」这类无信息量的表述——六校里四校雷同，
+   * 占着一列却什么也没说。而数据层里本来就有逐专业核验过的 extras
+   * （面试 / 笔试 / 作品集 / 试音 / UCAT），能确切回答「哪些专业要什么」。
+   * 因此改为在页面上由 UNIVERSITIES 实时推导，不再存一个占位的月份。
+   */
   /** Offer 公布窗口 */
   offerWindow: TimelinePoint | null;
   /** 开学月份 */
@@ -135,15 +142,17 @@ export const WACE_CYCLE: CycleStage[] = [
  * 各校招生周期。
  *
  * applicationOpen / applicationDeadline 取自 universities.ts 中逐校核验的官方申请窗口，
- * 标为 official；assessmentWindow / offerWindow / matriculation 目前只有规划稿的经验月份，
+ * 标为 official；offerWindow / matriculation 目前只有规划稿的经验月份，
  * 一律标为 indicative，界面须显著区分。
+ *
+ * 附加选拔不在此存储：由页面从 UNIVERSITIES 的 extras 实时推导，
+ * 确切给出「哪些专业要面试 / 笔试 / 作品集 / 试音 / UCAT」。
  */
 export const SG_TIMELINES: AdmissionTimeline[] = [
   {
     universityId: "nus",
     applicationOpen: official("2025 年 12 月 3 日", "3 December 2025"),
     applicationDeadline: official("2026 年 2 月 23 日", "23 February 2026"),
-    assessmentWindow: indicative("视专业而定", "Varies by programme"),
     offerWindow: indicative("通常 5 月起陆续公布，最晚批次可至 7 月", "Usually from May in batches, with the last round as late as July"),
     matriculation: indicative("8 月", "August"),
     checkedAt: "2026-08",
@@ -152,7 +161,6 @@ export const SG_TIMELINES: AdmissionTimeline[] = [
     universityId: "ntu",
     applicationOpen: official("2025 年 10 月 15 日", "15 October 2025"),
     applicationDeadline: official("2026 年 1 月 20 日", "20 January 2026"),
-    assessmentWindow: indicative("视专业而定", "Varies by programme"),
     offerWindow: indicative("澳洲学历通常 4—6 月陆续公布", "Australian qualifications usually receive outcomes from April to June"),
     matriculation: indicative("8 月", "August"),
     checkedAt: "2026-08",
@@ -161,7 +169,6 @@ export const SG_TIMELINES: AdmissionTimeline[] = [
     universityId: "smu",
     applicationOpen: official("2025 年 11 月 17 日", "17 November 2025"),
     applicationDeadline: official("2026 年 3 月 19 日", "19 March 2026"),
-    assessmentWindow: indicative("部分课程约 3—5 月", "Some programmes around March to May"),
     offerWindow: indicative("通常 5—7 月", "Usually May to July"),
     matriculation: indicative("8 月", "August"),
     checkedAt: "2026-08",
@@ -170,7 +177,6 @@ export const SG_TIMELINES: AdmissionTimeline[] = [
     universityId: "sutd",
     applicationOpen: official("2026 年 1 月 2 日", "2 January 2026"),
     applicationDeadline: official("2026 年 3 月 2 日", "2 March 2026"),
-    assessmentWindow: indicative("入围后安排 Conversation 或评估", "A conversation or assessment after shortlisting"),
     offerWindow: indicative("通常约 5 月起", "Usually from around May"),
     matriculation: indicative("9 月前后", "Around September"),
     checkedAt: "2026-08",
@@ -180,7 +186,6 @@ export const SG_TIMELINES: AdmissionTimeline[] = [
     // 官方仅明确截止日期，开放时间为「每年 1 月至 3 月」的概括表述，故开放标为 indicative
     applicationOpen: indicative("每年 1 月起", "From January each year"),
     applicationDeadline: official("2026 年 3 月 19 日", "19 March 2026"),
-    assessmentWindow: indicative("部分课程设面试或评估", "Some programmes hold an interview or assessment"),
     offerWindow: indicative("分批公布", "Released in batches"),
     matriculation: indicative("8—9 月", "August to September"),
     checkedAt: "2026-08",
@@ -189,7 +194,6 @@ export const SG_TIMELINES: AdmissionTimeline[] = [
     universityId: "suss",
     applicationOpen: official("2025 年 11 月 19 日", "19 November 2025"),
     applicationDeadline: official("2026 年 3 月 19 日", "19 March 2026"),
-    assessmentWindow: indicative("部分课程设面试或评估", "Some programmes hold an interview or assessment"),
     offerWindow: indicative("分批公布", "Released in batches"),
     matriculation: indicative("8 月", "August"),
     checkedAt: "2026-08",

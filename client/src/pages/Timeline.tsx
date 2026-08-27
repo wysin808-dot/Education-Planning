@@ -20,6 +20,7 @@ import { PrintHeader } from "@/components/PrintHeader";
 import { PrintReportButton } from "@/components/PrintReportButton";
 import { useLang } from "@/contexts/LangContext";
 import { UNIVERSITIES } from "@/data/universities";
+import { extraLabel } from "@/lib/matching";
 import {
   SG_TIMELINES,
   WACE_CYCLE,
@@ -57,6 +58,30 @@ function Point({ point }: { point: TimelinePoint | null }) {
   );
 }
 
+
+/**
+ * 某校的附加选拔要求，由 UNIVERSITIES 的 extras 实时推导。
+ *
+ * 不写死月份：各校官方并未公布统一的选拔时间，规划稿的「视专业而定」
+ * 六校里四校雷同、等于没说。而 extras 是逐专业核验过的官方项目，
+ * 能确切回答家长真正要问的「我这个专业要不要面试、要不要作品集」。
+ */
+function assessmentsOf(universityId: string) {
+  const uni = UNIVERSITIES.find((u) => u.id === universityId);
+  if (!uni) return { total: 0, withExtra: 0, groups: [] as { extra: string; programmes: string[] }[] };
+  const map = new Map<string, string[]>();
+  for (const p of uni.programmes) {
+    for (const e of p.extras) {
+      map.set(e, [...(map.get(e) ?? []), p.id]);
+    }
+  }
+  const groups = Array.from(map.entries())
+    .map(([extra, ids]) => ({ extra, programmes: ids }))
+    .sort((a, b) => b.programmes.length - a.programmes.length);
+  const withExtra = uni.programmes.filter((p) => p.extras.length > 0).length;
+  return { total: uni.programmes.length, withExtra, groups, uni };
+}
+
 export default function Timeline() {
   const { lang, t } = useLang();
 
@@ -74,14 +99,14 @@ export default function Timeline() {
       SG_TIMELINES.reduce(
         (n, tl) =>
           n +
-          [tl.applicationOpen, tl.applicationDeadline, tl.assessmentWindow, tl.offerWindow, tl.matriculation].filter(
+          [tl.applicationOpen, tl.applicationDeadline, tl.offerWindow, tl.matriculation].filter(
             (p) => p?.precision === "official",
           ).length,
         0,
       ),
     [],
   );
-  const totalPoints = SG_TIMELINES.length * 5;
+  const totalPoints = SG_TIMELINES.length * 4;
 
   return (
     <div className="min-h-screen">
@@ -162,7 +187,7 @@ export default function Timeline() {
                     t("院校", "University"),
                     t("申请开放", "Opens"),
                     t("申请截止", "Deadline"),
-                    t("选拔窗口", "Assessment"),
+                    t("附加选拔", "Additional assessment"),
                     t("Offer 阶段", "Offers"),
                     t("入学", "Matriculation"),
                   ].map((h) => (
@@ -186,7 +211,41 @@ export default function Timeline() {
                     </td>
                     <td className="px-3 py-4"><Point point={tl.applicationOpen} /></td>
                     <td className="px-3 py-4"><Point point={tl.applicationDeadline} /></td>
-                    <td className="px-3 py-4"><Point point={tl.assessmentWindow} /></td>
+                    <td className="px-3 py-4">
+                      {(() => {
+                        const a = assessmentsOf(tl.universityId);
+                        if (a.withExtra === 0) {
+                          return (
+                            <span className="text-[0.8125rem] text-muted-foreground">
+                              {t("本校专业均未登记附加选拔", "No additional assessment recorded")}
+                            </span>
+                          );
+                        }
+                        return (
+                          <span className="flex flex-col gap-1.5">
+                            <span className="score text-[0.75rem] text-brass">
+                              {t(`${a.withExtra} / ${a.total} 个专业`, `${a.withExtra} of ${a.total} programmes`)}
+                            </span>
+                            {a.groups.map((g) => {
+                              const names = g.programmes
+                                .map((pid) => {
+                                  const p = a.uni!.programmes.find((x) => x.id === pid)!;
+                                  return lang === "zh" ? p.nameZh : p.name;
+                                })
+                                .join(lang === "zh" ? "、" : ", ");
+                              return (
+                                <span key={g.extra} className="text-[0.75rem] leading-snug">
+                                  <span className="border border-brass/50 bg-brass/8 px-1.5 py-0.5 text-[oklch(0.42_0.07_74)]">
+                                    {extraLabel(g.extra, lang)}
+                                  </span>
+                                  <span className="ml-1.5 text-muted-foreground">{names}</span>
+                                </span>
+                              );
+                            })}
+                          </span>
+                        );
+                      })()}
+                    </td>
                     <td className="px-3 py-4"><Point point={tl.offerWindow} /></td>
                     <td className="px-3 py-4"><Point point={tl.matriculation} /></td>
                   </tr>
