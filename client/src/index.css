@@ -1,7 +1,7 @@
 /**
  * 设计风格：Admissions Almanac（招生年鉴）
  * 深墨绿 #123B2E + 铜金 #B4884A + 米白纸感 #F5F0E6
- * 字体：Fraunces（标题）/ Source Serif 4（英文正文）/ Noto Sans SC（中文与控件）/ IBM Plex Mono（分数）
+ * 字体：Fraunces（标题）/ Source Serif 4（英文正文）/ 系统中文字体（PingFang SC / Microsoft YaHei）/ IBM Plex Mono（分数）
  * 规则：细线与规则线建立层级，避免大圆角卡片堆叠；分数一律等宽右对齐。
  */
 @import "tailwindcss";
@@ -59,9 +59,9 @@
   --color-tier-reach: var(--tier-reach);
   --color-tier-unknown: var(--tier-unknown);
 
-  --font-display: "Fraunces", "Noto Serif SC", Georgia, serif;
-  --font-serif: "Source Serif 4", "Noto Serif SC", Georgia, serif;
-  --font-sans: "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Fraunces", "PingFang SC", "Microsoft YaHei", Georgia, serif;
+  --font-serif: "Source Serif 4", "PingFang SC", "Microsoft YaHei", Georgia, serif;
+  --font-sans: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
